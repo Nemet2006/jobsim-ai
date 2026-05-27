@@ -1,0 +1,227 @@
+export const dynamic = 'force-dynamic'
+
+import { createClient } from '@/lib/supabase/server'
+import { Trophy, ArrowRight, ClipboardList, GraduationCap, Sparkles } from 'lucide-react'
+import Link from 'next/link'
+import { StatGrid, type StatItem } from '@/components/ui/StatGrid'
+import { EditorialHero } from '@/components/ui/EditorialHero'
+import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/ui/Motion'
+
+export default async function CoursesDashboard() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const [{ data: profile }, { data: assignments }] = await Promise.all([
+    supabase.from('users').select('full_name').eq('id', user!.id).single(),
+    supabase
+      .from('course_assignments')
+      .select('student_id, simulation_id')
+      .eq('instructor_id', user!.id),
+  ])
+
+  const studentIds = [...new Set((assignments || []).map((a) => a.student_id))]
+  const simIds = [...new Set((assignments || []).map((a) => a.simulation_id))]
+
+  let completedAttempts: { student_id: string; score: number | null }[] = []
+  const avgScores: Record<string, number> = {}
+
+  if (studentIds.length > 0 && simIds.length > 0) {
+    const { data: attempts } = await supabase
+      .from('simulation_attempts')
+      .select('student_id, score')
+      .in('student_id', studentIds)
+      .in('simulation_id', simIds)
+      .eq('status', 'completed')
+    completedAttempts = (attempts || []).map((a) => ({ student_id: a.student_id, score: a.score }))
+
+    studentIds.forEach((sid) => {
+      const studentAttempts = completedAttempts.filter((a) => a.student_id === sid)
+      avgScores[sid] = studentAttempts.length
+        ? Math.round(studentAttempts.reduce((s, a) => s + (a.score || 0), 0) / studentAttempts.length)
+        : 0
+    })
+  }
+
+  const completionRate = studentIds.length > 0
+    ? Math.round((new Set(completedAttempts.map((a) => a.student_id)).size / studentIds.length) * 100)
+    : 0
+  const overallAvg = completedAttempts.length
+    ? Math.round(completedAttempts.reduce((s, a) => s + (a.score || 0), 0) / completedAttempts.length)
+    : 0
+
+  const leaderboard: { id: string; name: string; university: string | null; avg: number; completed: number }[] = []
+  for (const sid of studentIds) {
+    const { data: studentData } = await supabase.from('users').select('full_name, university').eq('id', sid).single()
+    leaderboard.push({
+      id: sid,
+      name: studentData?.full_name || 'Tələbə',
+      university: studentData?.university || null,
+      avg: avgScores[sid] || 0,
+      completed: completedAttempts.filter((a) => a.student_id === sid).length,
+    })
+  }
+  leaderboard.sort((a, b) => b.avg - a.avg)
+  const firstName = profile?.full_name?.split(' ')[0] || 'müəllim'
+
+  const stats: StatItem[] = [
+    { label: 'Tələbələr', value: studentIds.length, icon: 'users', accent: 'forest', meta: 'Aktiv qrupda' },
+    { label: 'Tamamlama', value: completionRate, suffix: '%', icon: 'check', accent: 'success', meta: 'Engagement' },
+    { label: 'Orta bal', value: overallAvg, icon: 'chart', accent: 'coral', meta: 'Bütün cəhdlər' },
+    { label: 'Tapşırıqlar', value: assignments?.length || 0, icon: 'clipboard', accent: 'sun', meta: 'Verilmiş' },
+  ]
+
+  return (
+    <div className="relative">
+      <EditorialHero
+        eyebrow="Müəllim Paneli"
+        title={
+          <>
+            <span className="italic font-light text-forest">{firstName}</span>,<br />
+            sinfiniz burada böyüyür.
+          </>
+        }
+        dek={
+          <>
+            Tələbələrinizin <strong className="text-ink">həqiqi tərəqqisi</strong> — qiymət vərəqəsi deyil, simulyasiyalarda göstərilən real bacarıq.
+          </>
+        }
+        actions={
+          <>
+            <Link href="/courses/assign" className="btn-coral group">
+              <ClipboardList size={16} aria-hidden="true" />
+              <span>Tapşırıq ver</span>
+              <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+            </Link>
+            <Link href="/courses/leaderboard" className="btn-secondary">
+              <Trophy size={14} aria-hidden="true" />
+              Reytinq
+            </Link>
+          </>
+        }
+        meta={[
+          { label: 'Müəllim', value: profile?.full_name || '—' },
+          { label: 'Sinif', value: `${studentIds.length} tələbə` },
+          { label: 'Aktiv', value: `${assignments?.length || 0} tapşırıq` },
+        ]}
+      />
+
+      <FadeInUp>
+        <StatGrid stats={stats} />
+      </FadeInUp>
+
+      <div className="mt-12 grid lg:grid-cols-3 gap-6 lg:gap-8">
+
+        {/* Leaderboard */}
+        <section className="lg:col-span-2" aria-labelledby="top-students">
+          <div className="flex items-end justify-between mb-5">
+            <div>
+              <span className="h-eyebrow block mb-1.5">Lider tələbələr</span>
+              <h2 id="top-students" className="font-display text-2xl lg:text-3xl font-semibold">
+                Top performans
+              </h2>
+            </div>
+            <Link href="/courses/leaderboard" className="link-arrow text-sm">
+              Hamısı <ArrowRight size={14} aria-hidden="true" />
+            </Link>
+          </div>
+
+          {leaderboard.slice(0, 6).length > 0 ? (
+            <StaggerContainer className="space-y-3">
+              {leaderboard.slice(0, 6).map((s, i) => {
+                const isTop3 = i < 3
+                const rankConfig = isTop3
+                  ? [
+                      'bg-coral text-white shadow-coral',
+                      'bg-forest text-cream',
+                      'bg-sun text-ink',
+                    ][i]
+                  : 'bg-cream-deep text-ink-mid border border-forest/8'
+
+                return (
+                  <StaggerItem key={s.id}>
+                    <article className="card p-5 group hover:shadow-soft-md hover:border-forest/20 transition-all hover:-translate-y-0.5">
+                      <div className="flex items-center gap-4">
+                        <div
+                          className={`w-12 h-12 rounded-2xl font-display font-semibold text-lg flex items-center justify-center shrink-0 ${rankConfig}`}
+                          aria-label={`${i + 1}-ci yer`}
+                        >
+                          {i + 1}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-display text-lg font-semibold text-ink truncate group-hover:text-forest transition-colors">
+                            {s.name}
+                          </h3>
+                          <div className="flex items-center gap-2 mt-0.5 text-xs text-ink-mute font-medium">
+                            <span>{s.completed} cəhd</span>
+                            {s.university && (
+                              <>
+                                <span className="w-1 h-1 rounded-full bg-ink-mute" aria-hidden="true" />
+                                <span className="truncate">{s.university}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          <p className={`number-display text-3xl ${isTop3 ? 'text-coral-deep' : 'text-ink'}`}>
+                            {s.avg}
+                          </p>
+                          <p className="text-[10px] text-ink-mute uppercase tracking-wider font-semibold">/ 100</p>
+                        </div>
+                      </div>
+                    </article>
+                  </StaggerItem>
+                )
+              })}
+            </StaggerContainer>
+          ) : (
+            <div className="card p-10 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-forest-wash flex items-center justify-center">
+                <GraduationCap size={28} className="text-forest" aria-hidden="true" />
+              </div>
+              <h3 className="font-display text-2xl font-semibold mb-2">Hələ tələbə yoxdur</h3>
+              <p className="text-ink-mid text-sm mb-6 max-w-sm mx-auto">
+                Tələbələrinizə tapşırıq verin və ilk nəticələri görün.
+              </p>
+              <Link href="/courses/assign" className="btn-coral inline-flex">
+                <ClipboardList size={14} aria-hidden="true" />
+                İlk tapşırığı ver
+              </Link>
+            </div>
+          )}
+        </section>
+
+        {/* Side: insights */}
+        <aside className="space-y-6" aria-label="Yan panel">
+          <FadeInUp delay={0.2}>
+            <div className="card-feature p-7 text-cream">
+              <Trophy size={20} className="text-sun mb-4" aria-hidden="true" />
+              <h3 className="font-display text-3xl font-semibold mb-3 leading-tight">
+                Sinif <span className="italic text-sun">{completionRate}%</span><br />
+                tamamladı
+              </h3>
+              <p className="text-sm text-cream/80 leading-relaxed">
+                {completionRate >= 75
+                  ? 'Əla — sinif aktiv və motivasiyalıdır. Növbəti çətinlik səviyyəsinə keçin.'
+                  : completionRate >= 50
+                  ? 'Yaxşı tempdə davam edir. Geridə qalanlara fərdi diqqət lazım ola bilər.'
+                  : 'Motivasiyanı dəstəkləmək lazımdır. Daha qısa simulyasiyalar deneməyə dəyər.'}
+              </p>
+            </div>
+          </FadeInUp>
+
+          <FadeInUp delay={0.3}>
+            <div className="card-feature-light p-6">
+              <Sparkles size={18} className="text-coral mb-3" aria-hidden="true" />
+              <blockquote className="font-display text-lg italic text-ink leading-snug mb-3">
+                &ldquo;Müəllim öyrətmir — tələbənin artmasına şərait yaradır.&rdquo;
+              </blockquote>
+              <footer className="text-xs text-ink-mute font-medium">— Pedagogical Note</footer>
+            </div>
+          </FadeInUp>
+        </aside>
+      </div>
+    </div>
+  )
+}
