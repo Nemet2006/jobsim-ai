@@ -48,6 +48,7 @@ export default function RegisterPage() {
   const [role, setRole] = useState<UserRole>('student')
   const [university, setUniversity] = useState('')
   const [companyName, setCompanyName] = useState('')
+  const [inviteCode, setInviteCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -56,43 +57,49 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          role,
-          university: role === 'student' ? university : null,
-          company_name: role === 'hr' ? companyName : null,
-        },
-      },
-    })
-
-    if (signUpError) {
-      setError(signUpError.message)
+    if (password.length < 8) {
+      setError('Şifrə ən az 8 simvol olmalıdır')
       setLoading(false)
       return
     }
 
-    if (data.user) {
-      await supabase.from('users').upsert({
-        id: data.user.id,
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         email,
-        full_name: fullName,
+        password,
+        fullName,
         role,
-        university: role === 'student' ? university || null : null,
-        company_name: role === 'hr' ? companyName || null : null,
-      })
+        university: role === 'student' ? university : null,
+        companyName: role === 'hr' ? companyName : null,
+        inviteCode: role !== 'student' ? inviteCode : undefined,
+      }),
+    })
 
-      const redirects: Record<UserRole, string> = {
-        student: '/student/dashboard',
-        hr: '/hr/dashboard',
-        courses: '/courses/dashboard',
-      }
-      router.push(redirects[role])
-      router.refresh()
+    const payload = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+      setError(payload.error || 'Qeydiyyat uğursuz oldu')
+      setLoading(false)
+      return
     }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (signInError) {
+      setError('Hesab yaradıldı, lakin giriş uğursuz oldu. Login səhifəsindən cəhd edin.')
+      setLoading(false)
+      return
+    }
+
+    const redirects: Record<UserRole, string> = {
+      student: '/student/dashboard',
+      hr: '/hr/dashboard',
+      courses: '/courses/dashboard',
+    }
+    router.push(redirects[role])
+    router.refresh()
   }
 
   return (
@@ -173,7 +180,7 @@ export default function RegisterPage() {
                         type="button"
                         role="radio"
                         aria-checked={isActive}
-                        onClick={() => setRole(option.value)}
+                        onClick={() => { setRole(option.value); setInviteCode('') }}
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 + idx * 0.06 }}
@@ -255,15 +262,54 @@ export default function RegisterPage() {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    className="space-y-5"
                   >
-                    <label htmlFor="company" className="block text-sm font-semibold text-ink mb-2">Şirkət adı</label>
+                    <div>
+                      <label htmlFor="company" className="block text-sm font-semibold text-ink mb-2">Şirkət adı</label>
+                      <input
+                        id="company"
+                        type="text"
+                        autoComplete="organization"
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        placeholder="Şirkətinizin adı"
+                        required
+                        className="ed-input"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="inviteCode" className="block text-sm font-semibold text-ink mb-2">HR dəvət kodu</label>
+                      <input
+                        id="inviteCode"
+                        type="password"
+                        autoComplete="off"
+                        value={inviteCode}
+                        onChange={(e) => setInviteCode(e.target.value)}
+                        placeholder="Daxili dəvət kodu"
+                        required
+                        className="ed-input"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+
+                {role === 'courses' && (
+                  <motion.div
+                    key="courses-invite"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <label htmlFor="coursesInviteCode" className="block text-sm font-semibold text-ink mb-2">Müəllim dəvət kodu</label>
                     <input
-                      id="company"
-                      type="text"
-                      autoComplete="organization"
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
-                      placeholder="Şirkətinizin adı"
+                      id="coursesInviteCode"
+                      type="password"
+                      autoComplete="off"
+                      value={inviteCode}
+                      onChange={(e) => setInviteCode(e.target.value)}
+                      placeholder="Daxili dəvət kodu"
+                      required
                       className="ed-input"
                     />
                   </motion.div>
@@ -288,7 +334,7 @@ export default function RegisterPage() {
                 </div>
                 <div>
                   <label htmlFor="password" className="block text-sm font-semibold text-ink mb-2">
-                    Şifrə <span className="text-ink-mute font-normal">· min 6</span>
+                    Şifrə <span className="text-ink-mute font-normal">· min 8</span>
                   </label>
                   <input
                     id="password"
@@ -297,7 +343,7 @@ export default function RegisterPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    minLength={6}
+                    minLength={8}
                     required
                     className="ed-input"
                   />

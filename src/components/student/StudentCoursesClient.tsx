@@ -259,48 +259,22 @@ function JoinGroupModal({
     setLoading(true)
     setError(null)
 
-    // Find group by join code (RPC bypasses RLS — no recursion, no broad table read)
-    const { data: lookupRows, error: findErr } = await supabase.rpc(
-      'lookup_group_by_join_code',
-      { p_code: trimmed }
-    )
-
-    const group = lookupRows?.[0] as { id: string; name: string } | undefined
-
-    if (findErr || !group) {
-      setError('Belə bir kod tapılmadı. Müəlliminizlə yoxlayın.')
-      setLoading(false)
-      return
-    }
-
-    // Check already member
-    const { data: existing } = await supabase
-      .from('group_members')
-      .select('id')
-      .eq('group_id', group.id)
-      .eq('student_id', studentId)
-      .single()
-
-    if (existing) {
-      setError('Siz artıq bu qrupun üzvüsünüz.')
-      setLoading(false)
-      return
-    }
-
-    // Insert membership
-    const { error: insertErr } = await supabase.from('group_members').insert({
-      group_id: group.id,
-      student_id: studentId,
+    // Secure join via API (validates join code server-side)
+    const res = await fetch('/api/groups/join', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: trimmed }),
     })
+    const payload = await res.json().catch(() => ({}))
 
-    if (insertErr) {
-      setError('Xəta baş verdi: ' + insertErr.message)
+    if (!res.ok) {
+      setError(payload.error || 'Xəta baş verdi')
       setLoading(false)
       return
     }
 
     setLoading(false)
-    setSuccess({ groupName: group.name })
+    setSuccess({ groupName: payload.groupName || 'Qrup' })
     startTransition(() => router.refresh())
   }
 

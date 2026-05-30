@@ -393,6 +393,27 @@ export interface Database {
         }
         Returns: undefined
       }
+      join_group_by_code: {
+        Args: { p_code: string }
+        Returns: Json
+      }
+      check_rate_limit: {
+        Args: {
+          p_bucket_key: string
+          p_max_requests: number
+          p_window_seconds: number
+        }
+        Returns: boolean
+      }
+      set_user_role: {
+        Args: {
+          p_user_id: string
+          p_role: Database['public']['Enums']['user_role']
+          p_company_name?: string | null
+          p_university?: string | null
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       user_role: 'student' | 'hr' | 'courses'

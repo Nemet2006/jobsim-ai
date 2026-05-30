@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { activatePremium } from '@/lib/premium'
+import { getClientIp } from '@/lib/api-auth'
+import { enforceRateLimit } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+  const rateLimited = await enforceRateLimit(`premium-activate:${ip}`, 10, 3600)
+  if (rateLimited) return rateLimited
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {

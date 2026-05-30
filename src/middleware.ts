@@ -10,6 +10,21 @@ const ROLE_REDIRECTS: Record<string, string> = {
 const PROTECTED_PREFIXES = ['/student', '/hr', '/courses']
 const AUTH_ROUTES = ['/login', '/register']
 
+const PROTECTED_API_PREFIXES = [
+  '/api/ai/',
+  '/api/attempts/',
+  '/api/reports/',
+  '/api/groups/',
+  '/api/premium/activate',
+  '/api/premium/checkout',
+  '/api/premium/confirm',
+]
+
+const PUBLIC_API_PREFIXES = [
+  '/api/premium/webhook',
+  '/api/auth/register',
+]
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
@@ -39,6 +54,15 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
+
+  const isPublicApi = PUBLIC_API_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  const isProtectedApi =
+    !isPublicApi &&
+    PROTECTED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+
+  if (!user && isProtectedApi) {
+    return NextResponse.json({ error: 'Daxil olmalısınız' }, { status: 401 })
+  }
 
   const isProtected = PROTECTED_PREFIXES.some((prefix) =>
     pathname.startsWith(prefix)

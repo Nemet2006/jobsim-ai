@@ -284,6 +284,7 @@ Supabase SQL Editor-də sıra ilə işə salın:
 2. `SQL_FIX_POLICIES.sql` (RLS insert düzəlişləri)
 3. `SQL_PREMIUM.sql`
 4. `SQL_STORAGE.sql`
+5. `SQL_SECURITY.sql` — **production security (roles, scoring, rate limits)**
 
 ### 5. Development server
 
@@ -302,6 +303,7 @@ Brauzer: [http://localhost:3000](http://localhost:3000)
 | `SQL_SCHEMA.sql` | Cədvəllər, enum-lar, RLS, trigger-lər |
 | `SQL_PREMIUM.sql` | Premium abunəlik strukturu |
 | `SQL_STORAGE.sql` | `attempt-files` bucket və policy-lər |
+| `SQL_SECURITY.sql` | Role/scoring protection, secure join, rate limits |
 | `SQL_FIX_POLICIES.sql` | INSERT policy düzəlişləri |
 | `SQL_GROUPS_*.sql` | Qrup modulu migration/fix |
 

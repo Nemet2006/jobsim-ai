@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ProctorCamera } from './ProctorCamera'
 import { createClient } from '@/lib/supabase/client'
 import { normalizeQuestions } from '@/lib/questions'
-import { formatAnswerForAI, hasQuestionAnswer, questionTypeLabel } from '@/lib/answers'
+import { hasQuestionAnswer, questionTypeLabel } from '@/lib/answers'
 import { QuestionAnswerInput } from './QuestionAnswerInput'
 import type { Question } from '@/types'
 import { CertificateCard } from './CertificateCard'
@@ -94,22 +94,16 @@ export default function SimulationExam({
 
     await supabase
       .from('simulation_attempts')
-      .update({ answers, status: 'in_progress' })
+      .update({ answers })
       .eq('id', attemptId)
 
-    const questionAnswerPairs = questions.map((q) => ({
-      question: `[${questionTypeLabel(q.type)}] ${q.question}`,
-      answer: formatAnswerForAI(q, answers[q.id]),
-    }))
-
     try {
-      const res = await fetch('/api/ai/analyze', {
+      const res = await fetch('/api/attempts/complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          simulationTitle: simulation.title,
-          roleType: simulation.role_type,
-          questions: questionAnswerPairs,
+          attemptId,
+          answers,
         }),
       })
       const analysis = await res.json()
@@ -118,33 +112,7 @@ export default function SimulationExam({
         throw new Error(analysis.error || 'AI analizi uğursuz oldu')
       }
 
-      await supabase
-        .from('simulation_attempts')
-        .update({
-          status: 'completed',
-          score: analysis.score,
-          ai_analysis: analysis,
-          answers,
-          completed_at: new Date().toISOString(),
-        })
-        .eq('id', attemptId)
-
-      // Update skill passport
-      if (analysis.skill_scores) {
-        const skillArray = Object.entries(analysis.skill_scores).map(([name, score]) => ({
-          skill_name: name,
-          score,
-          level:
-            (score as number) >= 80 ? 'Expert' :
-            (score as number) >= 60 ? 'Advanced' :
-            (score as number) >= 40 ? 'Intermediate' : 'Beginner',
-        }))
-          await supabase
-          .from('skill_passport')
-          .upsert({ student_id: studentId, skills: skillArray as unknown as import('@/types/database').Json, updated_at: new Date().toISOString() })
-      }
-
-      const completedAt = new Date().toISOString()
+      const completedAt = analysis.completed_at || new Date().toISOString()
       setFinalScore(analysis.score)
       setFinalCompletedAt(completedAt)
       setPhase('done')
