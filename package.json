@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "seed:real": "node scripts/seed-real-content.mjs",
+    "seed:hr": "node --env-file=.env.local scripts/seed-hr-panel.mjs --all",
     "seed:it": "node --env-file=.env.local scripts/seed-it-simulations.mjs",
     "seed:tasks": "node --env-file=.env.local scripts/seed-expand-tasks.mjs"
   },

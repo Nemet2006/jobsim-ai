@@ -319,6 +319,12 @@ Real platforma məzmunu yükləmək üçün:
 # 10 şirkət simulyasiyası + ADA kurs qrupu + demo tələbələr
 npm run seed:real
 
+# HR paneli: namizədlər, shortlist, hesabatlar (bütün HR hesablar)
+npm run seed:hr
+
+# Yalnız bir HR üçün:
+node --env-file=.env.local scripts/seed-hr-panel.mjs --email=hr@kapitalbank.az
+
 # 8 IT simulyasiyası
 npm run seed:it
 
