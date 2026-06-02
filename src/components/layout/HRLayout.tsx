@@ -36,7 +36,7 @@ export default function HRLayout({ children, user }: HRLayoutProps) {
       navItems={navItems}
       brand={{ label: 'HR', section, icon: Briefcase }}
     >
-      {children}
+      <div className="hr-theme">{children}</div>
     </AppShell>
   )
 }

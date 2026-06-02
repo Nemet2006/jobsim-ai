@@ -13,7 +13,14 @@ interface ReportsClientProps {
   shortlistCount: number
 }
 
-const CHART_COLORS = ['#0D9488', '#3B82F6', '#A855F7', '#F59E0B', '#22C55E']
+const CHART_COLORS = ['#1F4E4A', '#F47E47', '#3B82F6', '#F5C842', '#22A06B']
+const CHART_TICK = '#8A8A8A'
+const CHART_TOOLTIP = {
+  backgroundColor: '#FFFFFF',
+  border: '1px solid rgba(31, 78, 74, 0.12)',
+  borderRadius: '12px',
+  color: '#1A1A1A',
+}
 
 export default function ReportsClient({ companyName, simulations, attempts, shortlistCount }: ReportsClientProps) {
   const totalCandidates = new Set(attempts.map((a) => a.student_id)).size
@@ -100,16 +107,16 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
         {/* Bar Chart */}
         <div className="glass-card p-5">
           <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText size={15} className="text-teal-400" />
+            <FileText size={15} className="text-forest" />
             Rol tipinə görə orta bal
           </h2>
           {barData.length > 0 ? (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={barData}>
-                <XAxis dataKey="role" tick={{ fill: '#94A3B8', fontSize: 11 }} />
-                <YAxis domain={[0, 100]} tick={{ fill: '#94A3B8', fontSize: 11 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#162035', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff' }} />
-                <Bar dataKey="avg" fill="#0D9488" radius={[4, 4, 0, 0]} />
+                <XAxis dataKey="role" tick={{ fill: CHART_TICK, fontSize: 11 }} />
+                <YAxis domain={[0, 100]} tick={{ fill: CHART_TICK, fontSize: 11 }} />
+                <Tooltip contentStyle={CHART_TOOLTIP} />
+                <Bar dataKey="avg" fill="#1F4E4A" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : <p className="text-slate-500 text-sm text-center py-8">Məlumat yoxdur</p>}
@@ -118,16 +125,16 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
         {/* Line Chart */}
         <div className="glass-card p-5">
           <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText size={15} className="text-teal-400" />
+            <FileText size={15} className="text-forest" />
             Namizəd sayı (son 10 gün)
           </h2>
           {lineData.length > 0 ? (
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={lineData}>
-                <XAxis dataKey="date" tick={{ fill: '#94A3B8', fontSize: 10 }} />
-                <YAxis tick={{ fill: '#94A3B8', fontSize: 11 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#162035', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff' }} />
-                <Line type="monotone" dataKey="count" stroke="#0D9488" strokeWidth={2} dot={{ fill: '#0D9488', r: 3 }} />
+                <XAxis dataKey="date" tick={{ fill: CHART_TICK, fontSize: 10 }} />
+                <YAxis tick={{ fill: CHART_TICK, fontSize: 11 }} />
+                <Tooltip contentStyle={CHART_TOOLTIP} />
+                <Line type="monotone" dataKey="count" stroke="#1F4E4A" strokeWidth={2} dot={{ fill: '#F47E47', r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           ) : <p className="text-slate-500 text-sm text-center py-8">Məlumat yoxdur</p>}
@@ -136,7 +143,7 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
         {/* Pie Chart */}
         <div className="glass-card p-5">
           <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText size={15} className="text-teal-400" />
+            <FileText size={15} className="text-forest" />
             Shortlist nisbəti
           </h2>
           {totalCandidates > 0 ? (
@@ -147,7 +154,7 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
                     <Cell key={i} fill={CHART_COLORS[i]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#162035', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff' }} />
+                <Tooltip contentStyle={CHART_TOOLTIP} />
               </PieChart>
             </ResponsiveContainer>
           ) : <p className="text-slate-500 text-sm text-center py-8">Məlumat yoxdur</p>}
@@ -156,7 +163,7 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
         {/* Top Simulations */}
         <div className="glass-card p-5">
           <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText size={15} className="text-teal-400" />
+            <FileText size={15} className="text-forest" />
             Simulyasiya performansı
           </h2>
           <div className="space-y-3">
@@ -172,7 +179,7 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
                     <p className="text-xs text-slate-500">{simAttempts.length} namizəd</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-teal-400">{avg}</p>
+                    <p className="text-sm font-bold text-forest">{avg}</p>
                   </div>
                 </div>
               )

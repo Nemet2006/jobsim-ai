@@ -14,7 +14,7 @@ interface CandidateCompare {
   role_type: string
 }
 
-const RADAR_COLORS = ['#0D9488', '#3B82F6', '#A855F7', '#F59E0B']
+const RADAR_COLORS = ['#1F4E4A', '#F47E47', '#3B82F6', '#F5C842']
 const SKILL_LABELS: Record<string, string> = {
   communication: 'Ünsiyyət',
   problem_solving: 'Problem Həll',
@@ -111,8 +111,8 @@ export default function CompareClient({ candidates }: { candidates: CandidateCom
         <h2 className="text-base font-semibold text-white mb-4">Bacarıq Müqayisəsi</h2>
         <ResponsiveContainer width="100%" height={300}>
           <RadarChart data={radarData}>
-            <PolarGrid stroke="rgba(255,255,255,0.1)" />
-            <PolarAngleAxis dataKey="skill" tick={{ fill: '#94A3B8', fontSize: 11 }} />
+            <PolarGrid stroke="rgba(31, 78, 74, 0.15)" />
+            <PolarAngleAxis dataKey="skill" tick={{ fill: '#8A8A8A', fontSize: 11 }} />
             {candidates.map((c, i) => (
               <Radar
                 key={c.shortlist_id}
@@ -124,7 +124,7 @@ export default function CompareClient({ candidates }: { candidates: CandidateCom
                 strokeWidth={2}
               />
             ))}
-            <Legend wrapperStyle={{ color: '#94A3B8', fontSize: '12px' }} />
+            <Legend wrapperStyle={{ color: '#5C5C5C', fontSize: '12px' }} />
           </RadarChart>
         </ResponsiveContainer>
       </div>
