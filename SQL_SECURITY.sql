@@ -256,10 +256,24 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_premium_promo_user_code
   WHERE promo_code IS NOT NULL;
 
 -- ─── 7. Longer join codes for new groups ───────────────────
+-- generate_join_code() is a BEFORE INSERT trigger (not a scalar helper).
+-- Must drop trigger + function before changing return type / body.
+
+DROP TRIGGER IF EXISTS set_join_code ON public.course_groups;
+DROP FUNCTION IF EXISTS public.generate_join_code();
 
 CREATE OR REPLACE FUNCTION public.generate_join_code()
-RETURNS text
-LANGUAGE sql
+RETURNS TRIGGER
+LANGUAGE plpgsql
 AS $$
-  SELECT upper(substring(replace(gen_random_uuid()::text, '-', '') FROM 1 FOR 10));
+BEGIN
+  IF NEW.join_code IS NULL THEN
+    NEW.join_code := upper(substring(replace(gen_random_uuid()::text, '-', '') FROM 1 FOR 10));
+  END IF;
+  RETURN NEW;
+END;
 $$;
+
+CREATE TRIGGER set_join_code
+  BEFORE INSERT ON public.course_groups
+  FOR EACH ROW EXECUTE FUNCTION public.generate_join_code();
