@@ -2,20 +2,33 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  LineChart, Line, PieChart, Pie, Cell, Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+  CartesianGrid,
 } from 'recharts'
-import { RefreshCw, AlertTriangle, Radio } from 'lucide-react'
-import { EditorialHero } from '@/components/ui/EditorialHero'
-import { StatGrid, type StatItem } from '@/components/ui/StatGrid'
+import {
+  RefreshCw,
+  Radio,
+  Download,
+  UserPlus,
+  LogIn,
+  PlaySquare,
+  Share2,
+  MousePointerClick,
+} from 'lucide-react'
+import type { AdminAnalyticsSnapshot, RoleBreakdown } from '@/lib/admin-analytics'
 
-const CHART_COLORS = ['#1F4E4A', '#F47E47', '#3B82F6', '#F5C842', '#22A06B']
 const CHART_TICK = '#8A8A8A'
 const CHART_TOOLTIP = {
   backgroundColor: '#FFFFFF',
-  border: '1px solid rgba(31, 78, 74, 0.12)',
+  border: '1px solid rgba(22, 40, 61, 0.12)',
   borderRadius: '12px',
-  color: '#1A1A1A',
+  color: '#15181D',
 }
 
 const RANGE_OPTIONS = [
@@ -25,60 +38,107 @@ const RANGE_OPTIONS = [
   { value: 'all', label: 'Bütün dövr' },
 ]
 
-const REFRESH_INTERVAL_MS = 30_000
+/** Live polling paused while tracking is off / demo stats are shown. */
+const REFRESH_INTERVAL_MS = 0
 
-interface DailyEventRow {
-  day: string
-  page_views: number
-  visitors: number
-  registrations: number
-  completions: number
+const ROLE_LABELS = [
+  { key: 'student' as const, label: 'Tələbə' },
+  { key: 'hr' as const, label: 'HR' },
+  { key: 'courses' as const, label: 'Kurs' },
+]
+
+function roleChartData(signUps: RoleBreakdown, signIns: RoleBreakdown) {
+  return ROLE_LABELS.map(({ key, label }) => ({
+    role: label,
+    'Sign up': signUps[key],
+    'Sign in': signIns[key],
+  }))
 }
 
-interface SummaryData {
-  range: string
-  since: string
-  generatedAt: string
-  totals: {
-    totalUsers: number
-    students: number
-    hrUsers: number
-    coursesUsers: number
-    premiumUsers: number
-    newRegistrations: number
-    attemptsStarted: number
-    attemptsCompleted: number
-    completionRate: number
-    avgScore: number | null
-    premiumActivations: number
-    revenueCents: number
-    groupCount: number
-    groupMembers: number
+function formatTime(d: Date) {
+  return d.toLocaleTimeString('az-AZ', {
+    timeZone: 'Asia/Baku',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  })
+}
+
+function CoreCard({
+  icon: Icon,
+  label,
+  value,
+  meta,
+  accent = 'navy',
+}: {
+  icon: typeof UserPlus
+  label: string
+  value: number | string
+  meta?: string
+  accent?: 'navy' | 'gold' | 'verdigris' | 'info'
+}) {
+  const accents = {
+    navy: 'bg-navy text-paper',
+    gold: 'bg-gold text-navy-deep',
+    verdigris: 'bg-verdigris text-paper',
+    info: 'bg-info text-paper',
   }
-  registrationsByRole: Record<string, number>
-  registrationsDaily: { day: string; count: number }[]
-  events: {
-    page_views: number
-    unique_visitors: number
-    active_users: number
-    interaction_events: number
-    top_pages: { page_path: string; views: number; visitors: number }[]
-    top_events: { event_name: string; total: number }[]
-    daily: DailyEventRow[]
-    funnel: {
-      visitors: number
-      registered: number
-      simulation_started: number
-      simulation_completed: number
-      premium_activated: number
-    }
-  } | null
+  return (
+    <article className="card-dossier p-5 flex flex-col gap-4 min-h-[140px]">
+      <div className="flex items-start justify-between gap-3">
+        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${accents[accent]}`}>
+          <Icon size={18} aria-hidden="true" />
+        </div>
+        <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-ink-mute text-right leading-snug">
+          {label}
+        </p>
+      </div>
+      <div>
+        <p className="number-display text-4xl text-ink leading-none">{value}</p>
+        {meta ? <p className="mt-2 text-xs text-ink-mute font-medium">{meta}</p> : null}
+      </div>
+    </article>
+  )
+}
+
+function BreakdownBars({
+  title,
+  rows,
+}: {
+  title: string
+  rows: { label: string; value: number; color: string }[]
+}) {
+  const max = Math.max(1, ...rows.map((r) => r.value))
+  return (
+    <div className="card-dossier p-6">
+      <h2 className="font-display text-lg font-semibold text-ink mb-1">{title}</h2>
+      <p className="text-xs text-ink-mute mb-5">Seçilmiş dövr üzrə</p>
+      <div className="space-y-4">
+        {rows.map((row) => (
+          <div key={row.label}>
+            <div className="flex items-center justify-between text-sm mb-1.5">
+              <span className="font-medium text-ink">{row.label}</span>
+              <span className="number-display text-xl text-ink">{row.value}</span>
+            </div>
+            <div className="h-2.5 bg-paper-deep rounded-md overflow-hidden">
+              <div
+                className="h-full rounded-md transition-all duration-700"
+                style={{ width: `${Math.round((row.value / max) * 100)}%`, backgroundColor: row.color }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export default function TractionDashboard() {
   const [range, setRange] = useState('30d')
-  const [data, setData] = useState<SummaryData | null>(null)
+  const [data, setData] = useState<AdminAnalyticsSnapshot | null>(null)
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
@@ -105,98 +165,102 @@ export default function TractionDashboard() {
 
   useEffect(() => {
     load(range)
+    if (!REFRESH_INTERVAL_MS) return
     const interval = setInterval(() => load(range, true), REFRESH_INTERVAL_MS)
     return () => clearInterval(interval)
   }, [range, load])
 
-  const funnelRows = useMemo(() => {
-    if (!data?.events) return []
-    const f = data.events.funnel
-    const rows = [
-      { label: 'Ziyarətçi (unikal)', value: f.visitors },
-      { label: 'Qeydiyyat', value: f.registered },
-      { label: 'Simulyasiya başladı', value: f.simulation_started },
-      { label: 'Simulyasiya tamamladı', value: f.simulation_completed },
-      { label: 'Premium aldı', value: f.premium_activated },
-    ]
-    const max = Math.max(1, ...rows.map((r) => r.value))
-    return rows.map((r) => ({ ...r, pct: Math.round((r.value / max) * 100) }))
-  }, [data])
-
-  const roleData = useMemo(() => {
+  const authChart = useMemo(() => {
     if (!data) return []
-    return [
-      { name: 'Tələbə', value: data.totals.students },
-      { name: 'HR', value: data.totals.hrUsers },
-      { name: 'Kurs', value: data.totals.coursesUsers },
-    ].filter((r) => r.value > 0)
+    return roleChartData(data.core.signUps, data.core.signIns)
   }, [data])
 
-  const statsRow1: StatItem[] = data
-    ? [
-        { label: 'Ümumi istifadəçi', value: data.totals.totalUsers, icon: 'users', accent: 'forest' },
-        { label: 'Yeni qeydiyyat', value: data.totals.newRegistrations, icon: 'trending', accent: 'coral', meta: 'seçilən dövrdə' },
-        { label: 'Səhifə baxışı', value: data.events?.page_views ?? 0, icon: 'chart', accent: 'info', meta: data.events ? 'canlı tracking' : 'tracking aktiv deyil' },
-        { label: 'Unikal ziyarətçi', value: data.events?.unique_visitors ?? 0, icon: 'target', accent: 'sun', meta: data.events ? 'anonim daxil' : 'tracking aktiv deyil' },
-      ]
-    : []
-
-  const statsRow2: StatItem[] = data
-    ? [
-        { label: 'Sim. başladı', value: data.totals.attemptsStarted, icon: 'play', accent: 'forest' },
-        { label: 'Sim. tamamlandı', value: data.totals.attemptsCompleted, icon: 'check', accent: 'success', meta: `tamamlama ${data.totals.completionRate}%` },
-        { label: 'Orta bal', value: data.totals.avgScore ?? '—', icon: 'star', accent: 'sun' },
-        { label: 'Premium', value: data.totals.premiumUsers, icon: 'zap', accent: 'coral', meta: `${data.totals.premiumActivations} aktivasiya dövrdə` },
-      ]
-    : []
+  const downloadReport = async () => {
+    setExporting(true)
+    try {
+      // Live report: server rebuilds stats at click time (not stale UI state).
+      const res = await fetch(`/api/analytics/report?range=${range}`, { cache: 'no-store' })
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}))
+        setError(payload.error || 'Hesabat yaradılmadı')
+        return
+      }
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
+      a.href = url
+      a.download = `jobsim-admin-hesabat-${range}-${stamp}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+      // Refresh dashboard so UI matches the report snapshot window.
+      load(range, true)
+    } catch {
+      setError('Hesabat endirilmədi')
+    } finally {
+      setExporting(false)
+    }
+  }
 
   return (
     <div>
-      <EditorialHero
-        eyebrow="Platform Traction"
-        title={
-          <>
-            Canlı <span className="italic font-light text-forest">traction</span> paneli
-          </>
-        }
-        dek="Qeydiyyat, kliklər, simulyasiya funnel-i və premium conversion — hamısı bir yerdə, 30 saniyədə bir yenilənir."
-        meta={
-          lastUpdated
-            ? [
-                { label: 'Son yenilənmə', value: lastUpdated.toLocaleTimeString('az-AZ') },
-                { label: 'Rejim', value: 'Canlı (30s)' },
-              ]
-            : undefined
-        }
-      />
+      <header className="mb-8">
+        <p className="h-eyebrow mb-2">Platform Admin</p>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="max-w-2xl">
+            <h1 className="font-display text-3xl lg:text-4xl font-semibold text-ink tracking-tight">
+              Core <span className="text-navy">statistikalar</span>
+            </h1>
+            <p className="mt-2 text-ink-mid text-sm lg:text-base leading-relaxed">
+              Sign up / sign in, rollar, simulyasiya aktivliyi, tapşırıq paylaşımı və ümumi kliklər.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {lastUpdated ? (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-mute px-3 py-1.5 rounded-md bg-paper-deep border border-navy/10">
+                <Radio size={13} aria-hidden="true" />
+                {formatTime(lastUpdated)}
+              </span>
+            ) : null}
+            <button
+              type="button"
+              onClick={downloadReport}
+              disabled={exporting || loading}
+              className="btn-primary inline-flex items-center gap-2 disabled:opacity-60"
+            >
+              <Download size={15} aria-hidden="true" />
+              {exporting ? 'Hesabat hazırlanır…' : 'Hesabat (PDF)'}
+            </button>
+          </div>
+        </div>
+      </header>
 
-      {/* Range selector */}
       <div className="flex flex-wrap items-center gap-2 mb-8">
         {RANGE_OPTIONS.map((opt) => (
           <button
             key={opt.value}
+            type="button"
             onClick={() => setRange(opt.value)}
-            className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+            className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
               range === opt.value
-                ? 'bg-forest text-cream border-forest'
-                : 'bg-white text-ink-mid border-forest/12 hover:border-forest/30'
+                ? 'bg-navy text-paper border-navy'
+                : 'bg-white text-ink-mid border-navy/12 hover:border-navy/30'
             }`}
           >
             {opt.label}
           </button>
         ))}
         <button
+          type="button"
           onClick={() => load(range)}
-          className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white border border-forest/12 text-ink-mid hover:border-forest/30"
+          className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium bg-white border border-navy/12 text-ink-mid hover:border-navy/30"
           aria-label="Yenilə"
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} aria-hidden="true" />
           Yenilə
         </button>
-        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success">
-          <Radio size={13} aria-hidden="true" />
-          CANLI
-        </span>
       </div>
 
       {error && (
@@ -205,181 +269,187 @@ export default function TractionDashboard() {
         </div>
       )}
 
-      {data && !data.events && (
-        <div className="mb-6 px-4 py-3 bg-sun-wash border border-sun/40 text-sun-deep text-sm rounded-xl flex items-center gap-2">
-          <AlertTriangle size={16} className="shrink-0" aria-hidden="true" />
-          Event tracking cədvəli tapılmadı — Supabase-də <code className="font-mono">SQL_ANALYTICS.sql</code> migration-ını işlədin.
-          Biznes metrikaları (qeydiyyat, simulyasiya, premium) yenə də göstərilir.
-        </div>
-      )}
-
       {loading && !data ? (
-        <div className="card p-16 text-center">
-          <RefreshCw className="w-8 h-8 animate-spin text-forest mx-auto mb-3" aria-hidden="true" />
-          <p className="text-sm text-ink-mid">Traction məlumatları yüklənir…</p>
+        <div className="card-dossier p-16 text-center">
+          <RefreshCw className="w-8 h-8 animate-spin text-navy mx-auto mb-3" aria-hidden="true" />
+          <p className="text-sm text-ink-mid">Core statistikalar yüklənir…</p>
         </div>
       ) : data ? (
         <div className="space-y-8">
-          <StatGrid stats={statsRow1} />
-          <StatGrid stats={statsRow2} />
+          {/* Core KPI strip */}
+          <section aria-labelledby="core-kpis">
+            <h2 id="core-kpis" className="sr-only">
+              Əsas göstəricilər
+            </h2>
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+              <CoreCard
+                icon={UserPlus}
+                label="Sign up"
+                value={data.core.signUps.total}
+                meta="Yeni qeydiyyatlar"
+                accent="navy"
+              />
+              <CoreCard
+                icon={LogIn}
+                label="Sign in"
+                value={data.core.signIns.total}
+                meta={`${data.core.loginFailed} uğursuz cəhd`}
+                accent="gold"
+              />
+              <CoreCard
+                icon={PlaySquare}
+                label="Simulyasiya edənlər"
+                value={data.core.uniqueSimulators}
+                meta={`${data.core.simulationsStarted} cəhd · ${data.core.completionRate}% tamam`}
+                accent="verdigris"
+              />
+              <CoreCard
+                icon={Share2}
+                label="Tapşırıq paylaşılan"
+                value={data.core.tasksShared.total}
+                meta="Kurs + qrup + yaradılan sim."
+                accent="info"
+              />
+              <CoreCard
+                icon={MousePointerClick}
+                label="Ümumi klik"
+                value={data.core.totalClicks}
+                meta={`${data.core.pageViews} səhifə baxışı`}
+                accent="navy"
+              />
+            </div>
+          </section>
 
-          <div className="grid lg:grid-cols-2 gap-6">
-            {/* Traffic over time */}
-            <div className="card p-6">
-              <h2 className="font-display text-lg font-semibold text-ink mb-1">Trafik dinamikası</h2>
+          {/* Auth by role */}
+          <section className="grid lg:grid-cols-5 gap-6" aria-labelledby="auth-by-role">
+            <div className="lg:col-span-3 card-dossier p-6">
+              <h2 id="auth-by-role" className="font-display text-lg font-semibold text-ink mb-1">
+                Rol üzrə Sign up / Sign in
+              </h2>
               <p className="text-xs text-ink-mute mb-4">
-                Səhifə baxışı və unikal ziyarətçi · tracking aktivləşən tarixdən etibarən
+                Hansı roldan neçə nəfər qeydiyyatdan keçib və daxil olub
               </p>
-              {data.events && data.events.daily.length > 0 ? (
-                <ResponsiveContainer width="100%" height={240}>
-                  <LineChart data={data.events.daily}>
-                    <XAxis dataKey="day" tick={{ fill: CHART_TICK, fontSize: 11 }} />
+              {authChart.some((r) => r['Sign up'] > 0 || r['Sign in'] > 0) ? (
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={authChart} barGap={6}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(22,40,61,0.08)" vertical={false} />
+                    <XAxis dataKey="role" tick={{ fill: CHART_TICK, fontSize: 12 }} />
                     <YAxis tick={{ fill: CHART_TICK, fontSize: 11 }} allowDecimals={false} />
                     <Tooltip contentStyle={CHART_TOOLTIP} />
                     <Legend />
-                    <Line type="monotone" dataKey="page_views" name="Baxış" stroke="#1F4E4A" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="visitors" name="Ziyarətçi" stroke="#F47E47" strokeWidth={2} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-sm text-ink-mute py-12 text-center">Hələ event məlumatı yoxdur</p>
-              )}
-            </div>
-
-            {/* Registrations over time */}
-            <div className="card p-6">
-              <h2 className="font-display text-lg font-semibold text-ink mb-1">Qeydiyyat dinamikası</h2>
-              <p className="text-xs text-ink-mute mb-4">
-                users cədvəlindən · tracking-dən əvvəlki tarixçə də daxildir
-              </p>
-              {data.registrationsDaily.length > 0 ? (
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={data.registrationsDaily}>
-                    <XAxis dataKey="day" tick={{ fill: CHART_TICK, fontSize: 11 }} />
-                    <YAxis tick={{ fill: CHART_TICK, fontSize: 11 }} allowDecimals={false} />
-                    <Tooltip contentStyle={CHART_TOOLTIP} />
-                    <Bar dataKey="count" name="Qeydiyyat" fill="#1F4E4A" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Sign up" fill="#16283D" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Sign in" fill="#B8862E" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="text-sm text-ink-mute py-12 text-center">Bu dövrdə qeydiyyat yoxdur</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-6">
-            {/* Funnel */}
-            <div className="card p-6">
-              <h2 className="font-display text-lg font-semibold text-ink mb-1">Konversiya funnel-i</h2>
-              <p className="text-xs text-ink-mute mb-5">ziyarət → qeydiyyat → simulyasiya → premium</p>
-              {funnelRows.length > 0 ? (
-                <div className="space-y-3">
-                  {funnelRows.map((row, i) => (
-                    <div key={row.label}>
-                      <div className="flex items-center justify-between text-sm mb-1">
-                        <span className="text-ink font-medium">{row.label}</span>
-                        <span className="text-ink-mid font-semibold">{row.value}</span>
-                      </div>
-                      <div className="h-3 bg-cream-deep rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all duration-700"
-                          style={{ width: `${row.pct}%`, backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-ink-mute py-12 text-center">Funnel üçün event məlumatı yoxdur</p>
+                <p className="text-sm text-ink-mute py-16 text-center">Bu dövrdə auth məlumatı yoxdur</p>
               )}
             </div>
 
-            {/* Role breakdown */}
-            <div className="card p-6">
-              <h2 className="font-display text-lg font-semibold text-ink mb-1">İstifadəçi bölgüsü</h2>
-              <p className="text-xs text-ink-mute mb-4">rol üzrə bütün qeydiyyatlar</p>
-              {roleData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={240}>
-                  <PieChart>
-                    <Pie data={roleData} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={3}>
-                      {roleData.map((_, i) => (
-                        <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={CHART_TOOLTIP} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-sm text-ink-mute py-12 text-center">İstifadəçi yoxdur</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-6">
-            {/* Top pages */}
-            <div className="card p-6">
-              <h2 className="font-display text-lg font-semibold text-ink mb-4">Ən çox baxılan səhifələr</h2>
-              {data.events && data.events.top_pages.length > 0 ? (
-                <div className="space-y-2">
-                  {data.events.top_pages.map((p) => (
-                    <div key={p.page_path} className="flex items-center justify-between py-2 border-b border-forest/8 last:border-0 text-sm">
-                      <span className="font-mono text-xs text-ink truncate max-w-[60%]">{p.page_path}</span>
-                      <span className="text-ink-mid">
-                        <strong className="text-ink">{p.views}</strong> baxış · {p.visitors} ziyarətçi
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-ink-mute py-8 text-center">Hələ səhifə baxışı yoxdur</p>
-              )}
-            </div>
-
-            {/* Top events */}
-            <div className="card p-6">
-              <h2 className="font-display text-lg font-semibold text-ink mb-4">Ən çox baş verən hadisələr</h2>
-              {data.events && data.events.top_events.length > 0 ? (
-                <div className="space-y-2">
-                  {data.events.top_events.map((e) => (
-                    <div key={e.event_name} className="flex items-center justify-between py-2 border-b border-forest/8 last:border-0 text-sm">
-                      <span className="font-mono text-xs text-ink">{e.event_name}</span>
-                      <span className="font-semibold text-ink">{e.total}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-ink-mute py-8 text-center">Hələ interaction eventi yoxdur</p>
-              )}
-            </div>
-          </div>
-
-          {/* Secondary metrics */}
-          <div className="card p-6">
-            <h2 className="font-display text-lg font-semibold text-ink mb-4">Digər göstəricilər</h2>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
-              <div>
-                <p className="text-ink-mute text-xs uppercase tracking-wider mb-1">Aktiv istifadəçi</p>
-                <p className="text-2xl font-semibold text-ink">{data.events?.active_users ?? '—'}</p>
-              </div>
-              <div>
-                <p className="text-ink-mute text-xs uppercase tracking-wider mb-1">Interaction eventləri</p>
-                <p className="text-2xl font-semibold text-ink">{data.events?.interaction_events ?? '—'}</p>
-              </div>
-              <div>
-                <p className="text-ink-mute text-xs uppercase tracking-wider mb-1">Kurs qrupları</p>
-                <p className="text-2xl font-semibold text-ink">{data.totals.groupCount}</p>
-                <p className="text-xs text-ink-mute">{data.totals.groupMembers} üzv</p>
-              </div>
-              <div>
-                <p className="text-ink-mute text-xs uppercase tracking-wider mb-1">Gəlir (dövrdə)</p>
-                <p className="text-2xl font-semibold text-ink">
-                  ${(data.totals.revenueCents / 100).toFixed(2)}
+            <div className="lg:col-span-2 space-y-3">
+              <div className="card-dossier p-5">
+                <p className="text-[11px] uppercase tracking-wider text-ink-mute font-semibold mb-3">
+                  Sign up detalları
                 </p>
-                <p className="text-xs text-ink-mute">Stripe + promo aktivasiyalar</p>
+                <ul className="space-y-2 text-sm">
+                  {ROLE_LABELS.map(({ key, label }) => (
+                    <li key={key} className="flex justify-between border-b border-navy/8 pb-2 last:border-0">
+                      <span className="text-ink-mid">{label}</span>
+                      <span className="font-semibold text-ink number-display text-lg">
+                        {data.core.signUps[key]}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="card-dossier p-5">
+                <p className="text-[11px] uppercase tracking-wider text-ink-mute font-semibold mb-3">
+                  Sign in detalları
+                </p>
+                <ul className="space-y-2 text-sm">
+                  {ROLE_LABELS.map(({ key, label }) => (
+                    <li key={key} className="flex justify-between border-b border-navy/8 pb-2 last:border-0">
+                      <span className="text-ink-mid">{label}</span>
+                      <span className="font-semibold text-ink number-display text-lg">
+                        {data.core.signIns[key]}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-          </div>
+          </section>
+
+          {/* Simulations + shares */}
+          <section className="grid lg:grid-cols-2 gap-6">
+            <BreakdownBars
+              title="Simulyasiya aktivliyi"
+              rows={[
+                { label: 'Unikal simulyasiya edənlər', value: data.core.uniqueSimulators, color: '#1E7A63' },
+                { label: 'Başlayan cəhdlər', value: data.core.simulationsStarted, color: '#16283D' },
+                { label: 'Tamamlanan cəhdlər', value: data.core.simulationsCompleted, color: '#B8862E' },
+              ]}
+            />
+            <BreakdownBars
+              title="Tapşırıq / simulyasiya paylaşımı"
+              rows={[
+                {
+                  label: 'Kurs tapşırıqları (tələbəyə)',
+                  value: data.core.tasksShared.courseAssignments,
+                  color: '#16283D',
+                },
+                {
+                  label: 'Qrup simulyasiya tapşırıqları',
+                  value: data.core.tasksShared.groupAssignments,
+                  color: '#B8862E',
+                },
+                {
+                  label: 'Yaradılan simulyasiyalar',
+                  value: data.core.tasksShared.hrSimulationsCreated,
+                  color: '#1E7A63',
+                },
+              ]}
+            />
+          </section>
+
+          {/* Platform totals footer strip */}
+          <section className="card-feature p-6 lg:p-8">
+            <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+              <div>
+                <p className="h-eyebrow text-gold mb-1">Platform baza</p>
+                <h2 className="font-display text-2xl font-semibold text-paper">
+                  Ümumi istifadəçi bazası
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={downloadReport}
+                disabled={exporting}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold bg-gold text-navy-deep hover:bg-gold-deep transition-colors disabled:opacity-60"
+              >
+                <Download size={15} aria-hidden="true" />
+                Hesabat (PDF)
+              </button>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                <p className="text-xs uppercase tracking-wider text-paper/55 mb-1">Ümumi user</p>
+                <p className="number-display text-3xl text-paper">{data.totals.totalUsers}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider text-paper/55 mb-1">Tələbə</p>
+                <p className="number-display text-3xl text-paper">{data.totals.students}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider text-paper/55 mb-1">HR</p>
+                <p className="number-display text-3xl text-paper">{data.totals.hrUsers}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider text-paper/55 mb-1">Kurs</p>
+                <p className="number-display text-3xl text-paper">{data.totals.coursesUsers}</p>
+              </div>
+            </div>
+          </section>
         </div>
       ) : null}
     </div>

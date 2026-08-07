@@ -30,6 +30,7 @@ export const SERVER_EVENTS = [
   'simulation_completed',
   'premium_activated',
   'group_joined',
+  'admin_report_downloaded',
 ] as const
 
 export type ClientEventName = (typeof CLIENT_EVENTS)[number]

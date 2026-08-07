@@ -26,13 +26,13 @@ export default function CoursesStudentsClient({ students }: { students: Student[
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-white">Tələbələr</h1>
-        <p className="text-slate-400 text-sm mt-1">{students.length} tələbə</p>
+        <h1 className="font-display text-2xl font-semibold text-ink">Tələbələr</h1>
+        <p className="text-ink-mute text-sm mt-1">{students.length} tələbə</p>
       </div>
 
-      <div className="flex flex-wrap gap-3 glass-card p-4">
+      <div className="flex flex-wrap gap-3 card-dossier p-4">
         <div className="relative flex-1 min-w-48">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-mute" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Ad axtar..." className="input-dark w-full pl-8 text-sm" />
         </div>
         <div className="flex gap-2">
@@ -41,7 +41,7 @@ export default function CoursesStudentsClient({ students }: { students: Student[
               key={f}
               onClick={() => setFilter(f)}
               className={`text-xs px-3 py-2 rounded-lg border transition-all ${
-                filter === f ? 'border-teal-500/40 bg-teal-500/10 text-teal-400' : 'border-white/10 text-slate-400'
+                filter === f ? 'border-navy/30 bg-navy-wash text-navy' : 'border-navy/10 text-ink-mute'
               }`}
             >
               {f === 'all' ? 'Hamısı' : f === 'completed' ? 'Tamamlanmış' : f === 'in_progress' ? 'Davam edir' : 'Başlanmamış'}
@@ -50,43 +50,43 @@ export default function CoursesStudentsClient({ students }: { students: Student[
         </div>
       </div>
 
-      <div className="glass-card overflow-hidden">
+      <div className="card-dossier overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-white/5">
-              <th className="text-left text-xs text-slate-400 font-medium px-5 py-3">Ad Soyad</th>
-              <th className="text-left text-xs text-slate-400 font-medium px-5 py-3 hidden md:table-cell">Tapşırıqlar</th>
-              <th className="text-left text-xs text-slate-400 font-medium px-5 py-3">Tərəqqi</th>
-              <th className="text-left text-xs text-slate-400 font-medium px-5 py-3 hidden sm:table-cell">Orta bal</th>
+            <tr className="border-b border-navy/8">
+              <th className="text-left text-xs text-ink-mute font-medium px-5 py-3">Ad Soyad</th>
+              <th className="text-left text-xs text-ink-mute font-medium px-5 py-3 hidden md:table-cell">Tapşırıqlar</th>
+              <th className="text-left text-xs text-ink-mute font-medium px-5 py-3">Tərəqqi</th>
+              <th className="text-left text-xs text-ink-mute font-medium px-5 py-3 hidden sm:table-cell">Orta bal</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((s) => {
               const pct = s.stats.total > 0 ? Math.round((s.stats.completed / s.stats.total) * 100) : 0
               return (
-                <tr key={s.id} className="border-b border-white/5 hover:bg-white/2 transition-colors">
+                <tr key={s.id} className="border-b border-navy/8 hover:bg-navy-wash/60 transition-colors">
                   <td className="px-5 py-4">
                     <div>
-                      <p className="text-sm font-medium text-white">{s.full_name}</p>
-                      {s.university && <p className="text-xs text-slate-400 mt-0.5">{s.university}</p>}
+                      <p className="text-sm font-medium text-ink">{s.full_name}</p>
+                      {s.university && <p className="text-xs text-ink-mute mt-0.5">{s.university}</p>}
                     </div>
                   </td>
-                  <td className="px-5 py-4 hidden md:table-cell text-sm text-slate-400">
+                  <td className="px-5 py-4 hidden md:table-cell text-sm text-ink-mute">
                     {s.stats.completed}/{s.stats.total}
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden min-w-16">
+                      <div className="flex-1 h-2 bg-paper-deep rounded-md overflow-hidden min-w-16">
                         <div
-                          className="h-full bg-teal-500 rounded-full transition-all"
+                          className="h-full bg-verdigris rounded-md transition-all"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
-                      <span className="text-xs text-slate-400 w-8">{pct}%</span>
+                      <span className="text-xs text-ink-mute w-8">{pct}%</span>
                     </div>
                   </td>
                   <td className="px-5 py-4 hidden sm:table-cell">
-                    <span className={`text-sm font-bold ${s.stats.avg >= 71 ? 'text-green-400' : s.stats.avg >= 41 ? 'text-yellow-400' : s.stats.avg > 0 ? 'text-red-400' : 'text-slate-500'}`}>
+                    <span className={`text-sm font-bold ${s.stats.avg >= 71 ? 'text-verdigris' : s.stats.avg >= 41 ? 'text-gold-deep' : s.stats.avg > 0 ? 'text-danger' : 'text-ink-mute'}`}>
                       {s.stats.avg > 0 ? s.stats.avg : '—'}
                     </span>
                   </td>
@@ -94,7 +94,7 @@ export default function CoursesStudentsClient({ students }: { students: Student[
               )
             })}
             {filtered.length === 0 && (
-              <tr><td colSpan={4} className="text-center text-slate-400 py-8 text-sm">Tələbə tapılmadı</td></tr>
+              <tr><td colSpan={4} className="text-center text-ink-mute py-8 text-sm">Tələbə tapılmadı</td></tr>
             )}
           </tbody>
         </table>

@@ -6,7 +6,6 @@ import { PlaySquare, ArrowRight, Clock, Zap, Trophy, Sparkles } from 'lucide-rea
 import { formatDate, getScoreColor } from '@/lib/utils'
 import { StatGrid, type StatItem } from '@/components/ui/StatGrid'
 import { EditorialHero } from '@/components/ui/EditorialHero'
-import { PremiumUpgradeButton } from '@/components/student/PremiumUpgradeButton'
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/ui/Motion'
 
 export default async function StudentDashboard() {
@@ -14,14 +13,14 @@ export default async function StudentDashboard() {
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ data: profile }, { data: attempts }, { data: passport }] = await Promise.all([
-    supabase.from('users').select('*').eq('id', user!.id).single(),
+    supabase.from('users').select('full_name, university').eq('id', user!.id).single(),
     supabase
       .from('simulation_attempts')
-      .select('*, simulation:simulations(title, role_type)')
+      .select('id, score, status, started_at, simulation:simulations(title, role_type)')
       .eq('student_id', user!.id)
       .order('started_at', { ascending: false })
       .limit(6),
-    supabase.from('skill_passport').select('*').eq('student_id', user!.id).single(),
+    supabase.from('skill_passport').select('skills').eq('student_id', user!.id).single(),
   ])
 
   const completedAttempts = attempts?.filter((a) => a.status === 'completed') || []
@@ -36,11 +35,11 @@ export default async function StudentDashboard() {
     { label: 'Orta bal', value: avgScore, icon: 'target', accent: 'coral', meta: 'Son cəhdlər' },
     { label: 'Bacarıqlar', value: skillCount, icon: 'award', accent: 'sun', meta: 'Pasportda' },
     {
-      label: 'Status',
-      value: profile?.is_premium ? 'Premium' : 'Free',
+      label: 'Giriş',
+      value: 'Açıq',
       icon: 'zap',
-      accent: profile?.is_premium ? 'coral' : 'neutral',
-      meta: profile?.is_premium ? 'Aktiv üzv' : 'Yüksəlt',
+      accent: 'verdigris',
+      meta: 'Bütün simulyasiyalar',
     },
   ]
 
@@ -50,21 +49,20 @@ export default async function StudentDashboard() {
         eyebrow="Tələbə Paneli"
         title={
           <>
-            Salam,{' '}
-            <span className="italic font-light text-forest">{firstName}</span>.<br />
-            Bu gün hansı işi keçəcəyik?
+            Salam, <span className="text-navy">{firstName}</span>.<br />
+            Bu gün hansı bacarığı sübut edəcəksiniz?
           </>
         }
         dek={
           <>
-            Real iş simulyasiyaları, ekspert qiymətləndirməsi, və{' '}
-            <strong className="text-ink">karyera sübutu</strong>.
-            Hər tapşırıq bir addım — bacarıqlarınızı dünyaya göstərin.
+            Real iş simulyasiyaları, AI qiymətləndirmə və{' '}
+            <strong className="text-ink">verification seal</strong>.
+            Hər tamamlanmış tapşırıq — dossier-inizə bir qeyd.
           </>
         }
         actions={
           <>
-            <Link href="/student/simulations" className="btn-coral group">
+            <Link href="/student/simulations" className="btn-primary group">
               <PlaySquare size={16} aria-hidden="true" />
               <span>Simulyasiya başlat</span>
               <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
@@ -77,7 +75,7 @@ export default async function StudentDashboard() {
         }
         meta={[
           { label: 'Universitet', value: profile?.university || 'Qeyd edilməyib' },
-          { label: 'Üzvlük', value: profile?.is_premium ? 'Premium' : 'Free' },
+          { label: 'Giriş', value: 'Açıq' },
           { label: 'Cəhdlər', value: `${attempts?.length || 0}` },
         ]}
       />
@@ -107,14 +105,14 @@ export default async function StudentDashboard() {
             <StaggerContainer className="space-y-3">
               {attempts.map((attempt) => (
                 <StaggerItem key={attempt.id}>
-                  <article className="card p-5 group hover:shadow-soft-md hover:border-forest/20 transition-all hover:-translate-y-0.5">
+                  <article className="card-dossier p-4 group hover:shadow-soft-md hover:border-navy/20 transition-all">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-forest text-cream flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                        <PlaySquare size={18} aria-hidden="true" />
+                      <div className="w-10 h-10 rounded-md bg-navy text-paper flex items-center justify-center shrink-0">
+                        <PlaySquare size={16} aria-hidden="true" />
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-display text-lg font-semibold text-ink truncate group-hover:text-forest transition-colors">
+                        <h3 className="font-display text-base font-semibold text-ink truncate group-hover:text-navy transition-colors">
                           {(attempt.simulation as { title: string } | null)?.title || 'Simulyasiya'}
                         </h3>
                         <div className="flex items-center gap-2 mt-1 text-xs text-ink-mute font-medium">
@@ -123,7 +121,7 @@ export default async function StudentDashboard() {
                           {attempt.status === 'in_progress' && (
                             <>
                               <span className="w-1 h-1 rounded-full bg-ink-mute" aria-hidden="true" />
-                              <span className="text-coral-deep font-semibold">Davam edir</span>
+                              <span className="text-gold-deep font-semibold">Davam edir</span>
                             </>
                           )}
                         </div>
@@ -149,15 +147,15 @@ export default async function StudentDashboard() {
               ))}
             </StaggerContainer>
           ) : (
-            <div className="card p-10 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-forest-wash flex items-center justify-center">
-                <PlaySquare size={28} className="text-forest" aria-hidden="true" />
+            <div className="card-dossier p-10 text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-md bg-navy-wash flex items-center justify-center">
+                <PlaySquare size={24} className="text-navy" aria-hidden="true" />
               </div>
-              <h3 className="font-display text-2xl font-semibold mb-2">Boş səhifə</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">Dossier boşdur</h3>
               <p className="text-ink-mid text-sm mb-6 max-w-sm mx-auto">
-                Hələ heç bir simulyasiya başlamamısınız. Karyera hekayəniz buradan başlayır.
+                Hələ heç bir simulyasiya başlamamısınız. İlk verification seal buradan başlayır.
               </p>
-              <Link href="/student/simulations" className="btn-coral inline-flex">
+              <Link href="/student/simulations" className="btn-primary inline-flex">
                 İlk simulyasiyanı başlat
                 <ArrowRight size={14} aria-hidden="true" />
               </Link>
@@ -168,55 +166,30 @@ export default async function StudentDashboard() {
         {/* Side: Premium / motivation */}
         <aside className="space-y-6" aria-label="Yan panel">
           <FadeInUp delay={0.2}>
-            {!profile?.is_premium ? (
-              <div className="card-feature p-7 text-cream">
-                <div className="flex items-center gap-2 mb-4">
-                  <Zap size={16} aria-hidden="true" />
-                  <span className="text-[11px] font-semibold uppercase tracking-wider">Premium</span>
-                </div>
-                <h3 className="font-display text-3xl font-semibold mb-3 leading-tight">
-                  Növbəti<br />
-                  <span className="italic font-light text-sun">səviyyə.</span>
-                </h3>
-                <p className="text-sm text-cream/80 mb-6 leading-relaxed">
-                  Sınırsız simulyasiya, dərin AI analiz, və sertifikatlı bacarıq pasportu.
-                </p>
-                <ul className="space-y-2.5 mb-7">
-                  {[
-                    'Sınırsız simulyasiyalar',
-                    'Dərin AI analiz',
-                    'Premium sertifikat',
-                    'HR-a birbaşa müraciət',
-                  ].map((f) => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-cream/90">
-                      <span className="w-1.5 h-1.5 rounded-full bg-sun shrink-0" aria-hidden="true" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <PremiumUpgradeButton className="w-full">
-                  İndi Yüksəlt
-                </PremiumUpgradeButton>
+            <div className="card-feature p-6 text-paper">
+              <div className="flex items-center gap-2 mb-4">
+                <Zap size={15} aria-hidden="true" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">Premium</span>
               </div>
-            ) : (
-              <div className="card-feature p-7 text-cream">
-                <div className="w-12 h-12 rounded-2xl bg-coral text-white flex items-center justify-center mb-4">
-                  <Zap size={20} fill="currentColor" aria-hidden="true" />
-                </div>
-                <h3 className="font-display text-2xl font-semibold mb-2">Premium üzv.</h3>
-                <p className="text-sm text-cream/80">Bütün imtiyazlarınız aktivdir.</p>
-              </div>
-            )}
+              <h3 className="font-display text-2xl font-semibold mb-2 leading-tight text-paper">
+                Tezliklə aktivləşəcək
+              </h3>
+              <p className="text-sm text-paper/75 mb-5 leading-relaxed">
+                Premium abunəlik hələ aktiv deyil. Hazırda bütün simulyasiyalar açıqdır.
+              </p>
+              <Link href="/student/premium" className="inline-flex w-full items-center justify-center gap-2 px-5 py-2.5 rounded-md border border-paper/30 text-paper text-sm font-medium hover:bg-white/10">
+                Ətraflı
+              </Link>
+            </div>
           </FadeInUp>
 
-          {/* Testimonial / motivation */}
           <FadeInUp delay={0.3}>
-            <div className="card-feature-light p-6">
-              <Trophy size={18} className="text-coral mb-3" aria-hidden="true" />
-              <blockquote className="font-display text-lg italic text-ink leading-snug mb-3">
+            <div className="card-dossier p-5">
+              <Trophy size={16} className="text-gold mb-2.5" aria-hidden="true" />
+              <blockquote className="font-display text-base text-ink leading-snug mb-2">
                 &ldquo;Bacarıq təcrübədə sübut olunur, CV-də deyil.&rdquo;
               </blockquote>
-              <footer className="text-xs text-ink-mute font-medium">— JobSim Insight</footer>
+              <footer className="text-[10px] uppercase tracking-[0.12em] text-ink-mute font-semibold">JobSim Insight</footer>
             </div>
           </FadeInUp>
         </aside>

@@ -103,7 +103,7 @@ export function SimulationDetailTabs({
               icon={<Trophy size={18} aria-hidden="true" />}
               eyebrow="Tamamlandıqda"
               title="JobSim sertifikatı"
-              body="Profilinizə əlavə edilir və HR-lara avtomatik göndərilir."
+              body="Founder Elvin Hacızadə və Co-Founder Nemət Zərbiyev imzası ilə rəsmi sertifikat — profilinizə əlavə olunur."
             />
             <FeatureCard
               icon={<Target size={18} aria-hidden="true" />}

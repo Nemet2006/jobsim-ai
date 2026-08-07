@@ -81,16 +81,16 @@ export default async function GroupDetailPage({ params }: PageProps) {
       {/* Back */}
       <Link
         href="/courses/groups"
-        className="inline-flex items-center gap-2 text-sm font-medium text-ink-mid hover:text-forest transition-colors mb-8"
+        className="inline-flex items-center gap-2 text-sm font-medium text-ink-mid hover:text-navy transition-colors mb-8"
       >
         <ArrowLeft size={14} aria-hidden="true" />
         Bütün qruplar
       </Link>
 
       {/* Hero */}
-      <header className="pb-8 mb-2 border-b border-forest/8">
+      <header className="pb-8 mb-2 border-b border-navy/8">
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-16 h-16 rounded-3xl bg-forest text-cream font-display text-2xl font-semibold flex items-center justify-center shadow-soft-md">
+          <div className="w-16 h-16 rounded-3xl bg-navy text-paper font-display text-2xl font-semibold flex items-center justify-center shadow-soft-md">
             {group.name[0]?.toUpperCase()}
           </div>
           <div className="flex-1">
@@ -111,7 +111,7 @@ export default async function GroupDetailPage({ params }: PageProps) {
             { label: 'Yaradılıb', value: new Date(group.created_at).toLocaleDateString('az-AZ', { year: 'numeric', month: 'long', day: 'numeric' }), icon: null },
           ].map((m, i) => (
             <div key={m.label} className="flex items-center gap-3">
-              {i > 0 && <span className="h-4 w-px bg-forest/15" aria-hidden="true" />}
+              {i > 0 && <span className="h-4 w-px bg-navy/15" aria-hidden="true" />}
               <div>
                 <dt className="text-ink-mute text-xs uppercase tracking-wider font-medium mb-0.5 flex items-center gap-1">
                   {m.icon}

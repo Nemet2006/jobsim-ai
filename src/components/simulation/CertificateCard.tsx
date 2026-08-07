@@ -2,14 +2,16 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Award, Download, Loader2, ExternalLink } from 'lucide-react'
+import { Download, Loader2, ExternalLink } from 'lucide-react'
 import {
   downloadCertificatePDF,
   getCertificateId,
   getCertificateGrade,
   formatCertificateDate,
+  CERTIFICATE_SIGNATORIES,
   type CertificateData,
 } from '@/lib/certificate'
+import { VerificationSeal } from '@/components/ui/VerificationSeal'
 
 interface CertificateCardProps {
   data: CertificateData
@@ -44,47 +46,72 @@ export function CertificateCard({
     <div
       className={
         isDark
-          ? 'rounded-2xl border-2 border-teal-500/30 bg-[#112240] p-6 lg:p-8 text-center'
-          : 'card-feature p-6 lg:p-8 text-cream text-center'
+          ? 'relative rounded-md border border-white/[0.08] bg-[#121A2B] p-6 lg:p-8 text-center shadow-xl before:absolute before:left-0 before:top-3 before:bottom-3 before:w-[3px] before:rounded-full before:bg-gold/70'
+          : 'card-feature p-6 lg:p-8 text-paper text-center'
       }
     >
-      <div
-        className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
-          isDark ? 'bg-teal-500/20 text-teal-300' : 'bg-coral text-white'
-        }`}
-      >
-        <Award size={32} aria-hidden="true" />
-      </div>
+      <VerificationSeal
+        score={data.score}
+        label="SCORE"
+        size="lg"
+        variant="gold"
+        className="mx-auto mb-5"
+      />
 
-      <span className={`h-eyebrow block mb-2 ${isDark ? 'text-teal-300' : 'text-sun'}`}>
+      <span className={`h-eyebrow block mb-2 ${isDark ? 'text-gold-soft' : 'text-gold-deep'}`}>
         Sertifikat hazırdır
       </span>
-      <h2 className={`font-display text-2xl lg:text-3xl font-semibold mb-2 ${isDark ? 'text-white' : ''}`}>
+      <h2 className={`font-display text-2xl lg:text-3xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-paper'}`}>
         Təbrik edirik, {data.studentName.split(' ')[0]}!
       </h2>
-      <p className={`text-sm mb-1 ${isDark ? 'text-slate-300' : 'text-cream/80'}`}>
-        <strong className={isDark ? 'text-white' : 'text-cream'}>{data.simulationTitle}</strong>
+      <p className={`text-sm mb-1 ${isDark ? 'text-slate-300' : 'text-paper/85'}`}>
+        <strong className={isDark ? 'text-white' : 'text-paper'}>{data.simulationTitle}</strong>
         {data.companyName ? ` · ${data.companyName}` : ''}
       </p>
-      <p className={`text-xs mb-5 ${isDark ? 'text-slate-400' : 'text-cream/70'}`}>
+      <p className={`text-xs mb-4 ${isDark ? 'text-slate-300' : 'text-paper/75'}`}>
         {data.roleType} · {dateStr}
       </p>
 
-      <div
-        className={`inline-flex flex-col items-center px-8 py-4 rounded-2xl mb-5 ${
-          isDark ? 'bg-teal-500/15 border border-teal-500/30' : 'bg-white/10 border border-white/15'
-        }`}
-      >
-        <p className={`font-display text-4xl font-semibold ${isDark ? 'text-teal-300' : 'text-sun'}`}>
-          {data.score}
-          <span className={`text-lg ${isDark ? 'text-slate-400' : 'text-cream/60'}`}>/100</span>
-        </p>
-        <p className={`text-sm font-medium mt-1 ${isDark ? 'text-teal-200' : 'text-coral'}`}>{grade.az}</p>
-      </div>
-
-      <p className={`text-[10px] uppercase tracking-wider mb-6 ${isDark ? 'text-slate-500' : 'text-cream/50'}`}>
+      <p className={`text-sm font-semibold mb-1 ${isDark ? 'text-gold-soft' : 'text-gold-deep'}`}>{grade.az}</p>
+      <p className={`font-mono text-[10px] uppercase tracking-[0.14em] mb-6 ${isDark ? 'text-slate-400' : 'text-paper/70'}`}>
         ID: {certId}
       </p>
+
+      {/* Official JobSim signatories — always visible under certificate */}
+      <div
+        className={`mb-6 rounded-lg px-4 py-5 ${
+          isDark ? 'bg-white/[0.04] border border-white/10' : 'bg-black/20 border border-paper/15'
+        }`}
+        aria-label="JobSim AI rəsmi imza"
+      >
+        <p
+          className={`text-[10px] uppercase tracking-[0.18em] font-semibold mb-4 ${
+            isDark ? 'text-gold-soft' : 'text-gold-deep'
+          }`}
+        >
+          JobSim AI · Rəsmi imza
+        </p>
+        <div className="grid grid-cols-2 gap-5 max-w-md mx-auto">
+          {CERTIFICATE_SIGNATORIES.map((s) => (
+            <div key={s.name} className="text-center">
+              <div
+                className={`mx-auto mb-2 h-px w-20 ${isDark ? 'bg-gold/50' : 'bg-gold-deep/70'}`}
+                aria-hidden="true"
+              />
+              <p className={`text-base font-semibold leading-tight ${isDark ? 'text-white' : 'text-paper'}`}>
+                {s.name}
+              </p>
+              <p
+                className={`text-[11px] uppercase tracking-[0.14em] mt-1 font-medium ${
+                  isDark ? 'text-gold-soft' : 'text-gold-deep'
+                }`}
+              >
+                {s.role}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <button
@@ -94,13 +121,13 @@ export function CertificateCard({
           className={
             isDark
               ? 'exam-btn-primary inline-flex'
-              : 'inline-flex items-center justify-center gap-2 bg-coral hover:bg-coral-deep text-white font-semibold px-6 py-3 rounded-full transition-colors disabled:opacity-60'
+              : 'inline-flex items-center justify-center gap-2 bg-gold hover:bg-gold-deep text-navy-deep font-semibold px-6 py-2.5 rounded-md transition-colors disabled:opacity-60'
           }
         >
           {downloading ? (
             <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
           ) : (
-            <Download size={16} aria-hidden="true" />
+            <Download size={15} aria-hidden="true" />
           )}
           PDF yüklə
         </button>
@@ -110,11 +137,11 @@ export function CertificateCard({
             className={
               isDark
                 ? 'exam-btn-secondary inline-flex'
-                : 'inline-flex items-center justify-center gap-2 border border-cream/30 text-cream font-medium px-6 py-3 rounded-full hover:bg-white/10 transition-colors'
+                : 'inline-flex items-center justify-center gap-2 border border-paper/25 text-paper font-medium px-6 py-2.5 rounded-md hover:bg-white/10'
             }
           >
-            <ExternalLink size={16} aria-hidden="true" />
-            Nəticələr
+            <ExternalLink size={14} aria-hidden="true" />
+            Nəticələrə bax
           </Link>
         )}
       </div>

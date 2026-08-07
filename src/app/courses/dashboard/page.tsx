@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
-import { Trophy, ArrowRight, ClipboardList, GraduationCap, Sparkles } from 'lucide-react'
+import { Trophy, ArrowRight, ClipboardList, GraduationCap, BarChart2 } from 'lucide-react'
 import Link from 'next/link'
 import { StatGrid, type StatItem } from '@/components/ui/StatGrid'
 import { EditorialHero } from '@/components/ui/EditorialHero'
@@ -49,25 +49,35 @@ export default async function CoursesDashboard() {
     ? Math.round(completedAttempts.reduce((s, a) => s + (a.score || 0), 0) / completedAttempts.length)
     : 0
 
-  const leaderboard: { id: string; name: string; university: string | null; avg: number; completed: number }[] = []
-  for (const sid of studentIds) {
-    const { data: studentData } = await supabase.from('users').select('full_name, university').eq('id', sid).single()
-    leaderboard.push({
-      id: sid,
-      name: studentData?.full_name || 'Tələbə',
-      university: studentData?.university || null,
-      avg: avgScores[sid] || 0,
-      completed: completedAttempts.filter((a) => a.student_id === sid).length,
-    })
+  const completedByStudent = new Map<string, number>()
+  for (const a of completedAttempts) {
+    completedByStudent.set(a.student_id, (completedByStudent.get(a.student_id) || 0) + 1)
   }
-  leaderboard.sort((a, b) => b.avg - a.avg)
+
+  const { data: students } = studentIds.length
+    ? await supabase.from('users').select('id, full_name, university').in('id', studentIds)
+    : { data: [] as { id: string; full_name: string | null; university: string | null }[] }
+  const studentById = new Map((students || []).map((s) => [s.id, s]))
+
+  const leaderboard = studentIds
+    .map((sid) => {
+      const studentData = studentById.get(sid)
+      return {
+        id: sid,
+        name: studentData?.full_name || 'Tələbə',
+        university: studentData?.university || null,
+        avg: avgScores[sid] || 0,
+        completed: completedByStudent.get(sid) || 0,
+      }
+    })
+    .sort((a, b) => b.avg - a.avg)
   const firstName = profile?.full_name?.split(' ')[0] || 'müəllim'
 
   const stats: StatItem[] = [
-    { label: 'Tələbələr', value: studentIds.length, icon: 'users', accent: 'forest', meta: 'Aktiv qrupda' },
-    { label: 'Tamamlama', value: completionRate, suffix: '%', icon: 'check', accent: 'success', meta: 'Engagement' },
-    { label: 'Orta bal', value: overallAvg, icon: 'chart', accent: 'coral', meta: 'Bütün cəhdlər' },
-    { label: 'Tapşırıqlar', value: assignments?.length || 0, icon: 'clipboard', accent: 'sun', meta: 'Verilmiş' },
+    { label: 'Tələbələr', value: studentIds.length, icon: 'users', accent: 'navy', meta: 'Aktiv qrupda' },
+    { label: 'Tamamlama', value: completionRate, suffix: '%', icon: 'check', accent: 'verdigris', meta: 'Engagement' },
+    { label: 'Orta bal', value: overallAvg, icon: 'chart', accent: 'gold', meta: 'Bütün cəhdlər' },
+    { label: 'Tapşırıqlar', value: assignments?.length || 0, icon: 'clipboard', accent: 'gold', meta: 'Verilmiş' },
   ]
 
   return (
@@ -76,18 +86,19 @@ export default async function CoursesDashboard() {
         eyebrow="Müəllim Paneli"
         title={
           <>
-            <span className="italic font-light text-forest">{firstName}</span>,<br />
-            sinfiniz burada böyüyür.
+            Salam, <span className="text-navy">{firstName}</span>.<br />
+            Sinif ledger-iniz hazırdır.
           </>
         }
         dek={
           <>
-            Tələbələrinizin <strong className="text-ink">həqiqi tərəqqisi</strong> — qiymət vərəqəsi deyil, simulyasiyalarda göstərilən real bacarıq.
+            Tələbələrin <strong className="text-ink">sübut olunmuş tərəqqisi</strong> —
+            qiymət vərəqəsi deyil, simulyasiyada göstərilən real bacarıq.
           </>
         }
         actions={
           <>
-            <Link href="/courses/assign" className="btn-coral group">
+            <Link href="/courses/assign" className="btn-primary group">
               <ClipboardList size={16} aria-hidden="true" />
               <span>Tapşırıq ver</span>
               <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
@@ -110,8 +121,6 @@ export default async function CoursesDashboard() {
       </FadeInUp>
 
       <div className="mt-12 grid lg:grid-cols-3 gap-6 lg:gap-8">
-
-        {/* Leaderboard */}
         <section className="lg:col-span-2" aria-labelledby="top-students">
           <div className="flex items-end justify-between mb-5">
             <div>
@@ -131,32 +140,32 @@ export default async function CoursesDashboard() {
                 const isTop3 = i < 3
                 const rankConfig = isTop3
                   ? [
-                      'bg-coral text-white shadow-coral',
-                      'bg-forest text-cream',
-                      'bg-sun text-ink',
+                      'bg-gold text-navy-deep',
+                      'bg-navy text-paper',
+                      'bg-verdigris text-paper',
                     ][i]
-                  : 'bg-cream-deep text-ink-mid border border-forest/8'
+                  : 'bg-paper-deep text-ink-mid border border-navy/8'
 
                 return (
                   <StaggerItem key={s.id}>
-                    <article className="card p-5 group hover:shadow-soft-md hover:border-forest/20 transition-all hover:-translate-y-0.5">
+                    <article className="card-dossier p-5 group hover:shadow-soft-md hover:border-navy/20 transition-all hover:-translate-y-0.5">
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-12 h-12 rounded-2xl font-display font-semibold text-lg flex items-center justify-center shrink-0 ${rankConfig}`}
+                          className={`w-12 h-12 rounded-lg font-display font-semibold text-lg flex items-center justify-center shrink-0 ${rankConfig}`}
                           aria-label={`${i + 1}-ci yer`}
                         >
                           {i + 1}
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-display text-lg font-semibold text-ink truncate group-hover:text-forest transition-colors">
+                          <h3 className="font-display text-lg font-semibold text-ink truncate group-hover:text-navy transition-colors">
                             {s.name}
                           </h3>
                           <div className="flex items-center gap-2 mt-0.5 text-xs text-ink-mute font-medium">
                             <span>{s.completed} cəhd</span>
                             {s.university && (
                               <>
-                                <span className="w-1 h-1 rounded-full bg-ink-mute" aria-hidden="true" />
+                                <span className="w-1 h-1 rounded-md bg-ink-mute" aria-hidden="true" />
                                 <span className="truncate">{s.university}</span>
                               </>
                             )}
@@ -164,7 +173,7 @@ export default async function CoursesDashboard() {
                         </div>
 
                         <div className="text-right shrink-0">
-                          <p className={`number-display text-3xl ${isTop3 ? 'text-coral-deep' : 'text-ink'}`}>
+                          <p className={`number-display text-3xl ${isTop3 ? 'text-gold-deep' : 'text-ink'}`}>
                             {s.avg}
                           </p>
                           <p className="text-[10px] text-ink-mute uppercase tracking-wider font-semibold">/ 100</p>
@@ -176,15 +185,15 @@ export default async function CoursesDashboard() {
               })}
             </StaggerContainer>
           ) : (
-            <div className="card p-10 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-forest-wash flex items-center justify-center">
-                <GraduationCap size={28} className="text-forest" aria-hidden="true" />
+            <div className="card-dossier p-10 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-lg bg-navy-wash flex items-center justify-center">
+                <GraduationCap size={28} className="text-navy" aria-hidden="true" />
               </div>
               <h3 className="font-display text-2xl font-semibold mb-2">Hələ tələbə yoxdur</h3>
               <p className="text-ink-mid text-sm mb-6 max-w-sm mx-auto">
                 Tələbələrinizə tapşırıq verin və ilk nəticələri görün.
               </p>
-              <Link href="/courses/assign" className="btn-coral inline-flex">
+              <Link href="/courses/assign" className="btn-primary inline-flex">
                 <ClipboardList size={14} aria-hidden="true" />
                 İlk tapşırığı ver
               </Link>
@@ -192,32 +201,33 @@ export default async function CoursesDashboard() {
           )}
         </section>
 
-        {/* Side: insights */}
         <aside className="space-y-6" aria-label="Yan panel">
           <FadeInUp delay={0.2}>
-            <div className="card-feature p-7 text-cream">
-              <Trophy size={20} className="text-sun mb-4" aria-hidden="true" />
+            <div className="card-feature p-7 text-paper">
+              <Trophy size={20} className="text-gold mb-4" aria-hidden="true" />
               <h3 className="font-display text-3xl font-semibold mb-3 leading-tight">
-                Sinif <span className="italic text-sun">{completionRate}%</span><br />
+                Sinif <span className="text-gold">{completionRate}%</span><br />
                 tamamladı
               </h3>
-              <p className="text-sm text-cream/80 leading-relaxed">
+              <p className="text-sm text-paper/80 leading-relaxed">
                 {completionRate >= 75
-                  ? 'Əla — sinif aktiv və motivasiyalıdır. Növbəti çətinlik səviyyəsinə keçin.'
+                  ? 'Sinif aktivdir. Növbəti çətinlik səviyyəsinə keçin.'
                   : completionRate >= 50
                   ? 'Yaxşı tempdə davam edir. Geridə qalanlara fərdi diqqət lazım ola bilər.'
-                  : 'Motivasiyanı dəstəkləmək lazımdır. Daha qısa simulyasiyalar deneməyə dəyər.'}
+                  : 'Motivasiyanı dəstəkləyin. Daha qısa simulyasiyalar sınamağa dəyər.'}
               </p>
             </div>
           </FadeInUp>
 
           <FadeInUp delay={0.3}>
-            <div className="card-feature-light p-6">
-              <Sparkles size={18} className="text-coral mb-3" aria-hidden="true" />
-              <blockquote className="font-display text-lg italic text-ink leading-snug mb-3">
-                &ldquo;Müəllim öyrətmir — tələbənin artmasına şərait yaradır.&rdquo;
-              </blockquote>
-              <footer className="text-xs text-ink-mute font-medium">— Pedagogical Note</footer>
+            <div className="card-dossier p-6">
+              <BarChart2 size={18} className="text-navy mb-3" aria-hidden="true" />
+              <p className="font-display text-base font-semibold text-ink leading-snug mb-1">
+                Qiymətləndirmə prinsipi
+              </p>
+              <p className="text-sm text-ink-mid leading-relaxed">
+                Tərəqqi simulyasiya nəticələri ilə ölçülür — yoxlama vərəqəsi ilə deyil.
+              </p>
             </div>
           </FadeInUp>
         </aside>

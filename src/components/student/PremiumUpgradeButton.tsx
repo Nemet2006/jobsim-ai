@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Zap } from 'lucide-react'
+import { Clock } from 'lucide-react'
 
 interface PremiumUpgradeButtonProps {
   className?: string
@@ -9,26 +9,27 @@ interface PremiumUpgradeButtonProps {
   variant?: 'coral' | 'coral-full' | 'link'
 }
 
+/** Links to the Premium coming-soon page (subscription currently disabled). */
 export function PremiumUpgradeButton({
   className = '',
   children,
   variant = 'coral-full',
 }: PremiumUpgradeButtonProps) {
-  const base = 'inline-flex items-center justify-center gap-2 font-medium transition-colors touch-manipulation'
+  const label = children || 'Premium (tezliklə)'
 
   if (variant === 'link') {
     return (
       <Link href="/student/premium" className={`link-arrow text-sm ${className}`}>
-        {children || 'Premium-a keç'}
+        {label}
       </Link>
     )
   }
 
   if (variant === 'coral') {
     return (
-      <Link href="/student/premium" className={`btn-coral ${className}`}>
-        <Zap size={14} aria-hidden="true" />
-        {children || 'Premium Al'}
+      <Link href="/student/premium" className={`btn-secondary ${className}`}>
+        <Clock size={14} aria-hidden="true" />
+        {label}
       </Link>
     )
   }
@@ -36,10 +37,10 @@ export function PremiumUpgradeButton({
   return (
     <Link
       href="/student/premium"
-      className={`${base} bg-coral hover:bg-coral-deep text-white px-5 py-3 rounded-full ${className}`}
+      className={`inline-flex items-center justify-center gap-2 font-medium transition-colors touch-manipulation bg-navy-wash text-navy border border-navy/15 hover:bg-navy hover:text-paper px-5 py-3 rounded-md ${className}`}
     >
-      <Zap size={16} aria-hidden="true" />
-      {children || 'İndi Yüksəlt'}
+      <Clock size={16} aria-hidden="true" />
+      {label}
     </Link>
   )
 }

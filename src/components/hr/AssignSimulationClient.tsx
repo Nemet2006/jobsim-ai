@@ -68,20 +68,20 @@ export default function AssignSimulationClient({ students, simulations, assigned
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold text-white">Tapşırıq Ver</h1>
+      <h1 className="font-display text-2xl font-semibold text-ink">Tapşırıq Ver</h1>
 
       {success && (
-        <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 rounded-xl text-sm">
+        <div className="bg-verdigris-wash border border-verdigris/25 text-verdigris px-4 py-3 rounded-xl text-sm">
           Tapşırıq uğurla təyin edildi!
         </div>
       )}
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Select Students */}
-        <div className="glass-card p-5">
+        <div className="card-dossier p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-white">Tələbə seç ({selectedStudents.size})</h2>
-            <button onClick={selectAll} className="text-xs text-teal-400 hover:text-teal-300">Hamısını seç</button>
+            <h2 className="font-display text-base font-semibold text-ink">Tələbə seç ({selectedStudents.size})</h2>
+            <button onClick={selectAll} className="text-xs text-navy hover:text-navy">Hamısını seç</button>
           </div>
           <div className="space-y-2 max-h-80 overflow-y-auto">
             {students.map((s) => {
@@ -92,25 +92,25 @@ export default function AssignSimulationClient({ students, simulations, assigned
                   onClick={() => toggleStudent(s.id)}
                   className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${
                     isSelected
-                      ? 'border-teal-500/40 bg-teal-500/10'
-                      : 'border-white/5 bg-white/3 hover:bg-white/5'
+                      ? 'border-navy/30 bg-navy-wash'
+                      : 'border-navy/8 bg-paper-deep hover:bg-paper-deep'
                   }`}
                 >
-                  {isSelected ? <CheckSquare size={16} className="text-teal-400 flex-shrink-0" /> : <Square size={16} className="text-slate-500 flex-shrink-0" />}
+                  {isSelected ? <CheckSquare size={16} className="text-navy flex-shrink-0" /> : <Square size={16} className="text-ink-mute flex-shrink-0" />}
                   <div>
-                    <p className="text-sm font-medium text-white">{s.full_name}</p>
-                    {s.university && <p className="text-xs text-slate-400">{s.university}</p>}
+                    <p className="text-sm font-medium text-ink">{s.full_name}</p>
+                    {s.university && <p className="text-xs text-ink-mute">{s.university}</p>}
                   </div>
                 </button>
               )
             })}
-            {students.length === 0 && <p className="text-slate-400 text-sm text-center py-4">Tələbə tapılmadı</p>}
+            {students.length === 0 && <p className="text-ink-mute text-sm text-center py-4">Tələbə tapılmadı</p>}
           </div>
         </div>
 
         {/* Select Simulation */}
-        <div className="glass-card p-5 space-y-4">
-          <h2 className="text-base font-semibold text-white">Simulyasiya seç</h2>
+        <div className="card-dossier p-5 space-y-4">
+          <h2 className="font-display text-base font-semibold text-ink">Simulyasiya seç</h2>
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {simulations.map((sim) => (
               <button
@@ -118,21 +118,21 @@ export default function AssignSimulationClient({ students, simulations, assigned
                 onClick={() => setSelectedSim(sim.id)}
                 className={`w-full text-left p-3 rounded-lg border transition-all ${
                   selectedSim === sim.id
-                    ? 'border-teal-500/40 bg-teal-500/10'
-                    : 'border-white/5 bg-white/3 hover:bg-white/5'
+                    ? 'border-navy/30 bg-navy-wash'
+                    : 'border-navy/8 bg-paper-deep hover:bg-paper-deep'
                 }`}
               >
-                <p className="text-sm font-medium text-white">{sim.title}</p>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-sm font-medium text-ink">{sim.title}</p>
+                <p className="text-xs text-ink-mute mt-0.5">
                   {sim.role_type} • {getDifficultyLabel(sim.difficulty as Difficulty)}
                 </p>
               </button>
             ))}
-            {simulations.length === 0 && <p className="text-slate-400 text-sm text-center py-4">Simulyasiya yoxdur</p>}
+            {simulations.length === 0 && <p className="text-ink-mute text-sm text-center py-4">Simulyasiya yoxdur</p>}
           </div>
 
           <div>
-            <label className="block text-sm text-slate-400 mb-1.5">Son tarix (ixtiyari)</label>
+            <label className="block text-sm text-ink-mute mb-1.5">Son tarix (ixtiyari)</label>
             <input
               type="datetime-local"
               value={deadline}

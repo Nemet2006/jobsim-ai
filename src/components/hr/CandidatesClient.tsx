@@ -67,19 +67,19 @@ export default function CandidatesClient({ candidates, hrId }: CandidatesClientP
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-white">Namizədlər</h1>
-        <p className="text-slate-400 text-sm mt-1">{filtered.length} / {candidates.length} namizəd</p>
+        <h1 className="font-display text-2xl font-semibold text-ink">Namizədlər</h1>
+        <p className="text-ink-mute text-sm mt-1">{filtered.length} / {candidates.length} namizəd</p>
       </div>
 
       {/* Filters */}
-      <div className="glass-card p-4 space-y-3">
+      <div className="card-dossier p-4 space-y-3">
         <div className="flex items-center gap-2">
-          <Filter size={14} className="text-slate-400" />
-          <span className="text-xs text-slate-400 font-medium">Filterlər</span>
+          <Filter size={14} className="text-ink-mute" />
+          <span className="text-xs text-ink-mute font-medium">Filterlər</span>
         </div>
         <div className="flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-48">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-mute" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -88,15 +88,15 @@ export default function CandidatesClient({ candidates, hrId }: CandidatesClientP
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400">Bal:</span>
+            <span className="text-xs text-ink-mute">Bal:</span>
             <input type="number" value={scoreMin} onChange={(e) => setScoreMin(Number(e.target.value))} min={0} max={100} className="input-dark w-16 text-sm text-center" />
-            <span className="text-slate-500">—</span>
+            <span className="text-ink-mute">—</span>
             <input type="number" value={scoreMax} onChange={(e) => setScoreMax(Number(e.target.value))} min={0} max={100} className="input-dark w-16 text-sm text-center" />
           </div>
           <button
             onClick={() => setShortlistOnly(!shortlistOnly)}
             className={`flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-all ${
-              shortlistOnly ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400' : 'border-white/10 text-slate-400 hover:border-white/20'
+              shortlistOnly ? 'border-gold/40 bg-gold-wash text-gold-deep' : 'border-navy/10 text-ink-mute hover:border-navy/20'
             }`}
           >
             <Star size={12} />
@@ -107,14 +107,14 @@ export default function CandidatesClient({ candidates, hrId }: CandidatesClientP
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Table */}
-        <div className="lg:col-span-2 glass-card overflow-hidden">
+        <div className="lg:col-span-2 card-dossier overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-white/5">
-                <th className="text-left text-xs text-slate-400 font-medium px-4 py-3">Ad Soyad</th>
-                <th className="text-left text-xs text-slate-400 font-medium px-4 py-3 hidden md:table-cell">Simulyasiya</th>
-                <th className="text-left text-xs text-slate-400 font-medium px-4 py-3">Bal</th>
-                <th className="text-left text-xs text-slate-400 font-medium px-4 py-3 hidden sm:table-cell">Tarix</th>
+              <tr className="border-b border-navy/8">
+                <th className="text-left text-xs text-ink-mute font-medium px-4 py-3">Ad Soyad</th>
+                <th className="text-left text-xs text-ink-mute font-medium px-4 py-3 hidden md:table-cell">Simulyasiya</th>
+                <th className="text-left text-xs text-ink-mute font-medium px-4 py-3">Bal</th>
+                <th className="text-left text-xs text-ink-mute font-medium px-4 py-3 hidden sm:table-cell">Tarix</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -122,32 +122,32 @@ export default function CandidatesClient({ candidates, hrId }: CandidatesClientP
               {filtered.map((c) => (
                 <tr
                   key={c.attempt_id}
-                  className={`border-b border-white/5 cursor-pointer transition-colors ${
-                    selected?.attempt_id === c.attempt_id ? 'bg-teal-500/5' : 'hover:bg-white/2'
+                  className={`border-b border-navy/8 cursor-pointer transition-colors ${
+                    selected?.attempt_id === c.attempt_id ? 'bg-navy-wash' : 'hover:bg-navy-wash/60'
                   }`}
                   onClick={() => setSelected(c)}
                 >
                   <td className="px-4 py-3">
                     <div>
-                      <p className="text-sm font-medium text-white">{c.student_name}</p>
-                      {c.university && <p className="text-xs text-slate-400">{c.university}</p>}
+                      <p className="text-sm font-medium text-ink">{c.student_name}</p>
+                      {c.university && <p className="text-xs text-ink-mute">{c.university}</p>}
                     </div>
                   </td>
-                  <td className="px-4 py-3 hidden md:table-cell text-xs text-slate-400 max-w-[160px] truncate">
+                  <td className="px-4 py-3 hidden md:table-cell text-xs text-ink-mute max-w-[160px] truncate">
                     {c.simulation_title}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-base font-bold ${c.score !== null ? getScoreColor(c.score) : 'text-slate-400'}`}>
+                    <span className={`text-base font-bold ${c.score !== null ? getScoreColor(c.score) : 'text-ink-mute'}`}>
                       {c.score ?? '—'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 hidden sm:table-cell text-xs text-slate-400">
+                  <td className="px-4 py-3 hidden sm:table-cell text-xs text-ink-mute">
                     {formatDate(c.started_at)}
                   </td>
                   <td className="px-4 py-3">
                     <button
                       onClick={(e) => { e.stopPropagation(); toggleShortlist(c) }}
-                      className={localShortlist.has(c.attempt_id) ? 'text-yellow-400' : 'text-slate-500 hover:text-yellow-400'}
+                      className={localShortlist.has(c.attempt_id) ? 'text-gold-deep' : 'text-ink-mute hover:text-gold-deep'}
                     >
                       {localShortlist.has(c.attempt_id) ? <Star size={16} fill="currentColor" /> : <Star size={16} />}
                     </button>
@@ -155,7 +155,7 @@ export default function CandidatesClient({ candidates, hrId }: CandidatesClientP
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} className="text-center text-slate-400 py-8 text-sm">Namizəd tapılmadı</td></tr>
+                <tr><td colSpan={5} className="text-center text-ink-mute py-8 text-sm">Namizəd tapılmadı</td></tr>
               )}
             </tbody>
           </table>
@@ -163,45 +163,45 @@ export default function CandidatesClient({ candidates, hrId }: CandidatesClientP
 
         {/* Profile Drawer */}
         {selected ? (
-          <div className="glass-card p-5 space-y-4">
+          <div className="card-dossier p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-white">Profil</h3>
-              <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-white">
+              <h3 className="font-semibold text-ink">Profil</h3>
+              <button onClick={() => setSelected(null)} className="text-ink-mute hover:text-ink">
                 <X size={16} />
               </button>
             </div>
 
             <div className="text-center py-4">
-              <div className="w-14 h-14 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xl mx-auto mb-2">
+              <div className="w-14 h-14 rounded-full bg-navy-wash border border-navy/25 flex items-center justify-center text-navy font-bold text-xl mx-auto mb-2">
                 {selected.student_name[0]}
               </div>
-              <p className="font-semibold text-white">{selected.student_name}</p>
-              {selected.university && <p className="text-xs text-slate-400 mt-1">{selected.university}</p>}
+              <p className="font-semibold text-ink">{selected.student_name}</p>
+              {selected.university && <p className="text-xs text-ink-mute mt-1">{selected.university}</p>}
               {selected.score !== null && (
                 <div className={`text-4xl font-bold mt-3 ${getScoreColor(selected.score)}`}>
                   {selected.score}
-                  <span className="text-base text-slate-400">/100</span>
+                  <span className="text-base text-ink-mute">/100</span>
                 </div>
               )}
             </div>
 
             {analysis && (
               <div className="space-y-3">
-                <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                  <p className="text-xs font-medium text-green-400 mb-2">Güclü Tərəflər</p>
+                <div className="p-3 bg-verdigris-wash border border-verdigris/25 rounded-lg">
+                  <p className="text-xs font-medium text-verdigris mb-2">Güclü Tərəflər</p>
                   {analysis.strengths?.slice(0, 2).map((s, i) => (
                     <div key={i} className="flex items-start gap-1.5 mt-1">
-                      <CheckCircle size={11} className="text-green-400 flex-shrink-0 mt-0.5" />
-                      <p className="text-xs text-slate-300">{s}</p>
+                      <CheckCircle size={11} className="text-verdigris flex-shrink-0 mt-0.5" />
+                      <p className="text-xs text-ink-mid">{s}</p>
                     </div>
                   ))}
                 </div>
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <p className="text-xs font-medium text-red-400 mb-2">Zəif Tərəflər</p>
+                <div className="p-3 bg-danger-tint border border-danger/25 rounded-lg">
+                  <p className="text-xs font-medium text-danger mb-2">Zəif Tərəflər</p>
                   {analysis.weaknesses?.slice(0, 2).map((w, i) => (
                     <div key={i} className="flex items-start gap-1.5 mt-1">
-                      <XCircle size={11} className="text-red-400 flex-shrink-0 mt-0.5" />
-                      <p className="text-xs text-slate-300">{w}</p>
+                      <XCircle size={11} className="text-danger flex-shrink-0 mt-0.5" />
+                      <p className="text-xs text-ink-mid">{w}</p>
                     </div>
                   ))}
                 </div>
@@ -212,8 +212,8 @@ export default function CandidatesClient({ candidates, hrId }: CandidatesClientP
               onClick={() => toggleShortlist(selected)}
               className={`w-full flex items-center justify-center gap-2 py-2 rounded-lg border text-sm font-medium transition-all ${
                 localShortlist.has(selected.attempt_id)
-                  ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20'
-                  : 'border-teal-500/40 bg-teal-500/10 text-teal-400 hover:bg-teal-500/20'
+                  ? 'border-gold/40 bg-gold-wash text-gold-deep hover:bg-gold-wash'
+                  : 'border-navy/30 bg-navy-wash text-navy hover:bg-navy-wash'
               }`}
             >
               {localShortlist.has(selected.attempt_id) ? (
@@ -224,8 +224,8 @@ export default function CandidatesClient({ candidates, hrId }: CandidatesClientP
             </button>
           </div>
         ) : (
-          <div className="glass-card p-5 flex items-center justify-center">
-            <p className="text-slate-500 text-sm text-center">Detallı məlumat üçün bir namizəd seçin</p>
+          <div className="card-dossier p-5 flex items-center justify-center">
+            <p className="text-ink-mute text-sm text-center">Detallı məlumat üçün bir namizəd seçin</p>
           </div>
         )}
       </div>

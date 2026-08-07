@@ -38,6 +38,9 @@ function createAnalyticsAdminClient() {
  */
 export async function trackServerEvent(params: TrackEventParams): Promise<void> {
   try {
+    const { ANALYTICS_LIVE_TRACKING } = await import('@/lib/analytics-flags')
+    if (!ANALYTICS_LIVE_TRACKING) return
+
     const admin = createAnalyticsAdminClient()
     const { error } = await admin.from('analytics_events').upsert(
       {

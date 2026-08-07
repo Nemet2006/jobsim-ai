@@ -32,7 +32,7 @@ async function getFontData(): Promise<{ regular: string; bold: string }> {
   return fontDataPromise
 }
 
-/** Registers Noto Sans (Unicode / AZ) fonts on a jsPDF instance. */
+/** Registers Noto Sans (Unicode / AZ) fonts — browser / client path. */
 export async function registerPdfUnicodeFonts(doc: jsPDF): Promise<void> {
   const { regular, bold } = await getFontData()
   doc.addFileToVFS(FONT_REGULAR, regular)

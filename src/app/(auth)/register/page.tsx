@@ -15,28 +15,24 @@ const ROLE_OPTIONS: {
   label: string
   description: string
   icon: typeof GraduationCap
-  tag: string
 }[] = [
   {
     value: 'student',
     label: 'Tələbə / İş axtaran',
     description: 'Pulsuz simulyasiyalar keç, bacarıqlarını sübut et',
     icon: GraduationCap,
-    tag: '',
   },
   {
     value: 'hr',
     label: 'HR / Şirkət',
     description: 'Simulyasiyalar yarat, ən yaxşı namizədləri tap',
     icon: Briefcase,
-    tag: '',
   },
   {
     value: 'courses',
     label: 'Kurs / Müəllim',
     description: 'Tələbələrin tərəqqisini analitika ilə izlə',
     icon: Users,
-    tag: '',
   },
 ]
 
@@ -111,70 +107,65 @@ export default function RegisterPage() {
       <AuroraBackground variant="auth" />
 
       <header className="relative z-10 px-6 lg:px-8 py-5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2" aria-label="JobSim AI">
-            <div className="w-8 h-8 rounded-xl bg-forest flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="#FAF5EC" />
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="JobSim AI">
+            <div className="w-7 h-7 rounded-md bg-navy flex items-center justify-center">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 2L14 9L21 11L14 13L12 20L10 13L3 11L10 9L12 2Z" fill="#F6F3EC" />
               </svg>
             </div>
-            <span className="font-display text-2xl font-semibold">
-              JobSim<span className="text-coral">.</span>
+            <span className="font-display text-xl font-semibold">
+              JobSim<span className="text-gold">.</span>
             </span>
           </Link>
-          <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-forest">
-            Hesabınız var? <span className="text-forest underline-offset-2 hover:underline">Daxil ol</span>
+          <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-navy">
+            Hesabınız var? <span className="text-navy underline-offset-2 hover:underline">Daxil ol</span>
           </Link>
         </div>
       </header>
 
-      <main id="main" className="relative z-10 px-6 lg:px-8 py-10 lg:py-14">
+      <main id="main" className="relative z-10 px-6 lg:px-8 py-8 lg:py-12">
         <div className="max-w-3xl mx-auto">
-
-          {/* Hero */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center mb-10"
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center mb-8"
           >
-            <span className="h-eyebrow-coral inline-block mb-4">Pulsuz başlayın</span>
-            <h1 className="font-display text-[clamp(2rem,5vw,3.75rem)] leading-[1.02] font-semibold text-balance mb-4">
+            <span className="h-eyebrow-gold inline-block mb-3">Pulsuz başlayın</span>
+            <h1 className="h-display text-[clamp(1.85rem,4.5vw,3.25rem)] leading-[1.05] mb-3 text-balance">
               Karyera hekayəniz<br />
-              <span className="italic font-light text-forest">bu gün başlayır.</span>
+              <span className="text-navy">bu gün başlayır.</span>
             </h1>
-            <p className="text-lg text-ink-mid leading-relaxed max-w-xl mx-auto text-balance">
-              30 saniyəyə hesab yaradın. Self-paced, 100% pulsuz, açıq giriş.
+            <p className="text-base text-ink-mid leading-relaxed max-w-lg mx-auto">
+              30 saniyəyə hesab yaradın. Self-paced, 100% pulsuz başlanğıc.
             </p>
           </motion.div>
 
-          {/* Form card */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className="card p-7 lg:p-10"
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="card-dossier p-6 lg:p-8"
           >
             {error && (
               <motion.div
-                initial={{ opacity: 0, y: -6 }}
+                initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 role="alert"
                 aria-live="polite"
-                className="mb-6 px-4 py-3 bg-danger-tint border border-danger/25 text-danger text-sm rounded-xl"
+                className="mb-5 px-3.5 py-2.5 bg-danger-tint border border-danger/25 text-danger text-sm rounded-md"
               >
                 {error}
               </motion.div>
             )}
 
-            <form onSubmit={handleRegister} className="space-y-6">
-
-              {/* Role */}
+            <form onSubmit={handleRegister} className="space-y-5">
               <fieldset>
-                <legend className="block text-sm font-semibold text-ink mb-3">
+                <legend className="block text-sm font-semibold text-ink mb-2.5">
                   Sizə uyğun rol
                 </legend>
-                <div className="grid grid-cols-1 gap-2.5" role="radiogroup" aria-label="Rolunuzu seçin">
+                <div className="grid grid-cols-1 gap-2" role="radiogroup" aria-label="Rolunuzu seçin">
                   {ROLE_OPTIONS.map((option, idx) => {
                     const Icon = option.icon
                     const isActive = role === option.value
@@ -189,32 +180,29 @@ export default function RegisterPage() {
                           setInviteCode('')
                           track('register_role_selected', { role: option.value })
                         }}
-                        initial={{ opacity: 0, y: 8 }}
+                        initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 + idx * 0.06 }}
-                        className={`relative text-left p-4 rounded-2xl border-2 touch-manipulation focus-visible:ring-2 focus-visible:ring-forest/40 focus-visible:ring-offset-2 focus-visible:ring-offset-cream ${
+                        transition={{ delay: 0.15 + idx * 0.05 }}
+                        className={`relative text-left p-3.5 rounded-lg border-2 touch-manipulation focus-visible:ring-2 focus-visible:ring-navy/40 ${
                           isActive
-                            ? 'border-forest bg-forest-wash'
-                            : 'border-forest/10 bg-white hover:border-forest/30 hover:bg-forest-wash/40'
+                            ? 'border-navy bg-navy-wash'
+                            : 'border-navy/10 bg-white hover:border-navy/25 hover:bg-navy-wash/40'
                         }`}
                       >
-                        <div className="flex items-start gap-4">
-                          <div className={`shrink-0 w-11 h-11 rounded-xl flex items-center justify-center ${
-                            isActive ? 'bg-forest text-cream' : 'bg-forest-wash text-forest'
+                        <div className="flex items-start gap-3.5">
+                          <div className={`shrink-0 w-9 h-9 rounded-md flex items-center justify-center ${
+                            isActive ? 'bg-navy text-paper' : 'bg-navy-wash text-navy'
                           }`}>
-                            <Icon size={18} aria-hidden="true" />
+                            <Icon size={16} aria-hidden="true" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <p className={`font-semibold text-sm ${isActive ? 'text-forest' : 'text-ink'}`}>
-                                {option.label}
-                              </p>
-                              {option.tag && <span className="tag-coral text-[10px] py-0">{option.tag}</span>}
-                            </div>
+                            <p className={`font-semibold text-sm mb-0.5 ${isActive ? 'text-navy' : 'text-ink'}`}>
+                              {option.label}
+                            </p>
                             <p className="text-xs text-ink-mid">{option.description}</p>
                           </div>
                           {isActive && (
-                            <CheckCircle2 size={20} className="text-forest shrink-0" aria-hidden="true" />
+                            <CheckCircle2 size={18} className="text-navy shrink-0" aria-hidden="true" />
                           )}
                         </div>
                       </motion.button>
@@ -223,9 +211,8 @@ export default function RegisterPage() {
                 </div>
               </fieldset>
 
-              {/* Name */}
               <div>
-                <label htmlFor="fullName" className="block text-sm font-semibold text-ink mb-2">Ad Soyad</label>
+                <label htmlFor="fullName" className="block text-sm font-semibold text-ink mb-1.5">Ad Soyad</label>
                 <input
                   id="fullName"
                   name="fullName"
@@ -246,9 +233,9 @@ export default function RegisterPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.25 }}
                   >
-                    <label htmlFor="university" className="block text-sm font-semibold text-ink mb-2">
+                    <label htmlFor="university" className="block text-sm font-semibold text-ink mb-1.5">
                       Universitet <span className="text-ink-mute font-normal">· Opsional</span>
                     </label>
                     <input
@@ -269,11 +256,11 @@ export default function RegisterPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="space-y-5"
+                    transition={{ duration: 0.25 }}
+                    className="space-y-4"
                   >
                     <div>
-                      <label htmlFor="company" className="block text-sm font-semibold text-ink mb-2">Şirkət adı</label>
+                      <label htmlFor="company" className="block text-sm font-semibold text-ink mb-1.5">Şirkət adı</label>
                       <input
                         id="company"
                         type="text"
@@ -286,7 +273,7 @@ export default function RegisterPage() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="inviteCode" className="block text-sm font-semibold text-ink mb-2">HR dəvət kodu</label>
+                      <label htmlFor="inviteCode" className="block text-sm font-semibold text-ink mb-1.5">HR dəvət kodu</label>
                       <input
                         id="inviteCode"
                         type="password"
@@ -307,9 +294,9 @@ export default function RegisterPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.25 }}
                   >
-                    <label htmlFor="coursesInviteCode" className="block text-sm font-semibold text-ink mb-2">Müəllim dəvət kodu</label>
+                    <label htmlFor="coursesInviteCode" className="block text-sm font-semibold text-ink mb-1.5">Müəllim dəvət kodu</label>
                     <input
                       id="coursesInviteCode"
                       type="password"
@@ -324,9 +311,9 @@ export default function RegisterPage() {
                 )}
               </AnimatePresence>
 
-              <div className="grid sm:grid-cols-2 gap-5">
+              <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-ink mb-2">Email</label>
+                  <label htmlFor="email" className="block text-sm font-semibold text-ink mb-1.5">Email</label>
                   <input
                     id="email"
                     type="email"
@@ -341,7 +328,7 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-ink mb-2">
+                  <label htmlFor="password" className="block text-sm font-semibold text-ink mb-1.5">
                     Şifrə <span className="text-ink-mute font-normal">· min 8</span>
                   </label>
                   <input
@@ -358,7 +345,7 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="btn-coral w-full py-3.5 group">
+              <button type="submit" disabled={loading} className="btn-primary w-full py-3 group">
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
@@ -371,18 +358,12 @@ export default function RegisterPage() {
                   </>
                 )}
               </button>
-
-              <p className="text-xs text-ink-mute text-center pt-2">
-                Hesab yaradaraq{' '}
-                <Link href="/login" className="underline-offset-2 hover:underline">İstifadə Şərtləri</Link>
-                {' '}ilə razılaşırsınız
-              </p>
             </form>
           </motion.div>
 
-          <p className="mt-6 text-center text-sm text-ink-mid">
+          <p className="mt-5 text-center text-sm text-ink-mid">
             Hesabınız var?{' '}
-            <Link href="/login" className="font-semibold text-forest hover:text-forest-deep underline-offset-2 hover:underline">
+            <Link href="/login" className="font-semibold text-navy hover:underline underline-offset-2">
               Daxil ol →
             </Link>
           </p>

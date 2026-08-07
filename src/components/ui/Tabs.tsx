@@ -17,10 +17,6 @@ interface TabsProps {
   sticky?: boolean
 }
 
-/**
- * Forage-style tabs — underline + smooth content transition.
- * Sticky variant pins the tab bar below the navbar on scroll.
- */
 export function Tabs({ items, defaultTab, sticky = false }: TabsProps) {
   const [active, setActive] = useState(defaultTab || items[0]?.id)
 
@@ -32,8 +28,8 @@ export function Tabs({ items, defaultTab, sticky = false }: TabsProps) {
       <div
         role="tablist"
         aria-label="Səhifə tabları"
-        className={`relative border-b border-forest/10 bg-cream/95 backdrop-blur-sm -mx-4 lg:-mx-8 px-4 lg:px-8 ${
-          sticky ? 'sticky top-16 lg:top-18 z-30' : ''
+        className={`relative border-b border-navy/10 bg-paper/95 backdrop-blur-sm -mx-4 lg:-mx-8 px-4 lg:px-8 ${
+          sticky ? 'sticky top-14 lg:top-16 z-30' : ''
         }`}
       >
         <div className="flex gap-1 overflow-x-auto scrollbar-hide">
@@ -47,20 +43,20 @@ export function Tabs({ items, defaultTab, sticky = false }: TabsProps) {
                 aria-controls={`tabpanel-${tab.id}`}
                 id={`tab-${tab.id}`}
                 onClick={() => setActive(tab.id)}
-                className={`relative inline-flex items-center gap-2 px-4 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
-                  isActive ? 'text-forest' : 'text-ink-mute hover:text-forest'
+                className={`relative inline-flex items-center gap-2 px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-colors ${
+                  isActive ? 'text-navy' : 'text-ink-mute hover:text-navy'
                 }`}
               >
                 {tab.icon && (
-                  <span className={isActive ? 'text-forest' : 'text-ink-mute'} aria-hidden="true">
+                  <span className={isActive ? 'text-navy' : 'text-ink-mute'} aria-hidden="true">
                     {tab.icon}
                   </span>
                 )}
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span
-                    className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-semibold ${
-                      isActive ? 'bg-forest text-cream' : 'bg-forest-wash text-forest'
+                    className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded text-[10px] font-semibold ${
+                      isActive ? 'bg-navy text-paper' : 'bg-navy-wash text-navy'
                     }`}
                   >
                     {tab.count}
@@ -69,8 +65,8 @@ export function Tabs({ items, defaultTab, sticky = false }: TabsProps) {
                 {isActive && (
                   <motion.span
                     layoutId="active-tab-underline"
-                    className="absolute bottom-0 left-3 right-3 h-0.5 bg-coral rounded-full"
-                    transition={{ type: 'spring', bounce: 0.18, duration: 0.5 }}
+                    className="absolute bottom-0 left-3 right-3 h-0.5 bg-gold rounded-sm"
+                    transition={{ type: 'spring', bounce: 0.15, duration: 0.45 }}
                   />
                 )}
               </button>
@@ -79,14 +75,14 @@ export function Tabs({ items, defaultTab, sticky = false }: TabsProps) {
         </div>
       </div>
 
-      <div className="pt-8" id={`tabpanel-${activeItem.id}`} role="tabpanel" aria-labelledby={`tab-${activeItem.id}`}>
+      <div className="pt-7" id={`tabpanel-${activeItem.id}`} role="tabpanel" aria-labelledby={`tab-${activeItem.id}`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeItem.id}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
           >
             {activeItem.content}
           </motion.div>

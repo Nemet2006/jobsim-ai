@@ -74,7 +74,7 @@ export default function ResultsClient({ attempts, highlighted, showCancelled, st
         eyebrow="Performans"
         title={
           <>
-            Nəticələrim<span className="text-coral">.</span>
+            Nəticələrim<span className="text-gold-deep">.</span>
           </>
         }
         dek={`${completed.length} tamamlanmış simulyasiya · orta bal ${avgScore}`}
@@ -83,17 +83,17 @@ export default function ResultsClient({ attempts, highlighted, showCancelled, st
       {/* Summary Stats */}
       <div className="grid grid-cols-3 gap-4">
         <div className="card p-5 text-center">
-          <Trophy size={20} className="text-sun-deep mx-auto mb-2" aria-hidden="true" />
+          <Trophy size={20} className="text-gold-deep mx-auto mb-2" aria-hidden="true" />
           <p className="number-display text-3xl font-semibold text-ink">{bestScore}</p>
           <p className="text-xs text-ink-mute font-medium mt-1">Ən yüksək bal</p>
         </div>
         <div className="card p-5 text-center">
-          <Target size={20} className="text-forest mx-auto mb-2" aria-hidden="true" />
+          <Target size={20} className="text-navy mx-auto mb-2" aria-hidden="true" />
           <p className="number-display text-3xl font-semibold text-ink">{avgScore}</p>
           <p className="text-xs text-ink-mute font-medium mt-1">Orta bal</p>
         </div>
         <div className="card p-5 text-center">
-          <TrendingUp size={20} className="text-coral-deep mx-auto mb-2" aria-hidden="true" />
+          <TrendingUp size={20} className="text-verdigris mx-auto mb-2" aria-hidden="true" />
           <p className="number-display text-3xl font-semibold text-ink">{completed.length}</p>
           <p className="text-xs text-ink-mute font-medium mt-1">Tamamlanmış</p>
         </div>
@@ -108,10 +108,10 @@ export default function ResultsClient({ attempts, highlighted, showCancelled, st
               <button
                 key={attempt.id}
                 onClick={() => { setSelected(attempt); setActiveTab('strengths') }}
-                className={`w-full text-left p-3 rounded-xl border-2 transition-all ${
+                className={`w-full text-left p-3 rounded-md border-2 transition-all ${
                   selected?.id === attempt.id
-                    ? 'border-forest bg-forest-wash'
-                    : 'border-transparent bg-cream-paper hover:border-forest/15 hover:bg-forest-wash/50'
+                    ? 'border-navy bg-navy-wash'
+                    : 'border-transparent bg-paper hover:border-navy/15 hover:bg-navy-wash/50'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">

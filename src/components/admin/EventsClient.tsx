@@ -1,8 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
-import { EditorialHero } from '@/components/ui/EditorialHero'
+import { ChevronLeft, ChevronRight, Download, RefreshCw } from 'lucide-react'
 
 interface EventRow {
   id: string
@@ -30,12 +29,25 @@ const DAY_OPTIONS = [
   { value: 90, label: '90 gün' },
 ]
 
+function formatBaku(iso: string): string {
+  return new Date(iso).toLocaleString('az-AZ', {
+    timeZone: 'Asia/Baku',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+}
+
 export default function EventsClient() {
   const [data, setData] = useState<EventsResponse | null>(null)
   const [page, setPage] = useState(0)
   const [eventFilter, setEventFilter] = useState('')
   const [days, setDays] = useState(30)
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
@@ -63,19 +75,58 @@ export default function EventsClient() {
     load()
   }, [load])
 
+  const downloadReport = async () => {
+    setExporting(true)
+    try {
+      const params = new URLSearchParams({ days: String(days) })
+      if (eventFilter) params.set('event', eventFilter)
+      const res = await fetch(`/api/analytics/events/report?${params}`, { cache: 'no-store' })
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}))
+        setError(payload.error || 'Hesabat yaradılmadı')
+        return
+      }
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
+      a.href = url
+      a.download = `jobsim-hadiseler-hesabat-${days}d-${stamp}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch {
+      setError('Hesabat endirilmədi')
+    } finally {
+      setExporting(false)
+    }
+  }
+
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1
 
   return (
     <div>
-      <EditorialHero
-        eyebrow="Raw Events"
-        title={
-          <>
-            Hadisə <span className="italic font-light text-forest">axını</span>
-          </>
-        }
-        dek="Platformada baş verən bütün izlənən hadisələr — PII saxlanılmır, yalnız anonim identifikatorlar."
-      />
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-ink-mute mb-1">
+            Hadisələr
+          </p>
+          <h1 className="font-display text-3xl font-semibold text-ink tracking-tight">
+            Event axını
+          </h1>
+          <p className="mt-1 text-sm text-ink-mid">Filtre ilə bax və PDF hesabat çıxar.</p>
+        </div>
+        <button
+          type="button"
+          onClick={downloadReport}
+          disabled={exporting || loading}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-navy text-paper text-sm font-semibold hover:bg-navy-deep disabled:opacity-60"
+        >
+          <Download size={15} aria-hidden="true" />
+          {exporting ? 'Hesabat hazırlanır…' : 'Hesabat (PDF)'}
+        </button>
+      </header>
 
       <div className="flex flex-wrap items-center gap-2 mb-6">
         <select
@@ -89,21 +140,24 @@ export default function EventsClient() {
         >
           <option value="">Bütün eventlər</option>
           {(data?.eventNames ?? []).map((name) => (
-            <option key={name} value={name}>{name}</option>
+            <option key={name} value={name}>
+              {name}
+            </option>
           ))}
         </select>
 
         {DAY_OPTIONS.map((opt) => (
           <button
             key={opt.value}
+            type="button"
             onClick={() => {
               setDays(opt.value)
               setPage(0)
             }}
-            className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+            className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
               days === opt.value
-                ? 'bg-forest text-cream border-forest'
-                : 'bg-white text-ink-mid border-forest/12 hover:border-forest/30'
+                ? 'bg-navy text-paper border-navy'
+                : 'bg-white text-ink-mid border-navy/12 hover:border-navy/30'
             }`}
           >
             {opt.label}
@@ -111,8 +165,9 @@ export default function EventsClient() {
         ))}
 
         <button
+          type="button"
           onClick={load}
-          className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white border border-forest/12 text-ink-mid hover:border-forest/30"
+          className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium bg-white border border-navy/12 text-ink-mid hover:border-navy/30"
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} aria-hidden="true" />
           Yenilə
@@ -120,15 +175,18 @@ export default function EventsClient() {
       </div>
 
       {error && (
-        <div role="alert" className="mb-6 px-4 py-3 bg-danger-tint border border-danger/25 text-danger text-sm rounded-xl">
+        <div
+          role="alert"
+          className="mb-6 px-4 py-3 bg-danger-tint border border-danger/25 text-danger text-sm rounded-xl"
+        >
           {error}
         </div>
       )}
 
-      <div className="card overflow-x-auto">
+      <div className="rounded-2xl bg-white border border-navy/8 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs uppercase tracking-wider text-ink-mute border-b border-forest/8">
+            <tr className="text-left text-xs uppercase tracking-wider text-ink-mute border-b border-navy/8">
               <th className="px-4 py-3">Vaxt</th>
               <th className="px-4 py-3">Event</th>
               <th className="px-4 py-3">Rol</th>
@@ -139,12 +197,12 @@ export default function EventsClient() {
           </thead>
           <tbody>
             {(data?.items ?? []).map((row) => (
-              <tr key={row.id} className="border-b border-forest/8 last:border-0 align-top">
+              <tr key={row.id} className="border-b border-navy/8 last:border-0 align-top">
                 <td className="px-4 py-3 whitespace-nowrap text-ink-mid">
-                  {new Date(row.occurred_at).toLocaleString('az-AZ')}
+                  {formatBaku(row.occurred_at)}
                 </td>
                 <td className="px-4 py-3">
-                  <span className="font-mono text-xs bg-forest-wash text-forest px-2 py-1 rounded-lg">
+                  <span className="font-mono text-xs bg-navy-wash text-navy px-2 py-1 rounded-lg">
                     {row.event_name}
                   </span>
                 </td>
@@ -175,21 +233,24 @@ export default function EventsClient() {
 
       <div className="flex items-center justify-between mt-5 text-sm text-ink-mid">
         <span>
-          Cəmi <strong className="text-ink">{data?.total ?? 0}</strong> event · səhifə {page + 1}/{totalPages}
+          Cəmi <strong className="text-ink">{data?.total ?? 0}</strong> event · səhifə{' '}
+          {page + 1}/{totalPages}
         </span>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="inline-flex items-center gap-1 px-4 py-2 rounded-full border border-forest/12 bg-white disabled:opacity-40"
+            className="inline-flex items-center gap-1 px-4 py-2 rounded-md border border-navy/12 bg-white disabled:opacity-40"
           >
             <ChevronLeft size={14} aria-hidden="true" />
             Əvvəlki
           </button>
           <button
+            type="button"
             onClick={() => setPage((p) => p + 1)}
             disabled={page + 1 >= totalPages}
-            className="inline-flex items-center gap-1 px-4 py-2 rounded-full border border-forest/12 bg-white disabled:opacity-40"
+            className="inline-flex items-center gap-1 px-4 py-2 rounded-md border border-navy/12 bg-white disabled:opacity-40"
           >
             Növbəti
             <ChevronRight size={14} aria-hidden="true" />

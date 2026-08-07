@@ -1,38 +1,19 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
-export const FREE_SIMULATION_LIMIT = 2
+/** @deprecated Premium gate disabled — all published simulations are open. */
+export const FREE_SIMULATION_LIMIT = Number.POSITIVE_INFINITY
 
 type Supabase = SupabaseClient<Database>
 
+/**
+ * Premium subscription gate is currently disabled.
+ * All published simulations are open to every student.
+ */
 export async function canStudentAccessSimulation(
-  supabase: Supabase,
-  userId: string,
-  simulationId: string
-): Promise<{ allowed: boolean; reason: 'premium' | 'free' | 'assigned' | 'locked' }> {
-  const [{ data: profile }, { data: assigned }, { data: publishedSims }] = await Promise.all([
-    supabase.from('users').select('is_premium').eq('id', userId).single(),
-    supabase
-      .from('student_assigned_simulations')
-      .select('simulation_id')
-      .eq('student_id', userId)
-      .eq('simulation_id', simulationId)
-      .maybeSingle(),
-    supabase
-      .from('simulations')
-      .select('id')
-      .eq('is_published', true)
-      .order('created_at', { ascending: false }),
-  ])
-
-  if (profile?.is_premium) return { allowed: true, reason: 'premium' }
-  if (assigned) return { allowed: true, reason: 'assigned' }
-
-  const freeIds = (publishedSims || [])
-    .slice(0, FREE_SIMULATION_LIMIT)
-    .map((s) => s.id)
-
-  if (freeIds.includes(simulationId)) return { allowed: true, reason: 'free' }
-
-  return { allowed: false, reason: 'locked' }
+  _supabase: Supabase,
+  _userId: string,
+  _simulationId: string
+): Promise<{ allowed: boolean; reason: 'open' | 'premium' | 'free' | 'assigned' | 'locked' }> {
+  return { allowed: true, reason: 'open' }
 }

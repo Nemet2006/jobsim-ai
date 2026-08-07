@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
-import TractionDashboard from '@/components/admin/TractionDashboard'
+import ImpactReportDashboard from '@/components/admin/ImpactReportDashboard'
 
 export default function AdminDashboardPage() {
-  return <TractionDashboard />
+  return <ImpactReportDashboard />
 }

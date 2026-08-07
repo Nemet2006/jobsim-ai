@@ -41,12 +41,16 @@ export default async function CandidatesPage() {
     ])
 
     const shortlistedIds = new Set((shortlisted || []).map((s) => s.attempt_id))
+    const simTitleById = new Map((hrSims || []).map((s) => [s.id, s.title]))
+    const studentIds = [...new Set((attempts || []).map((a) => a.student_id))]
+
+    const { data: students } = studentIds.length
+      ? await supabase.from('users').select('id, full_name, university').in('id', studentIds)
+      : { data: [] as { id: string; full_name: string | null; university: string | null }[] }
+    const studentById = new Map((students || []).map((s) => [s.id, s]))
 
     for (const a of attempts || []) {
-      const [{ data: studentData }, { data: simData }] = await Promise.all([
-        supabase.from('users').select('full_name, university').eq('id', a.student_id).single(),
-        supabase.from('simulations').select('title').eq('id', a.simulation_id).single(),
-      ])
+      const studentData = studentById.get(a.student_id)
       candidates.push({
         attempt_id: a.id,
         student_id: a.student_id,
@@ -56,7 +60,7 @@ export default async function CandidatesPage() {
         ai_analysis: a.ai_analysis as Record<string, unknown> | null,
         student_name: studentData?.full_name || 'Namizəd',
         university: studentData?.university || null,
-        simulation_title: simData?.title || '',
+        simulation_title: simTitleById.get(a.simulation_id) || '',
         is_shortlisted: shortlistedIds.has(a.id),
       })
     }

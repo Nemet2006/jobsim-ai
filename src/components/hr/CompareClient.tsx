@@ -14,7 +14,7 @@ interface CandidateCompare {
   role_type: string
 }
 
-const RADAR_COLORS = ['#1F4E4A', '#F47E47', '#3B82F6', '#F5C842']
+const RADAR_COLORS = ['#16283D', '#B8862E', '#3B82F6', '#B8862E']
 const SKILL_LABELS: Record<string, string> = {
   communication: 'Ünsiyyət',
   problem_solving: 'Problem Həll',
@@ -27,7 +27,7 @@ export default function CompareClient({ candidates }: { candidates: CandidateCom
   if (candidates.length < 2) {
     return (
       <div className="text-center py-16">
-        <p className="text-slate-400">Müqayisə üçün Shortlist səhifəsindən ən az 2 namizəd seçin</p>
+        <p className="text-ink-mute">Müqayisə üçün Shortlist səhifəsindən ən az 2 namizəd seçin</p>
       </div>
     )
   }
@@ -45,7 +45,7 @@ export default function CompareClient({ candidates }: { candidates: CandidateCom
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold text-white">Müqayisə</h1>
+      <h1 className="font-display text-2xl font-semibold text-ink">Müqayisə</h1>
 
       {/* Side-by-side */}
       <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${candidates.length}, 1fr)` }}>
@@ -54,9 +54,9 @@ export default function CompareClient({ candidates }: { candidates: CandidateCom
           const isBest = c.score === maxScore
 
           return (
-            <div key={c.shortlist_id} className={`glass-card p-5 space-y-4 ${isBest ? 'border-teal-500/30' : ''}`}>
+            <div key={c.shortlist_id} className={`card-dossier p-5 space-y-4 ${isBest ? 'border-navy/25' : ''}`}>
               {isBest && (
-                <div className="flex items-center gap-1.5 text-xs text-teal-400">
+                <div className="flex items-center gap-1.5 text-xs text-navy">
                   <Trophy size={12} />
                   Ən yüksək bal
                 </div>
@@ -66,34 +66,34 @@ export default function CompareClient({ candidates }: { candidates: CandidateCom
                   style={{ borderColor: RADAR_COLORS[i], color: RADAR_COLORS[i], backgroundColor: `${RADAR_COLORS[i]}20` }}>
                   {c.student_name[0]}
                 </div>
-                <p className="font-semibold text-white">{c.student_name}</p>
-                {c.university && <p className="text-xs text-slate-400 mt-0.5">{c.university}</p>}
+                <p className="font-semibold text-ink">{c.student_name}</p>
+                {c.university && <p className="text-xs text-ink-mute mt-0.5">{c.university}</p>}
               </div>
 
               <div className="text-center">
-                <span className={`text-4xl font-bold ${c.score !== null ? getScoreColor(c.score) : 'text-slate-400'}`}>
+                <span className={`text-4xl font-bold ${c.score !== null ? getScoreColor(c.score) : 'text-ink-mute'}`}>
                   {c.score ?? '—'}
                 </span>
-                <span className="text-slate-400 text-sm">/100</span>
+                <span className="text-ink-mute text-sm">/100</span>
               </div>
 
               {analysis && (
                 <div className="space-y-2">
                   <div>
-                    <p className="text-xs font-medium text-green-400 mb-1">Güclü Tərəflər</p>
+                    <p className="text-xs font-medium text-verdigris mb-1">Güclü Tərəflər</p>
                     {analysis.strengths?.slice(0, 2).map((s, idx) => (
                       <div key={idx} className="flex items-start gap-1.5 mt-1">
-                        <CheckCircle size={10} className="text-green-400 flex-shrink-0 mt-0.5" />
-                        <p className="text-xs text-slate-300">{s}</p>
+                        <CheckCircle size={10} className="text-verdigris flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-ink-mid">{s}</p>
                       </div>
                     ))}
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-red-400 mb-1">Zəif Tərəflər</p>
+                    <p className="text-xs font-medium text-danger mb-1">Zəif Tərəflər</p>
                     {analysis.weaknesses?.slice(0, 1).map((w, idx) => (
                       <div key={idx} className="flex items-start gap-1.5 mt-1">
-                        <XCircle size={10} className="text-red-400 flex-shrink-0 mt-0.5" />
-                        <p className="text-xs text-slate-300">{w}</p>
+                        <XCircle size={10} className="text-danger flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-ink-mid">{w}</p>
                       </div>
                     ))}
                   </div>
@@ -107,8 +107,8 @@ export default function CompareClient({ candidates }: { candidates: CandidateCom
       </div>
 
       {/* Radar Chart */}
-      <div className="glass-card p-6">
-        <h2 className="text-base font-semibold text-white mb-4">Bacarıq Müqayisəsi</h2>
+      <div className="card-dossier p-6">
+        <h2 className="font-display text-base font-semibold text-ink mb-4">Bacarıq Müqayisəsi</h2>
         <ResponsiveContainer width="100%" height={300}>
           <RadarChart data={radarData}>
             <PolarGrid stroke="rgba(31, 78, 74, 0.15)" />

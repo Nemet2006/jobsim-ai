@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Users, Star, Plus, ArrowRight, BarChart2, Sparkles } from 'lucide-react'
+import { Users, Star, Plus, ArrowRight, BarChart2 } from 'lucide-react'
 import { formatDate, getScoreColor } from '@/lib/utils'
 import { StatGrid, type StatItem } from '@/components/ui/StatGrid'
 import { EditorialHero } from '@/components/ui/EditorialHero'
@@ -34,20 +34,26 @@ export default async function HRDashboard() {
       .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
       .slice(0, 6)
 
-    for (const attempt of recent) {
-      const [{ data: studentData }, { data: simData }] = await Promise.all([
-        supabase.from('users').select('full_name, university').eq('id', attempt.student_id).single(),
-        supabase.from('simulations').select('title').eq('id', attempt.simulation_id).single(),
-      ])
-      recentAttempts.push({
+    const recentStudentIds = [...new Set(recent.map((a) => a.student_id))]
+    const simTitleById = new Map((simulations || []).map((s) => [s.id, s.title]))
+
+    const { data: students } = recentStudentIds.length
+      ? await supabase.from('users').select('id, full_name, university').in('id', recentStudentIds)
+      : { data: [] as { id: string; full_name: string | null; university: string | null }[] }
+
+    const studentById = new Map((students || []).map((s) => [s.id, s]))
+
+    recentAttempts = recent.map((attempt) => {
+      const student = studentById.get(attempt.student_id)
+      return {
         id: attempt.id,
         score: attempt.score,
-        student_name: studentData?.full_name || 'Namizəd',
-        university: studentData?.university || null,
+        student_name: student?.full_name || 'Namizəd',
+        university: student?.university || null,
         started_at: attempt.started_at,
-        sim_title: simData?.title || '',
-      })
-    }
+        sim_title: simTitleById.get(attempt.simulation_id) || '',
+      }
+    })
   }
 
   const uniqueStudents = new Set(allAttempts.map((a) => a.student_id)).size
@@ -57,10 +63,10 @@ export default async function HRDashboard() {
   const activePublished = (simulations || []).filter((s) => s.is_published).length
 
   const stats: StatItem[] = [
-    { label: 'Aktiv sim.', value: activePublished, icon: 'play', accent: 'forest', meta: `${simulations?.length || 0} ümumi` },
-    { label: 'Namizəd', value: uniqueStudents, icon: 'users', accent: 'coral', meta: 'Unikal qatılan' },
-    { label: 'Orta bal', value: avgScore, icon: 'chart', accent: 'sun', meta: 'Bütün cəhdlər' },
-    { label: 'Shortlist', value: shortlist?.length || 0, icon: 'star', accent: 'success', meta: 'Seçilmiş' },
+    { label: 'Aktiv sim.', value: activePublished, icon: 'play', accent: 'navy', meta: `${simulations?.length || 0} ümumi` },
+    { label: 'Namizəd', value: uniqueStudents, icon: 'users', accent: 'gold', meta: 'Unikal qatılan' },
+    { label: 'Orta bal', value: avgScore, icon: 'chart', accent: 'verdigris', meta: 'Bütün cəhdlər' },
+    { label: 'Shortlist', value: shortlist?.length || 0, icon: 'star', accent: 'gold', meta: 'Seçilmiş' },
   ]
 
   const quickActions = [
@@ -76,18 +82,19 @@ export default async function HRDashboard() {
         eyebrow="HR Paneli"
         title={
           <>
-            <span className="italic font-light text-forest">{profile?.company_name || 'Sizin şirkət'}</span>{' '}
-            üçün istedad burada.
+            <span className="text-navy">{profile?.company_name || 'Sizin şirkət'}</span>{' '}
+            hiring ledger.
           </>
         }
         dek={
           <>
-            Resume-lar yox — <strong className="text-ink">real iş</strong>. Namizədləriniz simulyasiyalarda həqiqi tapşırıqları edir, siz isə sübut görürsünüz.
+            Namizədlər simulyasiyada real iş tapşırıqlarını tamamlayır — siz isə{' '}
+            <strong className="text-ink">sübut olunmuş nəticə</strong> görürsünüz.
           </>
         }
         actions={
           <>
-            <Link href="/hr/simulations/create" className="btn-coral group">
+            <Link href="/hr/simulations/create" className="btn-primary group">
               <Plus size={16} aria-hidden="true" />
               <span>Simulyasiya yarat</span>
               <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
@@ -99,7 +106,7 @@ export default async function HRDashboard() {
           </>
         }
         meta={[
-          { label: 'Editor', value: profile?.full_name || '—' },
+          { label: 'HR', value: profile?.full_name || '—' },
           { label: 'Aktiv', value: `${activePublished} sim` },
           { label: 'Namizəd', value: `${uniqueStudents} unikal` },
         ]}
@@ -129,21 +136,21 @@ export default async function HRDashboard() {
             <StaggerContainer className="space-y-3">
               {recentAttempts.map((attempt) => (
                 <StaggerItem key={attempt.id}>
-                  <article className="card p-5 group hover:shadow-soft-md hover:border-forest/20 transition-all hover:-translate-y-0.5">
+                  <article className="card p-5 group hover:shadow-soft-md hover:border-navy/20 transition-all hover:-translate-y-0.5">
                     <div className="flex items-center gap-4">
                       <div className="relative shrink-0">
-                        <div className="w-12 h-12 rounded-2xl bg-forest text-cream font-display font-semibold text-base flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-lg bg-navy text-paper font-display font-semibold text-base flex items-center justify-center">
                           {attempt.student_name[0]?.toUpperCase() || 'N'}
                         </div>
                         {attempt.score !== null && attempt.score >= 80 && (
-                          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-coral text-white flex items-center justify-center shadow-soft" aria-label="Top performer">
+                          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-md bg-gold text-navy-deep flex items-center justify-center shadow-soft" aria-label="Top performer">
                             <Star size={10} fill="currentColor" aria-hidden="true" />
                           </span>
                         )}
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-display text-lg font-semibold text-ink truncate group-hover:text-forest transition-colors">
+                        <h3 className="font-display text-lg font-semibold text-ink truncate group-hover:text-navy transition-colors">
                           {attempt.student_name}
                         </h3>
                         <div className="flex items-center gap-2 mt-0.5 text-xs text-ink-mute font-medium">
@@ -175,14 +182,14 @@ export default async function HRDashboard() {
             </StaggerContainer>
           ) : (
             <div className="card p-10 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-coral-wash flex items-center justify-center">
-                <Users size={28} className="text-coral-deep" aria-hidden="true" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-lg bg-gold-wash flex items-center justify-center">
+                <Users size={28} className="text-gold-deep" aria-hidden="true" />
               </div>
               <h3 className="font-display text-2xl font-semibold mb-2">Hələ namizəd yoxdur</h3>
               <p className="text-ink-mid text-sm mb-6 max-w-sm mx-auto">
                 İlk simulyasiyanızı yaradın, paylaşın, ən yaxşı namizədlər gəlsin.
               </p>
-              <Link href="/hr/simulations/create" className="btn-coral inline-flex">
+              <Link href="/hr/simulations/create" className="btn-primary inline-flex">
                 <Plus size={14} aria-hidden="true" />
                 İlk simulyasiyanı yarat
               </Link>
@@ -204,25 +211,25 @@ export default async function HRDashboard() {
               <StaggerItem key={item.href}>
                 <Link
                   href={item.href}
-                  className={`group block p-5 rounded-2xl border transition-all hover:-translate-y-0.5 ${
+                  className={`group block p-5 rounded-lg border transition-all hover:-translate-y-0.5 ${
                     item.primary
-                      ? 'bg-coral text-white border-coral hover:bg-coral-deep hover:shadow-coral'
-                      : 'bg-white border-forest/8 hover:border-forest/20 hover:shadow-soft-md'
+                      ? 'bg-navy text-paper border-navy hover:bg-navy-deep hover:shadow-soft-md'
+                      : 'bg-white border-navy/8 hover:border-navy/20 hover:shadow-soft-md'
                   }`}
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex-1 min-w-0">
                       <p className={`font-display text-lg font-semibold mb-0.5 ${
-                        item.primary ? 'text-white' : 'text-ink group-hover:text-forest'
+                        item.primary ? 'text-paper' : 'text-ink group-hover:text-navy'
                       }`}>
                         {item.label}
                       </p>
-                      <p className={`text-xs ${item.primary ? 'text-white/85' : 'text-ink-mute'}`}>
+                      <p className={`text-xs ${item.primary ? 'text-paper/85' : 'text-ink-mute'}`}>
                         {item.desc}
                       </p>
                     </div>
                     <ArrowRight size={16} className={`shrink-0 mt-1 transition-transform group-hover:translate-x-1 ${
-                      item.primary ? 'text-white' : 'text-ink-mute group-hover:text-forest'
+                      item.primary ? 'text-paper' : 'text-ink-mute group-hover:text-navy'
                     }`} aria-hidden="true" />
                   </div>
                 </Link>
@@ -230,15 +237,14 @@ export default async function HRDashboard() {
             ))}
           </StaggerContainer>
 
-          <div className="card-feature-light p-5 mt-6">
-            <Sparkles size={18} className="text-coral mb-3" aria-hidden="true" />
-            <blockquote className="font-display text-base italic text-ink leading-snug mb-2">
-              &ldquo;Ən yaxşı müsahibə işin özüdür.&rdquo;
-            </blockquote>
-            <footer className="text-xs text-ink-mute font-medium flex items-center gap-1.5">
-              <BarChart2 size={11} aria-hidden="true" />
-              HR Insight
-            </footer>
+          <div className="card-dossier p-5 mt-6">
+            <BarChart2 size={18} className="text-navy mb-3" aria-hidden="true" />
+            <p className="font-display text-base font-semibold text-ink leading-snug mb-1">
+              Qiymətləndirmə prinsipi
+            </p>
+            <p className="text-sm text-ink-mid leading-relaxed">
+              Ən güclü siqnal — namizədin real tapşırıqdakı performansı, resume mətnindəki iddialar deyil.
+            </p>
           </div>
         </aside>
       </div>

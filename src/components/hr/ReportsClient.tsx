@@ -14,7 +14,7 @@ interface ReportsClientProps {
   shortlistCount: number
 }
 
-const CHART_COLORS = ['#1F4E4A', '#F47E47', '#3B82F6', '#F5C842', '#22A06B']
+const CHART_COLORS = ['#16283D', '#B8862E', '#3B82F6', '#B8862E', '#1E7A63']
 const CHART_TICK = '#8A8A8A'
 const CHART_TOOLTIP = {
   backgroundColor: '#FFFFFF',
@@ -81,8 +81,8 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Hesabatlar</h1>
-          <p className="text-slate-400 text-sm mt-1">{companyName}</p>
+          <h1 className="font-display text-2xl font-semibold text-ink">Hesabatlar</h1>
+          <p className="text-ink-mute text-sm mt-1">{companyName}</p>
         </div>
         <button onClick={downloadPDF} className="btn-primary flex items-center gap-2">
           <Download size={16} />
@@ -98,18 +98,18 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
           { label: 'Orta Bal', value: avgScore },
           { label: 'Shortlistdə', value: shortlistCount },
         ].map((s) => (
-          <div key={s.label} className="stat-card text-center">
-            <p className="text-3xl font-bold text-white">{s.value}</p>
-            <p className="text-xs text-slate-400 mt-1">{s.label}</p>
+          <div key={s.label} className="card-dossier p-5 text-center">
+            <p className="number-display text-3xl text-navy">{s.value}</p>
+            <p className="text-xs text-ink-mute mt-1 uppercase tracking-wider font-medium">{s.label}</p>
           </div>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Bar Chart */}
-        <div className="glass-card p-5">
-          <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText size={15} className="text-forest" />
+        <div className="card-dossier p-5">
+          <h2 className="text-sm font-semibold text-ink mb-4 flex items-center gap-2">
+            <FileText size={15} className="text-navy" />
             Rol tipinə görə orta bal
           </h2>
           {barData.length > 0 ? (
@@ -118,16 +118,16 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
                 <XAxis dataKey="role" tick={{ fill: CHART_TICK, fontSize: 11 }} />
                 <YAxis domain={[0, 100]} tick={{ fill: CHART_TICK, fontSize: 11 }} />
                 <Tooltip contentStyle={CHART_TOOLTIP} />
-                <Bar dataKey="avg" fill="#1F4E4A" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="avg" fill="#16283D" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-          ) : <p className="text-slate-500 text-sm text-center py-8">Məlumat yoxdur</p>}
+          ) : <p className="text-ink-mute text-sm text-center py-8">Məlumat yoxdur</p>}
         </div>
 
         {/* Line Chart */}
-        <div className="glass-card p-5">
-          <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText size={15} className="text-forest" />
+        <div className="card-dossier p-5">
+          <h2 className="text-sm font-semibold text-ink mb-4 flex items-center gap-2">
+            <FileText size={15} className="text-navy" />
             Namizəd sayı (son 10 gün)
           </h2>
           {lineData.length > 0 ? (
@@ -136,16 +136,16 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
                 <XAxis dataKey="date" tick={{ fill: CHART_TICK, fontSize: 10 }} />
                 <YAxis tick={{ fill: CHART_TICK, fontSize: 11 }} />
                 <Tooltip contentStyle={CHART_TOOLTIP} />
-                <Line type="monotone" dataKey="count" stroke="#1F4E4A" strokeWidth={2} dot={{ fill: '#F47E47', r: 3 }} />
+                <Line type="monotone" dataKey="count" stroke="#16283D" strokeWidth={2} dot={{ fill: '#B8862E', r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
-          ) : <p className="text-slate-500 text-sm text-center py-8">Məlumat yoxdur</p>}
+          ) : <p className="text-ink-mute text-sm text-center py-8">Məlumat yoxdur</p>}
         </div>
 
         {/* Pie Chart */}
-        <div className="glass-card p-5">
-          <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText size={15} className="text-forest" />
+        <div className="card-dossier p-5">
+          <h2 className="text-sm font-semibold text-ink mb-4 flex items-center gap-2">
+            <FileText size={15} className="text-navy" />
             Shortlist nisbəti
           </h2>
           {totalCandidates > 0 ? (
@@ -159,13 +159,13 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
                 <Tooltip contentStyle={CHART_TOOLTIP} />
               </PieChart>
             </ResponsiveContainer>
-          ) : <p className="text-slate-500 text-sm text-center py-8">Məlumat yoxdur</p>}
+          ) : <p className="text-ink-mute text-sm text-center py-8">Məlumat yoxdur</p>}
         </div>
 
         {/* Top Simulations */}
-        <div className="glass-card p-5">
-          <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText size={15} className="text-forest" />
+        <div className="card-dossier p-5">
+          <h2 className="text-sm font-semibold text-ink mb-4 flex items-center gap-2">
+            <FileText size={15} className="text-navy" />
             Simulyasiya performansı
           </h2>
           <div className="space-y-3">
@@ -177,16 +177,16 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
               return (
                 <div key={sim.id} className="flex items-center gap-3">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-white truncate">{sim.title}</p>
-                    <p className="text-xs text-slate-500">{simAttempts.length} namizəd</p>
+                    <p className="text-xs font-medium text-ink truncate">{sim.title}</p>
+                    <p className="text-xs text-ink-mute">{simAttempts.length} namizəd</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-forest">{avg}</p>
+                    <p className="text-sm font-bold text-navy">{avg}</p>
                   </div>
                 </div>
               )
             })}
-            {simulations.length === 0 && <p className="text-slate-500 text-sm text-center py-4">Məlumat yoxdur</p>}
+            {simulations.length === 0 && <p className="text-ink-mute text-sm text-center py-4">Məlumat yoxdur</p>}
           </div>
         </div>
       </div>

@@ -8,6 +8,12 @@ export interface CertificateData {
   attemptId: string
 }
 
+/** Official JobSim AI signatories shown on every certificate. */
+export const CERTIFICATE_SIGNATORIES = [
+  { name: 'Elvin Hacızadə', role: 'Founder' },
+  { name: 'Nemət Zərbiyev', role: 'Co-Founder' },
+] as const
+
 export function getCertificateId(attemptId: string): string {
   return `JSIM-${attemptId.replace(/-/g, '').slice(0, 12).toUpperCase()}`
 }
@@ -24,12 +30,19 @@ const AZ_MONTHS = [
   'iyul', 'avqust', 'sentyabr', 'oktyabr', 'noyabr', 'dekabr',
 ]
 
+/** Certificate date in Asia/Baku local time. */
 export function formatCertificateDate(iso: string): string {
   const d = new Date(iso)
-  const day = d.getDate()
-  const month = AZ_MONTHS[d.getMonth()] ?? ''
-  const year = d.getFullYear()
-  return `${day} ${month} ${year}`
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Baku',
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+  }).formatToParts(d)
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? ''
+  const monthIdx = Math.max(0, Number(get('month')) - 1)
+  return `${get('day')} ${AZ_MONTHS[monthIdx] ?? ''} ${get('year')}`
 }
 
 export async function downloadCertificatePDF(data: CertificateData): Promise<void> {
@@ -114,16 +127,43 @@ export async function downloadCertificatePDF(data: CertificateData): Promise<voi
   doc.setFontSize(10)
   setPdfFont(doc, 'normal')
   doc.setTextColor(244, 126, 71)
-  doc.text(grade.az, w / 2, 158, { align: 'center' })
+  doc.text(grade.az, w / 2, 152, { align: 'center' })
+
+  // Signatories — official JobSim AI issuance (prominent)
+  const sigY = 162
+  const leftX = 70
+  const rightX = w - 70
+
+  setPdfFont(doc, 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(184, 134, 46)
+  doc.text('JobSim AI · Rəsmi imza', w / 2, sigY - 4, { align: 'center' })
+
+  doc.setDrawColor(31, 78, 74)
+  doc.setLineWidth(0.4)
+  doc.line(leftX - 32, sigY + 2, leftX + 32, sigY + 2)
+  doc.line(rightX - 32, sigY + 2, rightX + 32, sigY + 2)
+
+  setPdfFont(doc, 'bold')
+  doc.setFontSize(11)
+  doc.setTextColor(31, 78, 74)
+  doc.text(CERTIFICATE_SIGNATORIES[0].name, leftX, sigY + 9, { align: 'center' })
+  doc.text(CERTIFICATE_SIGNATORIES[1].name, rightX, sigY + 9, { align: 'center' })
+
+  setPdfFont(doc, 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(184, 134, 46)
+  doc.text(CERTIFICATE_SIGNATORIES[0].role, leftX, sigY + 15, { align: 'center' })
+  doc.text(CERTIFICATE_SIGNATORIES[1].role, rightX, sigY + 15, { align: 'center' })
 
   // Footer
   doc.setTextColor(92, 92, 92)
-  doc.setFontSize(9)
+  doc.setFontSize(8)
   setPdfFont(doc, 'normal')
-  doc.text(`Tarix: ${dateStr}`, 24, h - 28)
-  doc.text(`Sertifikat ID: ${certId}`, 24, h - 22)
-  doc.text('verify.jobsim-ai.app', w - 24, h - 28, { align: 'right' })
-  doc.text('AI qiymətləndirmə ilə təsdiqlənib', w - 24, h - 22, { align: 'right' })
+  doc.text(`Tarix: ${dateStr}`, 24, h - 18)
+  doc.text(`Sertifikat ID: ${certId}`, 24, h - 12)
+  doc.text('JobSim AI · rəsmi sertifikat', w - 24, h - 18, { align: 'right' })
+  doc.text('AI qiymətləndirmə ilə təsdiqlənib', w - 24, h - 12, { align: 'right' })
 
   const safeName = data.studentName.replace(/[^a-zA-Z0-9\u00C0-\u024F]/g, '-').slice(0, 30)
   doc.save(`JobSim-sertifikat-${safeName}.pdf`)

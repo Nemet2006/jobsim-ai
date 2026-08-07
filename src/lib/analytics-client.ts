@@ -1,6 +1,7 @@
 'use client'
 
 import type { AnalyticsProperties, ClientEventName } from '@/lib/analytics-shared'
+import { ANALYTICS_LIVE_TRACKING } from '@/lib/analytics-flags'
 
 const SESSION_STORAGE_KEY = 'jobsim_sid'
 
@@ -29,6 +30,8 @@ export function track(
   pathOverride?: string
 ): void {
   if (typeof window === 'undefined') return
+  if (!ANALYTICS_LIVE_TRACKING) return
+
   try {
     const payload = JSON.stringify({
       event,
@@ -59,6 +62,7 @@ let lastTrackedPath: string | null = null
 
 /** Page view with consecutive-duplicate guard (prefetch/replay safety). */
 export function trackPageView(path: string): void {
+  if (!ANALYTICS_LIVE_TRACKING) return
   const clean = path.split(/[?#]/)[0]
   if (!clean.startsWith('/') || clean === lastTrackedPath) return
   lastTrackedPath = clean
