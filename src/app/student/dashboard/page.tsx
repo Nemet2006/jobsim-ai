@@ -171,7 +171,7 @@ export default async function StudentDashboard() {
                 <Zap size={15} aria-hidden="true" />
                 <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">Premium</span>
               </div>
-              <h3 className="font-display text-2xl font-semibold mb-2 leading-tight">
+              <h3 className="font-display text-2xl font-semibold mb-2 leading-tight text-paper">
                 Tezliklə aktivləşəcək
               </h3>
               <p className="text-sm text-paper/75 mb-5 leading-relaxed">

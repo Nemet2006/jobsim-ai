@@ -95,6 +95,13 @@
   .card-feature {
     @apply relative bg-gradient-to-br from-navy to-navy-deep text-paper rounded-xl shadow-soft-lg;
   }
+  /* Base h1–h4 set text-ink; force light headings on dark feature panels */
+  .card-feature h1,
+  .card-feature h2,
+  .card-feature h3,
+  .card-feature h4 {
+    @apply text-paper;
+  }
   .card-feature-light {
     @apply relative bg-gradient-to-br from-gold-wash via-paper to-navy-wash rounded-xl border border-navy/10 shadow-soft;
   }
