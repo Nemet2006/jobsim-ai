@@ -6,7 +6,6 @@ import { PlaySquare, ArrowRight, Clock, Zap, Trophy, Sparkles } from 'lucide-rea
 import { formatDate, getScoreColor } from '@/lib/utils'
 import { StatGrid, type StatItem } from '@/components/ui/StatGrid'
 import { EditorialHero } from '@/components/ui/EditorialHero'
-import { PremiumUpgradeButton } from '@/components/student/PremiumUpgradeButton'
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/ui/Motion'
 
 export default async function StudentDashboard() {
@@ -36,11 +35,11 @@ export default async function StudentDashboard() {
     { label: 'Orta bal', value: avgScore, icon: 'target', accent: 'coral', meta: 'Son cəhdlər' },
     { label: 'Bacarıqlar', value: skillCount, icon: 'award', accent: 'sun', meta: 'Pasportda' },
     {
-      label: 'Status',
-      value: profile?.is_premium ? 'Premium' : 'Free',
+      label: 'Giriş',
+      value: 'Açıq',
       icon: 'zap',
-      accent: profile?.is_premium ? 'coral' : 'neutral',
-      meta: profile?.is_premium ? 'Aktiv üzv' : 'Yüksəlt',
+      accent: 'verdigris',
+      meta: 'Bütün simulyasiyalar',
     },
   ]
 
@@ -76,7 +75,7 @@ export default async function StudentDashboard() {
         }
         meta={[
           { label: 'Universitet', value: profile?.university || 'Qeyd edilməyib' },
-          { label: 'Üzvlük', value: profile?.is_premium ? 'Premium' : 'Free' },
+          { label: 'Giriş', value: 'Açıq' },
           { label: 'Cəhdlər', value: `${attempts?.length || 0}` },
         ]}
       />
@@ -167,44 +166,21 @@ export default async function StudentDashboard() {
         {/* Side: Premium / motivation */}
         <aside className="space-y-6" aria-label="Yan panel">
           <FadeInUp delay={0.2}>
-            {!profile?.is_premium ? (
-              <div className="card-feature p-6 text-paper">
-                <div className="flex items-center gap-2 mb-4">
-                  <Zap size={15} aria-hidden="true" />
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">Premium</span>
-                </div>
-                <h3 className="font-display text-2xl font-semibold mb-2 leading-tight">
-                  Növbəti səviyyə
-                </h3>
-                <p className="text-sm text-paper/75 mb-5 leading-relaxed">
-                  Sınırsız simulyasiya, dərin AI analiz və verification seal.
-                </p>
-                <ul className="space-y-2 mb-6">
-                  {[
-                    'Sınırsız simulyasiyalar',
-                    'Dərin AI analiz',
-                    'Premium sertifikat',
-                    'HR-a birbaşa müraciət',
-                  ].map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-paper/85">
-                      <span className="w-1.5 h-1.5 rounded-sm bg-gold shrink-0" aria-hidden="true" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <PremiumUpgradeButton className="w-full">
-                  İndi Yüksəlt
-                </PremiumUpgradeButton>
+            <div className="card-feature p-6 text-paper">
+              <div className="flex items-center gap-2 mb-4">
+                <Zap size={15} aria-hidden="true" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">Premium</span>
               </div>
-            ) : (
-              <div className="card-feature p-6 text-paper">
-                <div className="w-10 h-10 rounded-md bg-gold text-white flex items-center justify-center mb-3">
-                  <Zap size={18} fill="currentColor" aria-hidden="true" />
-                </div>
-                <h3 className="font-display text-xl font-semibold mb-1.5">Premium üzv</h3>
-                <p className="text-sm text-paper/75">Bütün imtiyazlarınız aktivdir.</p>
-              </div>
-            )}
+              <h3 className="font-display text-2xl font-semibold mb-2 leading-tight">
+                Tezliklə aktivləşəcək
+              </h3>
+              <p className="text-sm text-paper/75 mb-5 leading-relaxed">
+                Premium abunəlik hələ aktiv deyil. Hazırda bütün simulyasiyalar açıqdır.
+              </p>
+              <Link href="/student/premium" className="btn-secondary border-paper/25 bg-transparent text-paper hover:bg-white/10 w-full justify-center">
+                Ətraflı
+              </Link>
+            </div>
           </FadeInUp>
 
           <FadeInUp delay={0.3}>

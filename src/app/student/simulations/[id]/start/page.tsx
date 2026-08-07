@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import SimulationExam from '@/components/simulation/SimulationExam'
 import { trackServerEvent } from '@/lib/analytics'
-import { canStudentAccessSimulation } from '@/lib/simulation-access'
 import { normalizeQuestions } from '@/lib/questions'
 import type { Question } from '@/types'
 
@@ -27,11 +26,6 @@ export default async function SimulationStartPage({ params }: { params: Promise<
   ])
 
   if (!sim) notFound()
-
-  const access = await canStudentAccessSimulation(supabase, user.id, id)
-  if (!access.allowed) {
-    redirect('/student/premium?locked=1')
-  }
 
   // Create attempt record
   const { data: attempt } = await supabase

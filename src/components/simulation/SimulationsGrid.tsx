@@ -1,19 +1,14 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { PremiumUpgradeButton } from '@/components/student/PremiumUpgradeButton'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
   Filter,
-  Lock,
   X,
   SlidersHorizontal,
   Zap,
   Clock,
-  ArrowUpRight,
   CheckCircle2,
 } from 'lucide-react'
 import { getDifficultyLabel } from '@/lib/utils'
@@ -22,13 +17,10 @@ import { SimCard } from '@/components/ui/SimCard'
 
 interface SimulationsGridProps {
   simulations: (Simulation & { creator?: { full_name: string; company_name: string } | null })[]
-  isPremium: boolean
+  /** @deprecated Premium gate disabled — kept for call-site compatibility */
+  isPremium?: boolean
   completionCounts?: Record<string, number>
 }
-
-import { FREE_SIMULATION_LIMIT } from '@/lib/simulation-access'
-
-const FREE_LIMIT = FREE_SIMULATION_LIMIT
 
 const QUICK_FILTERS = [
   { id: 'all',     label: 'Hamısı',       icon: null as React.ReactNode },
@@ -47,8 +39,7 @@ const SORT_OPTIONS: { id: SortKey; label: string }[] = [
   { id: 'hard_first', label: 'Çətindən asana' },
 ]
 
-export default function SimulationsGrid({ simulations, isPremium, completionCounts = {} }: SimulationsGridProps) {
-  const router = useRouter()
+export default function SimulationsGrid({ simulations, completionCounts = {} }: SimulationsGridProps) {
   const [search, setSearch] = useState('')
   const [quick, setQuick] = useState<QuickFilterId>('all')
   const [roles, setRoles] = useState<Set<string>>(new Set())
@@ -56,7 +47,6 @@ export default function SimulationsGrid({ simulations, isPremium, completionCoun
   const [difficulties, setDifficulties] = useState<Set<Difficulty>>(new Set())
   const [sort, setSort] = useState<SortKey>('recent')
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
-  const [showUpgrade, setShowUpgrade] = useState(false)
 
   // Derived facets
   const facets = useMemo(() => {
@@ -135,12 +125,9 @@ export default function SimulationsGrid({ simulations, isPremium, completionCoun
               Bacarıqlarınızı qurmaq və recruiter-lər tərəfindən fərq edilmək üçün uyğun simulyasiyanı tapın.
             </p>
           </div>
-          {!isPremium && (
-            <div className="hidden sm:flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-coral-wash border border-coral/25 text-coral-deep text-sm font-medium">
-              <Lock size={14} aria-hidden="true" />
-              <span>{FREE_LIMIT} pulsuz / {simulations.length} ümumi</span>
-            </div>
-          )}
+          <div className="hidden sm:flex items-center gap-2.5 px-4 py-2.5 rounded-md bg-navy-wash border border-navy/15 text-navy text-sm font-medium">
+            <span>{simulations.length} simulyasiya · hamısı açıq</span>
+          </div>
         </div>
 
         {/* Search */}
@@ -268,18 +255,7 @@ export default function SimulationsGrid({ simulations, isPremium, completionCoun
           {/* Grid */}
           {list.length > 0 ? (
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5">
-              {list.map((sim, idx) => {
-                const isLocked = !isPremium && idx >= FREE_LIMIT
-                if (isLocked) {
-                  return (
-                    <LockedCard
-                      key={sim.id}
-                      sim={sim}
-                      onUpgrade={() => setShowUpgrade(true)}
-                    />
-                  )
-                }
-                return (
+              {list.map((sim, idx) => (
                   <SimCard
                     key={sim.id}
                     href={`/student/simulations/${sim.id}`}
@@ -290,11 +266,9 @@ export default function SimulationsGrid({ simulations, isPremium, completionCoun
                     duration={`${sim.duration_minutes} dəq`}
                     description={sim.description}
                     completions={completionCounts[sim.id]}
-                    badge={!isPremium && idx < FREE_LIMIT ? 'Pulsuz' : undefined}
                     delay={Math.min(idx * 0.04, 0.4)}
                   />
-                )
-              })}
+              ))}
             </div>
           ) : (
             <div className="card p-12 text-center">
@@ -373,13 +347,6 @@ export default function SimulationsGrid({ simulations, isPremium, completionCoun
               </div>
             </motion.aside>
           </>
-        )}
-      </AnimatePresence>
-
-      {/* UPGRADE MODAL */}
-      <AnimatePresence>
-        {showUpgrade && (
-          <UpgradeModal onClose={() => setShowUpgrade(false)} onUpgrade={() => router.push('/student/dashboard')} />
         )}
       </AnimatePresence>
     </div>
@@ -530,106 +497,3 @@ function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
   )
 }
 
-/* ---------- Locked sim card ---------- */
-
-function LockedCard({
-  sim,
-  onUpgrade,
-}: {
-  sim: Simulation & { creator?: { full_name: string; company_name: string } | null }
-  onUpgrade: () => void
-}) {
-  return (
-    <article className="relative card p-5 lg:p-6 h-full opacity-95 overflow-hidden">
-      <div className="absolute inset-0 bg-cream/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-coral text-white flex items-center justify-center mb-3">
-          <Lock size={18} aria-hidden="true" />
-        </div>
-        <p className="font-display text-lg font-semibold mb-1">Premium üçün</p>
-        <p className="text-xs text-ink-mid mb-4 max-w-[200px]">
-          Bu simulyasiyaya tam giriş üçün Premium-a keçin
-        </p>
-        <button onClick={onUpgrade} className="btn-coral text-xs py-2 px-4">
-          Premium-a Keç
-        </button>
-      </div>
-      {/* Greyed background content */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 rounded-xl bg-forest/20 font-display text-lg font-semibold flex items-center justify-center text-forest">
-          {(sim.creator?.company_name || sim.title)[0]?.toUpperCase()}
-        </div>
-        {sim.creator?.company_name && (
-          <div className="min-w-0">
-            <p className="text-[11px] uppercase tracking-wider text-ink-mute font-semibold">From</p>
-            <p className="text-sm font-semibold text-ink truncate">{sim.creator.company_name}</p>
-          </div>
-        )}
-      </div>
-      <h3 className="font-display text-xl font-semibold text-ink mb-2 leading-tight">{sim.title}</h3>
-      <p className="text-sm text-ink-mid line-clamp-2 mb-4">{sim.description}</p>
-    </article>
-  )
-}
-
-/* ---------- Upgrade modal ---------- */
-
-function UpgradeModal({ onClose, onUpgrade }: { onClose: () => void; onUpgrade: () => void }) {
-  return (
-    <>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-ink/40 backdrop-blur-sm z-50"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      <motion.div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="upgrade-title"
-        initial={{ opacity: 0, scale: 0.94, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.94, y: 20 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
-      >
-        <div className="card-feature p-8 max-w-md w-full text-cream pointer-events-auto relative">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-9 h-9 rounded-full hover:bg-cream/10 flex items-center justify-center text-cream/70 hover:text-cream"
-            aria-label="Bağla"
-          >
-            <X size={18} aria-hidden="true" />
-          </button>
-          <div className="w-14 h-14 rounded-2xl bg-coral flex items-center justify-center mb-5">
-            <Zap size={22} className="text-white" fill="currentColor" aria-hidden="true" />
-          </div>
-          <h2 id="upgrade-title" className="font-display text-3xl font-semibold mb-2">
-            Premium-a <span className="italic text-sun">keç.</span>
-          </h2>
-          <p className="text-sm text-cream/80 mb-6 leading-relaxed">
-            Bütün simulyasiyalara limitsiz giriş, dərin AI analiz, və sertifikat.
-          </p>
-          <ul className="space-y-2.5 mb-7">
-            {['Sınırsız simulyasiyalar', 'Dərin AI analiz', 'Premium sertifikat', 'HR-a birbaşa müraciət'].map((f) => (
-              <li key={f} className="flex items-center gap-2.5 text-sm">
-                <CheckCircle2 size={16} className="text-sun shrink-0" aria-hidden="true" />
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="grid grid-cols-2 gap-3">
-            <button onClick={onClose} className="btn-secondary border-cream/20 bg-transparent text-cream hover:bg-cream/10">
-              İndi yox
-            </button>
-            <Link href="/student/premium" className="btn-coral w-full justify-center">
-              Premium Al
-              <ArrowUpRight size={14} aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </motion.div>
-    </>
-  )
-}
