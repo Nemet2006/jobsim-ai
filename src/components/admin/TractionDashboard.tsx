@@ -183,7 +183,7 @@ export default function TractionDashboard() {
       const a = document.createElement('a')
       const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
       a.href = url
-      a.download = `jobsim-admin-report-${range}-${stamp}.pdf`
+      a.download = `jobsim-admin-hesabat-${range}-${stamp}.pdf`
       document.body.appendChild(a)
       a.click()
       a.remove()
@@ -224,7 +224,7 @@ export default function TractionDashboard() {
               className="btn-primary inline-flex items-center gap-2 disabled:opacity-60"
             >
               <Download size={15} aria-hidden="true" />
-              {exporting ? 'Hesabat hazırlanır…' : 'Live report çıxar'}
+              {exporting ? 'Hesabat hazırlanır…' : 'Canlı hesabat (PDF)'}
             </button>
           </div>
         </div>
@@ -429,7 +429,7 @@ export default function TractionDashboard() {
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold bg-gold text-navy-deep hover:bg-gold-deep transition-colors disabled:opacity-60"
               >
                 <Download size={15} aria-hidden="true" />
-                Live report (PDF)
+                Canlı hesabat (PDF)
               </button>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
