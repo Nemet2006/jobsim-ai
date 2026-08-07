@@ -20,6 +20,7 @@ const PROTECTED_API_PREFIXES = [
   '/api/premium/confirm',
   '/api/analytics/summary',
   '/api/analytics/events',
+  '/api/analytics/report',
 ]
 
 const PUBLIC_API_PREFIXES = [

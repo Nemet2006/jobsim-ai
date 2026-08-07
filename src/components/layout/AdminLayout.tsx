@@ -10,7 +10,7 @@ interface AdminLayoutProps {
 }
 
 const navItems: NavItem[] = [
-  { href: '/admin/dashboard', label: 'Traction', icon: LayoutDashboard },
+  { href: '/admin/dashboard', label: 'Core stats', icon: LayoutDashboard },
   { href: '/admin/events',    label: 'Hadisələr', icon: Activity },
 ]
 
