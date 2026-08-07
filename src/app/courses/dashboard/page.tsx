@@ -49,18 +49,28 @@ export default async function CoursesDashboard() {
     ? Math.round(completedAttempts.reduce((s, a) => s + (a.score || 0), 0) / completedAttempts.length)
     : 0
 
-  const leaderboard: { id: string; name: string; university: string | null; avg: number; completed: number }[] = []
-  for (const sid of studentIds) {
-    const { data: studentData } = await supabase.from('users').select('full_name, university').eq('id', sid).single()
-    leaderboard.push({
-      id: sid,
-      name: studentData?.full_name || 'Tələbə',
-      university: studentData?.university || null,
-      avg: avgScores[sid] || 0,
-      completed: completedAttempts.filter((a) => a.student_id === sid).length,
-    })
+  const completedByStudent = new Map<string, number>()
+  for (const a of completedAttempts) {
+    completedByStudent.set(a.student_id, (completedByStudent.get(a.student_id) || 0) + 1)
   }
-  leaderboard.sort((a, b) => b.avg - a.avg)
+
+  const { data: students } = studentIds.length
+    ? await supabase.from('users').select('id, full_name, university').in('id', studentIds)
+    : { data: [] as { id: string; full_name: string | null; university: string | null }[] }
+  const studentById = new Map((students || []).map((s) => [s.id, s]))
+
+  const leaderboard = studentIds
+    .map((sid) => {
+      const studentData = studentById.get(sid)
+      return {
+        id: sid,
+        name: studentData?.full_name || 'Tələbə',
+        university: studentData?.university || null,
+        avg: avgScores[sid] || 0,
+        completed: completedByStudent.get(sid) || 0,
+      }
+    })
+    .sort((a, b) => b.avg - a.avg)
   const firstName = profile?.full_name?.split(' ')[0] || 'müəllim'
 
   const stats: StatItem[] = [

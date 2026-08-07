@@ -13,14 +13,14 @@ export default async function StudentDashboard() {
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ data: profile }, { data: attempts }, { data: passport }] = await Promise.all([
-    supabase.from('users').select('*').eq('id', user!.id).single(),
+    supabase.from('users').select('full_name, university').eq('id', user!.id).single(),
     supabase
       .from('simulation_attempts')
-      .select('*, simulation:simulations(title, role_type)')
+      .select('id, score, status, started_at, simulation:simulations(title, role_type)')
       .eq('student_id', user!.id)
       .order('started_at', { ascending: false })
       .limit(6),
-    supabase.from('skill_passport').select('*').eq('student_id', user!.id).single(),
+    supabase.from('skill_passport').select('skills').eq('student_id', user!.id).single(),
   ])
 
   const completedAttempts = attempts?.filter((a) => a.status === 'completed') || []

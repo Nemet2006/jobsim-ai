@@ -34,20 +34,26 @@ export default async function HRDashboard() {
       .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
       .slice(0, 6)
 
-    for (const attempt of recent) {
-      const [{ data: studentData }, { data: simData }] = await Promise.all([
-        supabase.from('users').select('full_name, university').eq('id', attempt.student_id).single(),
-        supabase.from('simulations').select('title').eq('id', attempt.simulation_id).single(),
-      ])
-      recentAttempts.push({
+    const recentStudentIds = [...new Set(recent.map((a) => a.student_id))]
+    const simTitleById = new Map((simulations || []).map((s) => [s.id, s.title]))
+
+    const { data: students } = recentStudentIds.length
+      ? await supabase.from('users').select('id, full_name, university').in('id', recentStudentIds)
+      : { data: [] as { id: string; full_name: string | null; university: string | null }[] }
+
+    const studentById = new Map((students || []).map((s) => [s.id, s]))
+
+    recentAttempts = recent.map((attempt) => {
+      const student = studentById.get(attempt.student_id)
+      return {
         id: attempt.id,
         score: attempt.score,
-        student_name: studentData?.full_name || 'Namizəd',
-        university: studentData?.university || null,
+        student_name: student?.full_name || 'Namizəd',
+        university: student?.university || null,
         started_at: attempt.started_at,
-        sim_title: simData?.title || '',
-      })
-    }
+        sim_title: simTitleById.get(attempt.simulation_id) || '',
+      }
+    })
   }
 
   const uniqueStudents = new Set(allAttempts.map((a) => a.student_id)).size

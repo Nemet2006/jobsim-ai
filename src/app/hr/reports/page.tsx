@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
-import ReportsClient from '@/components/hr/ReportsClient'
+import { LazyReportsClient as ReportsClient } from '@/components/charts/lazy'
 
 export default async function ReportsPage() {
   const supabase = await createClient()
@@ -37,8 +37,14 @@ export default async function ReportsPage() {
     ])
     shortlistCount = sl?.length || 0
 
+    const studentIds = [...new Set((attempts || []).map((a) => a.student_id))]
+    const { data: students } = studentIds.length
+      ? await supabase.from('users').select('id, full_name, university').in('id', studentIds)
+      : { data: [] as { id: string; full_name: string | null; university: string | null }[] }
+    const studentById = new Map((students || []).map((s) => [s.id, s]))
+
     for (const a of attempts || []) {
-      const { data: studentData } = await supabase.from('users').select('full_name, university').eq('id', a.student_id).single()
+      const studentData = studentById.get(a.student_id)
       attemptData.push({
         score: a.score,
         started_at: a.started_at,

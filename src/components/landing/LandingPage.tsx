@@ -1,7 +1,4 @@
-'use client'
-
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle2, Shield, Award, Briefcase, GraduationCap } from 'lucide-react'
 import { VerificationSeal } from '@/components/ui/VerificationSeal'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
@@ -30,6 +27,7 @@ const STEPS = [
   { n: '03', title: 'Sertifikat alın', text: 'Verification seal + skill passport' },
 ]
 
+/** Server Component — zero client JS for the marketing homepage. */
 export default function LandingPage() {
   return (
     <div className="min-h-screen relative">
@@ -44,14 +42,14 @@ export default function LandingPage() {
               </svg>
             </div>
             <span className="font-display text-xl font-semibold tracking-tight">
-              JobSim<span className="text-gold">.</span>
+              JobSim<span className="text-gold-deep">.</span>
             </span>
           </Link>
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-navy">
+            <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-navy" prefetch>
               Daxil ol
             </Link>
-            <Link href="/register" className="btn-primary text-sm py-2 px-4">
+            <Link href="/register" className="btn-primary text-sm py-2 px-4" prefetch>
               Pulsuz başla
             </Link>
           </div>
@@ -59,14 +57,9 @@ export default function LandingPage() {
       </header>
 
       <main id="main" className="relative z-10">
-        {/* Hero */}
         <section className="px-6 lg:px-8 pt-12 pb-20 lg:pt-20 lg:pb-28">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            >
+            <div className="animate-fade-up">
               <span className="h-eyebrow inline-block mb-5">Bacarıq sertifikatlaşdırması</span>
               <h1 className="h-display text-[clamp(2.5rem,6vw,4.25rem)] leading-[1.02] mb-5 text-balance">
                 Sübut et.<br />
@@ -78,30 +71,26 @@ export default function LandingPage() {
                 CV-ni deyil, bacarığını göstər.
               </p>
               <div className="flex flex-wrap items-center gap-3">
-                <Link href="/register" className="btn-primary group">
+                <Link href="/register" className="btn-primary group" prefetch>
                   Pulsuz hesab yarat
                   <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                 </Link>
-                <Link href="/login" className="btn-secondary">
+                <Link href="/login" className="btn-secondary" prefetch>
                   Artıq hesabım var
                 </Link>
               </div>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
-                {['100% pulsuz başlanğıc', 'Self-paced', 'AI-powered'].map((t) => (
+                {['100% pulsuz', 'Self-paced', 'AI-powered'].map((t) => (
                   <li key={t} className="flex items-center gap-1.5 text-sm text-ink-mid">
                     <CheckCircle2 size={14} className="text-verdigris" aria-hidden="true" />
                     {t}
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
 
-            {/* Ledger card — signature visual */}
-            <motion.aside
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-              className="card-dossier p-6 lg:p-7 max-w-sm mx-auto lg:ml-auto w-full"
+            <aside
+              className="card-dossier p-6 lg:p-7 max-w-sm mx-auto lg:ml-auto w-full animate-fade-up [animation-delay:120ms]"
               aria-label="Nümunə verification ledger"
             >
               <div className="flex items-start justify-between mb-6">
@@ -127,38 +116,33 @@ export default function LandingPage() {
               <div className="mt-5 pt-4 border-t border-navy/10 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-verdigris" aria-hidden="true" />
                 <span className="text-xs font-semibold uppercase tracking-[0.12em] text-verdigris">
-                  Premium aktiv
+                  Açıq giriş
                 </span>
               </div>
-            </motion.aside>
+            </aside>
           </div>
         </section>
 
-        {/* How it works */}
         <section className="px-6 lg:px-8 py-16 border-t border-navy/10 bg-white/50">
           <div className="max-w-6xl mx-auto">
             <p className="h-eyebrow mb-3">Proses</p>
             <h2 className="h-display text-3xl lg:text-4xl mb-10">Üç addımda işə hazırlıq</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {STEPS.map((step, i) => (
-                <motion.div
+                <div
                   key={step.n}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.5 }}
-                  className="card-dossier p-6"
+                  className="card-dossier p-6 animate-fade-up"
+                  style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <span className="font-mono text-2xl font-semibold text-gold-deep tabular-nums">{step.n}</span>
-                  <h3 className="font-display text-xl font-semibold mt-3 mb-1.5">{step.title}</h3>
+                  <h3 className="font-display text-xl font-semibold mt-3 mb-1.5 text-ink">{step.title}</h3>
                   <p className="text-sm text-ink-mid">{step.text}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Features */}
         <section className="px-6 lg:px-8 py-16">
           <div className="max-w-6xl mx-auto">
             <p className="h-eyebrow mb-3">Niyə JobSim</p>
@@ -166,30 +150,22 @@ export default function LandingPage() {
               CV əvəzinə sübut
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
-              {FEATURES.map((f, i) => {
+              {FEATURES.map((f) => {
                 const Icon = f.icon
                 return (
-                  <motion.div
-                    key={f.title}
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08, duration: 0.5 }}
-                    className="p-1"
-                  >
+                  <div key={f.title} className="p-1">
                     <div className="w-10 h-10 rounded-md bg-navy-wash flex items-center justify-center mb-4">
                       <Icon size={18} className="text-navy" aria-hidden="true" />
                     </div>
-                    <h3 className="font-display text-lg font-semibold mb-2">{f.title}</h3>
+                    <h3 className="font-display text-lg font-semibold mb-2 text-ink">{f.title}</h3>
                     <p className="text-sm text-ink-mid leading-relaxed">{f.text}</p>
-                  </motion.div>
+                  </div>
                 )
               })}
             </div>
           </div>
         </section>
 
-        {/* Audiences */}
         <section className="px-6 lg:px-8 py-16 border-t border-navy/10 bg-navy text-paper">
           <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
             {[
@@ -200,16 +176,15 @@ export default function LandingPage() {
               const Icon = a.icon
               return (
                 <div key={a.role}>
-                  <Icon size={20} className="text-gold-deep mb-3" aria-hidden="true" />
-                  <h3 className="font-display text-xl font-semibold mb-2">{a.role}</h3>
-                  <p className="text-sm text-paper/75 leading-relaxed">{a.text}</p>
+                  <Icon size={20} className="text-gold-soft mb-3" aria-hidden="true" />
+                  <h3 className="font-display text-xl font-semibold mb-2 text-paper">{a.role}</h3>
+                  <p className="text-sm text-paper/80 leading-relaxed">{a.text}</p>
                 </div>
               )
             })}
           </div>
         </section>
 
-        {/* CTA */}
         <section className="px-6 lg:px-8 py-20">
           <div className="max-w-3xl mx-auto text-center">
             <VerificationSeal label="START" size="lg" variant="navy" className="mx-auto mb-6" />
@@ -217,9 +192,9 @@ export default function LandingPage() {
               Karyera hekayəniz bu gün başlayır
             </h2>
             <p className="text-ink-mid mb-8 max-w-md mx-auto">
-              Pulsuz hesab yaradın. İlk iki simulyasiya limitsiz, AI qiymətləndirmə dərhal.
+              Pulsuz hesab yaradın. Bütün simulyasiyalar açıq, AI qiymətləndirmə dərhal.
             </p>
-            <Link href="/register" className="btn-primary group text-base px-7 py-3">
+            <Link href="/register" className="btn-primary group text-base px-7 py-3" prefetch>
               İndi qeydiyyatdan keç
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
@@ -230,7 +205,7 @@ export default function LandingPage() {
       <footer className="relative z-10 border-t border-navy/10 px-6 lg:px-8 py-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="font-display text-sm font-semibold">
-            JobSim<span className="text-gold">.</span>
+            JobSim<span className="text-gold-deep">.</span>
           </span>
           <p className="text-xs text-ink-mute">© 2026 JobSim AI · Get noticed. Get hired.</p>
         </div>

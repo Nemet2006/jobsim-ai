@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google'
 import './globals.css'
 
@@ -6,20 +6,24 @@ const display = Bricolage_Grotesque({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-display',
   display: 'swap',
+  weight: ['500', '600', '700'],
+  preload: true,
 })
 
 const body = IBM_Plex_Sans({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-body',
   display: 'swap',
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600'],
+  preload: true,
 })
 
 const mono = IBM_Plex_Mono({
-  subsets: ['latin', 'latin-ext'],
+  subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500'],
+  preload: false,
 })
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jobsim-ai-mvpp.vercel.app'
@@ -58,6 +62,14 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport: Viewport = {
+  themeColor: '#F6F3EC',
+  width: 'device-width',
+  initialScale: 1,
+  // Avoid layout thrash from URL bar on mobile where possible
+  viewportFit: 'cover',
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -69,7 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-body antialiased bg-paper text-ink selection:bg-gold/25 selection:text-ink">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-navy focus:text-paper focus:rounded-md focus:shadow-soft-lg"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-navy focus:text-white focus:rounded-md focus:shadow-soft-lg"
         >
           Skip to main content
         </a>
