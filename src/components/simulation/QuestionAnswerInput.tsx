@@ -45,9 +45,9 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
   if (question.type === 'code') {
     return (
       <div>
-        <div className="flex items-center gap-2 mb-2 text-xs text-slate-400">
-          <Code2 size={14} aria-hidden="true" />
-          <span>{question.code_language || 'JavaScript'} · Kod editoru</span>
+        <div className="flex items-center gap-2 mb-2 text-[11px] uppercase tracking-[0.14em] text-white/45 font-semibold">
+          <Code2 size={13} aria-hidden="true" />
+          <span>{question.code_language || 'JavaScript'} · Kod cavabı</span>
         </div>
         <textarea
           value={value}
@@ -55,7 +55,7 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
           placeholder={question.placeholder || '// Kodunuzu buraya yazın...'}
           rows={14}
           spellCheck={false}
-          className="exam-input text-sm leading-relaxed font-mono bg-[#0d1117] text-teal-100 border-verdigris/20 placeholder:text-slate-500"
+          className="exam-input text-sm leading-relaxed font-mono text-[#D4E0C8] placeholder:text-white/25"
         />
       </div>
     )
@@ -65,25 +65,25 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
     return (
       <div className="space-y-3">
         {question.instructions && (
-          <p className="text-sm text-slate-300 bg-white/5 border border-white/10 rounded-xl p-4 leading-relaxed">
+          <p className="text-sm text-white/70 bg-white/[0.03] border border-white/10 rounded-md p-4 leading-relaxed">
             {question.instructions}
           </p>
         )}
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-white/40">
           Dəstək: PDF, DOCX, XLSX, PPTX, TXT, CSV, PNG, JPG, ZIP · max 10MB
         </p>
 
         {fileAnswer ? (
-          <div className="flex items-center gap-3 p-4 rounded-xl border border-verdigris/40 bg-verdigris/10">
-            <FileText size={22} className="text-verdigris-soft shrink-0" aria-hidden="true" />
+          <div className="flex items-center gap-3 p-4 rounded-md border border-gold/35 bg-gold/10">
+            <FileText size={22} className="text-gold-soft shrink-0" aria-hidden="true" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{fileAnswer.name}</p>
-              <p className="text-xs text-slate-400">{Math.round(fileAnswer.size / 1024)} KB · yükləndi</p>
+              <p className="text-sm font-medium text-paper truncate">{fileAnswer.name}</p>
+              <p className="text-xs text-white/45">{Math.round(fileAnswer.size / 1024)} KB · yükləndi</p>
             </div>
             <button
               type="button"
               onClick={() => onChange('')}
-              className="p-2 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white"
+              className="p-2 rounded-md hover:bg-white/10 text-white/45 hover:text-paper"
               aria-label="Faylı sil"
             >
               <X size={16} />
@@ -94,17 +94,17 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
             type="button"
             disabled={uploading}
             onClick={() => inputRef.current?.click()}
-            className="w-full flex flex-col items-center justify-center gap-2 p-8 rounded-xl border-2 border-dashed border-white/20 hover:border-verdigris/50 hover:bg-white/5 transition-colors disabled:opacity-60"
+            className="w-full flex flex-col items-center justify-center gap-2 p-8 rounded-md border border-dashed border-white/20 hover:border-gold/45 hover:bg-white/[0.03] transition-colors disabled:opacity-60"
           >
             {uploading ? (
-              <Loader2 className="w-8 h-8 animate-spin text-verdigris-soft" aria-hidden="true" />
+              <Loader2 className="w-8 h-8 animate-spin text-gold" aria-hidden="true" />
             ) : (
-              <Upload className="w-8 h-8 text-slate-400" aria-hidden="true" />
+              <Upload className="w-8 h-8 text-white/40" aria-hidden="true" />
             )}
-            <span className="text-sm font-medium text-slate-200">
+            <span className="text-sm font-medium text-paper">
               {uploading ? 'Yüklənir…' : 'Hesabat / fayl yüklə'}
             </span>
-            <span className="text-xs text-slate-500">Klikləyin və ya sürükləyin</span>
+            <span className="text-xs text-white/40">Klikləyin və seçin</span>
           </button>
         )}
 
@@ -121,7 +121,7 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
         />
 
         {uploadError && (
-          <p role="alert" className="text-sm text-red-400">{uploadError}</p>
+          <p role="alert" className="text-sm text-danger-soft">{uploadError}</p>
         )}
       </div>
     )
@@ -129,20 +129,20 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
 
   if (question.type === 'multiple_choice') {
     return (
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {question.options?.map((opt, i) => (
           <button
             key={i}
             type="button"
             onClick={() => onChange(opt)}
-            className={`w-full text-left p-4 rounded-xl border transition-all duration-200 ${
+            className={`w-full text-left p-4 rounded-md border transition-colors ${
               value === opt
-                ? 'border-verdigris/50 bg-verdigris/10 text-white'
-                : 'border-white/10 bg-white/3 text-slate-300 hover:border-white/20 hover:bg-white/5'
+                ? 'border-gold/45 bg-gold/10 text-paper'
+                : 'border-white/10 bg-white/[0.02] text-white/70 hover:border-white/20 hover:bg-white/[0.04]'
             }`}
           >
-            <span className={`inline-flex w-6 h-6 rounded-md border mr-3 items-center justify-center text-xs font-bold ${
-              value === opt ? 'border-verdigris bg-verdigris text-white' : 'border-white/20 text-slate-400'
+            <span className={`inline-flex w-6 h-6 rounded-md border mr-3 items-center justify-center text-xs font-bold font-mono ${
+              value === opt ? 'border-gold bg-gold text-navy-deep' : 'border-white/20 text-white/45'
             }`}>
               {String.fromCharCode(65 + i)}
             </span>

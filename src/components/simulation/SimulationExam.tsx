@@ -10,7 +10,15 @@ import { hasQuestionAnswer, questionTypeLabel } from '@/lib/answers'
 import { QuestionAnswerInput } from './QuestionAnswerInput'
 import type { Question } from '@/types'
 import { CertificateCard } from './CertificateCard'
-import { AlertTriangle, Clock, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
+import {
+  AlertTriangle,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle,
+  ShieldCheck,
+  Cpu,
+} from 'lucide-react'
 
 interface SimulationExamProps {
   simulation: {
@@ -27,6 +35,13 @@ interface SimulationExamProps {
 }
 
 type ExamPhase = 'exam' | 'analyzing' | 'done' | 'error'
+
+const ANALYZE_STEPS = [
+  'Cavablar oxunur və strukturlaşdırılır',
+  'Bacarıq skorları hesablanır',
+  'Güclü / zəif tərəflər müəyyən edilir',
+  'Verification hesabatı hazırlanır',
+]
 
 export default function SimulationExam({
   simulation,
@@ -47,6 +62,7 @@ export default function SimulationExam({
   const [analyzeError, setAnalyzeError] = useState<string | null>(null)
   const [finalScore, setFinalScore] = useState<number | null>(null)
   const [finalCompletedAt, setFinalCompletedAt] = useState<string | null>(null)
+  const [analyzeStep, setAnalyzeStep] = useState(0)
   const cheatCountRef = useRef(0)
 
   const questions = normalizeQuestions(simulation.questions)
@@ -61,7 +77,15 @@ export default function SimulationExam({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Countdown timer
+  useEffect(() => {
+    if (phase !== 'analyzing') return
+    setAnalyzeStep(0)
+    const id = setInterval(() => {
+      setAnalyzeStep((s) => (s < ANALYZE_STEPS.length - 1 ? s + 1 : s))
+    }, 2200)
+    return () => clearInterval(id)
+  }, [phase])
+
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((t) => {
@@ -100,7 +124,7 @@ export default function SimulationExam({
         .eq('id', attemptId)
       router.push('/student/results?cancelled=true')
     }
-  }, [attemptId, router, supabase])
+  }, [attemptId, router, supabase, simulation.id])
 
   const handleSubmit = useCallback(async () => {
     if (submitting) return
@@ -146,7 +170,7 @@ export default function SimulationExam({
       setPhase('error')
       setSubmitting(false)
     }
-  }, [answers, attemptId, questions, router, simulation, studentId, supabase, submitting])
+  }, [answers, attemptId, simulation.id, supabase, submitting])
 
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60).toString().padStart(2, '0')
@@ -159,21 +183,60 @@ export default function SimulationExam({
 
   if (phase === 'analyzing') {
     return (
-      <div className="fixed inset-0 bg-[#0F1B2A] flex flex-col items-center justify-center z-50">
-        <div className="relative">
-          <div className="w-24 h-24 border-4 border-verdigris/20 rounded-full" />
-          <div className="absolute inset-0 w-24 h-24 border-4 border-verdigris border-t-transparent rounded-full animate-spin" />
-        </div>
-        <h2 className="text-xl font-bold text-white mt-8 mb-2">AI cavabınızı analiz edir</h2>
-        <div className="flex gap-1.5 mt-4">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="w-2 h-2 bg-verdigris rounded-md animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
-          ))}
-        </div>
-        <div className="mt-6 max-w-xs text-center space-y-2">
-          {['Cavablarınız oxunur...', 'Güclü tərəflər müəyyən edilir...', 'Hesabat hazırlanır...'].map((msg, i) => (
-            <p key={i} className="text-sm text-slate-400 animate-pulse" style={{ animationDelay: `${i * 0.5}s` }}>{msg}</p>
-          ))}
+      <div className="fixed inset-0 exam-shell flex flex-col items-center justify-center z-50 px-4">
+        <div className="exam-card max-w-md w-full !pl-7">
+          <div className="flex items-center gap-2 mb-5">
+            <ShieldCheck size={16} className="text-gold" aria-hidden="true" />
+            <span className="text-[11px] uppercase tracking-[0.16em] text-gold font-semibold">
+              Assessment engine
+            </span>
+          </div>
+
+          <div className="relative w-16 h-16 mb-6">
+            <div className="absolute inset-0 rounded-md border border-white/10" />
+            <div className="absolute inset-0 rounded-md border-2 border-gold border-t-transparent animate-spin" />
+            <Cpu size={22} className="absolute inset-0 m-auto text-gold" aria-hidden="true" />
+          </div>
+
+          <h2 className="font-display text-2xl font-semibold text-paper mb-2">
+            Cavablar qiymətləndirilir
+          </h2>
+          <p className="text-sm text-white/55 leading-relaxed mb-6">
+            OpenRouter üzərindən real AI modeli cavablarınızı oxuyur, skor və bacarıq hesabatı hazırlayır.
+            Bu addım bir neçə saniyə çəkə bilər.
+          </p>
+
+          <ol className="space-y-2.5 mb-6">
+            {ANALYZE_STEPS.map((step, i) => {
+              const done = i < analyzeStep
+              const active = i === analyzeStep
+              return (
+                <li
+                  key={step}
+                  className={`flex items-start gap-3 text-sm ${
+                    done || active ? 'text-paper' : 'text-white/35'
+                  }`}
+                >
+                  <span
+                    className={`mt-0.5 w-5 h-5 rounded-sm border flex items-center justify-center shrink-0 ${
+                      done
+                        ? 'bg-gold border-gold text-navy-deep'
+                        : active
+                        ? 'border-gold text-gold'
+                        : 'border-white/15'
+                    }`}
+                  >
+                    {done ? <CheckCircle size={12} /> : <span className="font-mono text-[10px]">{i + 1}</span>}
+                  </span>
+                  <span className={active ? 'font-medium' : ''}>{step}</span>
+                </li>
+              )
+            })}
+          </ol>
+
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/35">
+            Attempt · {attemptId.slice(0, 8)}
+          </p>
         </div>
       </div>
     )
@@ -181,7 +244,7 @@ export default function SimulationExam({
 
   if (phase === 'done' && finalScore !== null && finalCompletedAt) {
     return (
-      <div className="fixed inset-0 bg-[#0F1B2A] flex items-center justify-center z-50 px-4 py-8 overflow-y-auto">
+      <div className="fixed inset-0 exam-shell flex items-center justify-center z-50 px-4 py-8 overflow-y-auto">
         <div className="w-full max-w-lg">
           <CertificateCard
             variant="dark"
@@ -204,11 +267,11 @@ export default function SimulationExam({
 
   if (phase === 'error') {
     return (
-      <div className="fixed inset-0 bg-[#0F1B2A] flex items-center justify-center z-50 px-4">
-        <div className="exam-card max-w-md w-full text-center">
-          <AlertTriangle size={40} className="text-red-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-white mb-2">AI analizi uğursuz oldu</h2>
-          <p className="text-sm text-slate-300 mb-6">{analyzeError || 'Zəhmət olmasa bir daha cəhd edin.'}</p>
+      <div className="fixed inset-0 exam-shell flex items-center justify-center z-50 px-4">
+        <div className="exam-card max-w-md w-full text-center !pl-7">
+          <AlertTriangle size={36} className="text-danger-soft mx-auto mb-4" />
+          <h2 className="font-display text-xl font-semibold text-paper mb-2">Qiymətləndirmə uğursuz oldu</h2>
+          <p className="text-sm text-white/55 mb-6">{analyzeError || 'Zəhmət olmasa bir daha cəhd edin.'}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => {
@@ -220,7 +283,7 @@ export default function SimulationExam({
               Cavablara qayıt
             </button>
             <button onClick={handleSubmit} className="exam-btn-primary">
-              Yenidən analiz et
+              Yenidən qiymətləndir
             </button>
           </div>
         </div>
@@ -230,11 +293,11 @@ export default function SimulationExam({
 
   if (questions.length === 0) {
     return (
-      <div className="fixed inset-0 bg-[#0F1B2A] flex items-center justify-center z-50 px-4">
-        <div className="exam-card max-w-md w-full text-center">
-          <AlertTriangle size={40} className="text-amber-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-white mb-2">Suallar tapılmadı</h2>
-          <p className="text-sm text-slate-300">Bu simulyasiyada sual yoxdur. HR ilə əlaqə saxlayın.</p>
+      <div className="fixed inset-0 exam-shell flex items-center justify-center z-50 px-4">
+        <div className="exam-card max-w-md w-full text-center !pl-7">
+          <AlertTriangle size={36} className="text-gold mx-auto mb-4" />
+          <h2 className="font-display text-xl font-semibold text-paper mb-2">Suallar tapılmadı</h2>
+          <p className="text-sm text-white/55">Bu simulyasiyada sual yoxdur. HR ilə əlaqə saxlayın.</p>
         </div>
       </div>
     )
@@ -243,111 +306,139 @@ export default function SimulationExam({
   const q = questions[currentQ]
 
   return (
-    <div className="fixed inset-0 bg-[#0F1B2A] overflow-auto">
+    <div className="fixed inset-0 exam-shell overflow-auto">
       <ProctorCamera onCheatDetected={handleCheat} cheatCount={cheatCount} />
 
-      {/* Cheat Warning */}
       {showCheatWarning && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-red-500/90 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg">
-          <AlertTriangle size={18} />
-          <span className="font-medium">Xəbərdarlıq! {cheatCount}/3 — Ekrandan çıxmayın!</span>
+        <div
+          role="alert"
+          className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-danger text-paper px-5 py-3 rounded-md flex items-center gap-2 shadow-xl border border-white/10"
+        >
+          <AlertTriangle size={16} aria-hidden="true" />
+          <span className="text-sm font-semibold">
+            Proctor xəbərdarlığı · {cheatCount}/3 — Ekrandan çıxmayın
+          </span>
         </div>
       )}
 
-      {/* Header */}
-      <div className="sticky top-0 bg-[#1A2F48]/95 backdrop-blur border-b border-white/5 px-4 py-3 z-40">
-        <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-sm font-semibold text-white truncate">{simulation.title}</h1>
-            <p className="text-xs text-slate-400">{answeredCount}/{questions.length} cavablandı</p>
-          </div>
-          <div className={`flex items-center gap-2 font-mono font-bold text-lg ${timeLeft < 300 ? 'text-red-400 animate-pulse' : 'text-verdigris-soft'}`}>
-            <Clock size={18} />
-            {formatTime(timeLeft)}
-          </div>
-        </div>
-        {/* Progress bar */}
-        <div className="max-w-3xl mx-auto mt-2">
-          <div className="h-1.5 bg-white/5 rounded-md overflow-hidden">
+      <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#0B1220]/92 backdrop-blur-md">
+        <div className="max-w-3xl mx-auto px-4 py-3.5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 pr-28 sm:pr-40">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-gold font-semibold mb-1">
+                Proctored assessment
+              </p>
+              <h1 className="font-display text-base sm:text-lg font-semibold text-paper truncate">
+                {simulation.title}
+              </h1>
+              <p className="text-xs text-white/45 mt-0.5">
+                {simulation.role_type}
+                {companyName ? ` · ${companyName}` : ''}
+                {' · '}
+                <span className="font-mono">{answeredCount}/{questions.length}</span> cavablandı
+              </p>
+            </div>
             <div
-              className="h-full bg-gradient-to-r from-verdigris-deep to-verdigris-soft rounded-sm transition-all duration-500"
+              className={`flex items-center gap-2 font-mono font-bold text-lg tabular-nums shrink-0 ${
+                timeLeft < 300 ? 'text-danger-soft animate-pulse' : 'text-gold'
+              }`}
+              aria-live="polite"
+              aria-label={`Qalan vaxt ${formatTime(timeLeft)}`}
+            >
+              <Clock size={16} aria-hidden="true" />
+              {formatTime(timeLeft)}
+            </div>
+          </div>
+          <div className="mt-3 h-1 bg-white/[0.06] rounded-sm overflow-hidden">
+            <div
+              className="h-full bg-gold rounded-sm transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Question */}
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        <div className="exam-card mb-6">
+      <main className="max-w-3xl mx-auto px-4 py-8 pb-16">
+        <div className="exam-card mb-5 !pl-7">
           <div className="flex items-center gap-3 mb-4">
-            <span className="w-8 h-8 rounded-md bg-verdigris/20 border border-verdigris/30 text-verdigris-soft font-bold text-sm flex items-center justify-center">
+            <span className="w-8 h-8 rounded-md bg-gold/15 border border-gold/30 text-gold font-mono font-bold text-sm flex items-center justify-center">
               {currentQ + 1}
             </span>
-            <span className="text-xs text-slate-300 uppercase tracking-wide">
+            <span className="text-[11px] text-white/45 uppercase tracking-[0.14em] font-semibold">
               {questionTypeLabel(q.type)}
             </span>
+            <span className="ml-auto font-mono text-[10px] text-white/30 uppercase tracking-wider">
+              Q{currentQ + 1}/{questions.length}
+            </span>
           </div>
-          <p className="text-white font-medium text-base lg:text-lg leading-relaxed">{q.question || 'Sual mətni yoxdur'}</p>
+          <p className="text-paper font-medium text-base lg:text-lg leading-relaxed">
+            {q.question || 'Sual mətni yoxdur'}
+          </p>
         </div>
 
-        <QuestionAnswerInput
-          question={q}
-          value={answers[q.id] || ''}
-          attemptId={attemptId}
-          onChange={(val) => setAnswers((prev) => ({ ...prev, [q.id]: val }))}
-        />
+        <div className="exam-card !pl-6 mb-8">
+          <QuestionAnswerInput
+            question={q}
+            value={answers[q.id] || ''}
+            attemptId={attemptId}
+            onChange={(val) => setAnswers((prev) => ({ ...prev, [q.id]: val }))}
+          />
+        </div>
 
-        {/* Navigation */}
-        <div className="flex items-center justify-between mt-8">
+        <div className="flex items-center justify-between gap-3">
           <button
-            onClick={() => setCurrentQ((q) => Math.max(0, q - 1))}
+            onClick={() => setCurrentQ((idx) => Math.max(0, idx - 1))}
             disabled={currentQ === 0}
             className="exam-btn-secondary"
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={16} aria-hidden="true" />
             Əvvəlki
           </button>
 
           {currentQ < questions.length - 1 ? (
             <button
-              onClick={() => setCurrentQ((q) => Math.min(questions.length - 1, q + 1))}
+              onClick={() => setCurrentQ((idx) => Math.min(questions.length - 1, idx + 1))}
               className="exam-btn-primary"
             >
               Növbəti
-              <ChevronRight size={16} />
+              <ChevronRight size={16} aria-hidden="true" />
             </button>
           ) : (
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="exam-btn-primary bg-green-600 hover:bg-green-500"
+              className="exam-btn-submit"
             >
-              <CheckCircle size={16} />
-              Simulyasiyanı Tamamla
+              <CheckCircle size={16} aria-hidden="true" />
+              Qiymətləndirməyə göndər
             </button>
           )}
         </div>
 
-        {/* Question indicators */}
-        <div className="flex flex-wrap gap-2 mt-6 justify-center max-h-36 overflow-y-auto py-1">
-          {questions.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentQ(i)}
-              className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
-                i === currentQ
-                  ? 'bg-verdigris text-white'
-                  : hasQuestionAnswer(answers, questions[i])
-                  ? 'bg-verdigris/20 text-verdigris-soft border border-verdigris/30'
-                  : 'bg-white/5 text-slate-400 border border-white/10'
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      </div>
+        <nav className="flex flex-wrap gap-2 mt-8 justify-center max-h-36 overflow-y-auto py-1" aria-label="Sual naviqasiyası">
+          {questions.map((_, i) => {
+            const answered = hasQuestionAnswer(answers, questions[i])
+            const active = i === currentQ
+            return (
+              <button
+                key={i}
+                onClick={() => setCurrentQ(i)}
+                className={`w-8 h-8 rounded-md text-xs font-mono font-bold transition-colors ${
+                  active
+                    ? 'bg-gold text-navy-deep'
+                    : answered
+                    ? 'bg-gold/15 text-gold border border-gold/30'
+                    : 'bg-white/[0.04] text-white/40 border border-white/10 hover:border-white/20'
+                }`}
+                aria-current={active ? 'step' : undefined}
+                aria-label={`Sual ${i + 1}${answered ? ', cavablanıb' : ''}`}
+              >
+                {i + 1}
+              </button>
+            )
+          })}
+        </nav>
+      </main>
     </div>
   )
 }

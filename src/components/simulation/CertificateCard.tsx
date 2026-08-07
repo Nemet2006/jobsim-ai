@@ -45,7 +45,7 @@ export function CertificateCard({
     <div
       className={
         isDark
-          ? 'rounded-lg border border-white/15 bg-[#1A2F48] p-6 lg:p-8 text-center'
+          ? 'relative rounded-md border border-white/[0.08] bg-[#121A2B] p-6 lg:p-8 text-center shadow-xl before:absolute before:left-0 before:top-3 before:bottom-3 before:w-[3px] before:rounded-full before:bg-gold/70'
           : 'card-feature p-6 lg:p-8 text-paper text-center'
       }
     >
