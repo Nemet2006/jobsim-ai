@@ -129,36 +129,41 @@ export async function downloadCertificatePDF(data: CertificateData): Promise<voi
   doc.setTextColor(244, 126, 71)
   doc.text(grade.az, w / 2, 152, { align: 'center' })
 
-  // Signatories — proves official JobSim AI issuance
-  const sigY = 168
-  const leftX = 55
-  const rightX = w - 55
-
-  doc.setDrawColor(31, 78, 74)
-  doc.setLineWidth(0.35)
-  doc.line(leftX - 28, sigY, leftX + 28, sigY)
-  doc.line(rightX - 28, sigY, rightX + 28, sigY)
-
-  setPdfFont(doc, 'bold')
-  doc.setFontSize(10)
-  doc.setTextColor(31, 78, 74)
-  doc.text(CERTIFICATE_SIGNATORIES[0].name, leftX, sigY + 6, { align: 'center' })
-  doc.text(CERTIFICATE_SIGNATORIES[1].name, rightX, sigY + 6, { align: 'center' })
+  // Signatories — official JobSim AI issuance (prominent)
+  const sigY = 162
+  const leftX = 70
+  const rightX = w - 70
 
   setPdfFont(doc, 'normal')
   doc.setFontSize(8)
-  doc.setTextColor(92, 92, 92)
-  doc.text(CERTIFICATE_SIGNATORIES[0].role, leftX, sigY + 11, { align: 'center' })
-  doc.text(CERTIFICATE_SIGNATORIES[1].role, rightX, sigY + 11, { align: 'center' })
+  doc.setTextColor(184, 134, 46)
+  doc.text('JobSim AI · Rəsmi imza', w / 2, sigY - 4, { align: 'center' })
+
+  doc.setDrawColor(31, 78, 74)
+  doc.setLineWidth(0.4)
+  doc.line(leftX - 32, sigY + 2, leftX + 32, sigY + 2)
+  doc.line(rightX - 32, sigY + 2, rightX + 32, sigY + 2)
+
+  setPdfFont(doc, 'bold')
+  doc.setFontSize(11)
+  doc.setTextColor(31, 78, 74)
+  doc.text(CERTIFICATE_SIGNATORIES[0].name, leftX, sigY + 9, { align: 'center' })
+  doc.text(CERTIFICATE_SIGNATORIES[1].name, rightX, sigY + 9, { align: 'center' })
+
+  setPdfFont(doc, 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(184, 134, 46)
+  doc.text(CERTIFICATE_SIGNATORIES[0].role, leftX, sigY + 15, { align: 'center' })
+  doc.text(CERTIFICATE_SIGNATORIES[1].role, rightX, sigY + 15, { align: 'center' })
 
   // Footer
   doc.setTextColor(92, 92, 92)
   doc.setFontSize(8)
   setPdfFont(doc, 'normal')
-  doc.text(`Tarix: ${dateStr}`, 24, h - 22)
-  doc.text(`Sertifikat ID: ${certId}`, 24, h - 16)
-  doc.text('JobSim AI · rəsmi sertifikat', w - 24, h - 22, { align: 'right' })
-  doc.text('AI qiymətləndirmə ilə təsdiqlənib', w - 24, h - 16, { align: 'right' })
+  doc.text(`Tarix: ${dateStr}`, 24, h - 18)
+  doc.text(`Sertifikat ID: ${certId}`, 24, h - 12)
+  doc.text('JobSim AI · rəsmi sertifikat', w - 24, h - 18, { align: 'right' })
+  doc.text('AI qiymətləndirmə ilə təsdiqlənib', w - 24, h - 12, { align: 'right' })
 
   const safeName = data.studentName.replace(/[^a-zA-Z0-9\u00C0-\u024F]/g, '-').slice(0, 30)
   doc.save(`JobSim-sertifikat-${safeName}.pdf`)

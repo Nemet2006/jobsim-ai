@@ -54,7 +54,7 @@ export function CertificateCard({
         score={data.score}
         label="SCORE"
         size="lg"
-        variant={isDark ? 'gold' : 'gold'}
+        variant="gold"
         className="mx-auto mb-5"
       />
 
@@ -73,25 +73,44 @@ export function CertificateCard({
       </p>
 
       <p className={`text-sm font-semibold mb-1 ${isDark ? 'text-gold-soft' : 'text-gold-deep'}`}>{grade.az}</p>
-      <p className={`font-mono text-[10px] uppercase tracking-[0.14em] mb-5 ${isDark ? 'text-slate-400' : 'text-paper/70'}`}>
+      <p className={`font-mono text-[10px] uppercase tracking-[0.14em] mb-6 ${isDark ? 'text-slate-400' : 'text-paper/70'}`}>
         ID: {certId}
       </p>
 
+      {/* Official JobSim signatories — always visible under certificate */}
       <div
-        className={`mb-6 grid grid-cols-2 gap-4 max-w-md mx-auto pt-4 border-t ${
-          isDark ? 'border-white/10' : 'border-paper/20'
+        className={`mb-6 rounded-lg px-4 py-5 ${
+          isDark ? 'bg-white/[0.04] border border-white/10' : 'bg-black/20 border border-paper/15'
         }`}
+        aria-label="JobSim AI rəsmi imza"
       >
-        {CERTIFICATE_SIGNATORIES.map((s) => (
-          <div key={s.name} className="text-center">
-            <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-paper'}`}>
-              {s.name}
-            </p>
-            <p className={`text-[10px] uppercase tracking-[0.12em] mt-0.5 ${isDark ? 'text-slate-400' : 'text-paper/65'}`}>
-              {s.role}
-            </p>
-          </div>
-        ))}
+        <p
+          className={`text-[10px] uppercase tracking-[0.18em] font-semibold mb-4 ${
+            isDark ? 'text-gold-soft' : 'text-gold-deep'
+          }`}
+        >
+          JobSim AI · Rəsmi imza
+        </p>
+        <div className="grid grid-cols-2 gap-5 max-w-md mx-auto">
+          {CERTIFICATE_SIGNATORIES.map((s) => (
+            <div key={s.name} className="text-center">
+              <div
+                className={`mx-auto mb-2 h-px w-20 ${isDark ? 'bg-gold/50' : 'bg-gold-deep/70'}`}
+                aria-hidden="true"
+              />
+              <p className={`text-base font-semibold leading-tight ${isDark ? 'text-white' : 'text-paper'}`}>
+                {s.name}
+              </p>
+              <p
+                className={`text-[11px] uppercase tracking-[0.14em] mt-1 font-medium ${
+                  isDark ? 'text-gold-soft' : 'text-gold-deep'
+                }`}
+              >
+                {s.role}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
