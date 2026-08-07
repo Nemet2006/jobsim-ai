@@ -37,8 +37,12 @@ export async function POST(request: Request) {
       throw new ApiError('Email, şifrə və ad tələb olunur', 400)
     }
 
-    if (password.length < 8) {
-      throw new ApiError('Şifrə ən az 8 simvol olmalıdır', 400)
+    if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      throw new ApiError('Email formatı yanlışdır', 400)
+    }
+
+    if (password.length < 8 || password.length > 72) {
+      throw new ApiError('Şifrə 8-72 simvol aralığında olmalıdır', 400)
     }
 
     if (!['student', 'hr', 'courses'].includes(role)) {
