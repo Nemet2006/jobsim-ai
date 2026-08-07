@@ -100,7 +100,15 @@ export function ReportProofView({
           ) : null}
           {generatedAt ? (
             <p className="mt-0.5 text-xs text-ink-mute font-mono">
-              {new Date(generatedAt).toISOString()}
+              {new Date(generatedAt).toLocaleString('az-AZ', {
+                timeZone: 'Asia/Baku',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              })}
             </p>
           ) : null}
         </div>

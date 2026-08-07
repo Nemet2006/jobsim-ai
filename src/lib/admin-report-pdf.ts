@@ -29,13 +29,28 @@ const AZ_MONTHS = [
   'dekabr',
 ]
 
+/** Format in Azerbaijan local time (Asia/Baku, UTC+4) — not server UTC. */
 function formatAzDateTime(iso: string): string {
   const d = new Date(iso)
-  const day = d.getDate()
-  const month = AZ_MONTHS[d.getMonth()] ?? ''
-  const year = d.getFullYear()
-  const hh = String(d.getHours()).padStart(2, '0')
-  const mm = String(d.getMinutes()).padStart(2, '0')
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Baku',
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(d)
+
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? ''
+
+  const day = get('day')
+  const monthIdx = Math.max(0, Number(get('month')) - 1)
+  const month = AZ_MONTHS[monthIdx] ?? ''
+  const year = get('year')
+  const hh = get('hour')
+  const mm = get('minute')
   return `${day} ${month} ${year}, ${hh}:${mm}`
 }
 
@@ -157,38 +172,45 @@ export async function generateAdminReportPdf(
 
   y = 52
 
-  // Proof strip: QR + report id (machine-verifiable, no narrative)
-  ensureSpace(36)
+  // Proof strip: large scannable QR + report id (no narrative)
+  const qrSize = 52
+  const proofH = qrSize + 8
+  ensureSpace(proofH + 4)
   doc.setFillColor(238, 242, 246)
-  doc.roundedRect(marginX, y, pageW - marginX * 2, 34, 2, 2, 'F')
+  doc.roundedRect(marginX, y, pageW - marginX * 2, proofH, 2, 2, 'F')
 
-  const qrSize = 28
-  doc.addImage(qrDataUrl, 'PNG', marginX + 3, y + 3, qrSize, qrSize)
+  // White pad behind QR for contrast / cleaner scan
+  doc.setFillColor(255, 255, 255)
+  doc.roundedRect(marginX + 3, y + 3, qrSize + 2, qrSize + 2, 1.5, 1.5, 'F')
+  doc.addImage(qrDataUrl, 'PNG', marginX + 4, y + 4, qrSize, qrSize)
 
-  drawVerificationSeal(doc, marginX + 48, y + 17, 10)
+  const metaX = marginX + qrSize + 14
+  const metaMidY = y + proofH / 2
+
+  drawVerificationSeal(doc, metaX + 10, metaMidY - 6, 11)
 
   setPdfFont(doc, 'bold')
-  doc.setFontSize(9)
+  doc.setFontSize(10)
   doc.setTextColor(22, 40, 61)
-  doc.text(reportId, marginX + 62, y + 12)
+  doc.text(reportId, metaX + 26, metaMidY - 8)
 
   setPdfFont(doc, 'normal')
-  doc.setFontSize(8)
+  doc.setFontSize(9)
   doc.setTextColor(90, 94, 102)
-  doc.text(proof.payload.generatedAt, marginX + 62, y + 19)
+  doc.text(generatedLabel, metaX + 26, metaMidY)
 
-  // Hash fingerprint strip (visual, not a paragraph)
+  // Hash fingerprint strip (visual)
   const fingerprint = reportId.replace('JSIM-', '')
   doc.setFillColor(22, 40, 61)
-  const barX = marginX + 62
-  const barY = y + 24
+  const barX = metaX + 26
+  const barY = metaMidY + 6
   for (let i = 0; i < fingerprint.length; i++) {
     const code = fingerprint.charCodeAt(i)
-    const h = 3 + (code % 5)
-    doc.rect(barX + i * 2.2, barY + (8 - h) * 0.35, 1.4, h * 0.7, 'F')
+    const h = 3.5 + (code % 6)
+    doc.rect(barX + i * 2.4, barY + (9 - h) * 0.3, 1.6, h * 0.75, 'F')
   }
 
-  y += 40
+  y += proofH + 6
 
   sectionTitle('Platform baza')
   kvRow('Ümumi istifadəçi', snapshot.totals.totalUsers, true)

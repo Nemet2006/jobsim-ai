@@ -56,7 +56,13 @@ function roleChartData(signUps: RoleBreakdown, signIns: RoleBreakdown) {
 }
 
 function formatTime(d: Date) {
-  return d.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  return d.toLocaleTimeString('az-AZ', {
+    timeZone: 'Asia/Baku',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  })
 }
 
 function CoreCard({

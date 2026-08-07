@@ -128,9 +128,9 @@ export function verifyReportProofToken(
 export async function buildProofQrDataUrl(verifyUrl: string): Promise<string> {
   const QRCode = (await import('qrcode')).default
   return QRCode.toDataURL(verifyUrl, {
-    errorCorrectionLevel: 'M',
-    margin: 1,
-    width: 280,
+    errorCorrectionLevel: 'H',
+    margin: 2,
+    width: 640,
     color: { dark: '#16283D', light: '#FFFFFF' },
   })
 }
