@@ -182,7 +182,10 @@ export default function ImpactReportDashboard() {
 
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-ink-mute">
           <p>
-            <span className="font-semibold text-ink-mid">Təsisçi:</span> {IMPACT_META.founder}
+            <span className="font-semibold text-ink-mid">Founder:</span> {IMPACT_META.founder}
+          </p>
+          <p>
+            <span className="font-semibold text-ink-mid">Co-Founder:</span> {IMPACT_META.coFounder}
           </p>
           <p>
             <span className="font-semibold text-ink-mid">Tarix:</span> {reportDate}
@@ -425,14 +428,19 @@ export default function ImpactReportDashboard() {
             </p>
           </Card>
 
-          <Card className="p-5 space-y-3">
-            <p className="text-xs uppercase tracking-wider text-ink-mute font-semibold">Quotes</p>
-            {IMPACT_FEEDBACK.liked.map((q) => (
+          <Card className="p-5 space-y-4">
+            <p className="text-xs uppercase tracking-wider text-ink-mute font-semibold">
+              İstifadəçi rəyləri
+            </p>
+            {IMPACT_FEEDBACK.liked.slice(0, 3).map((q) => (
               <blockquote
-                key={q}
+                key={`${q.author}-${q.date}`}
                 className="text-sm text-ink-mid leading-snug border-l-2 border-gold pl-3"
               >
-                {q}
+                <p>“{q.text}”</p>
+                <footer className="mt-1.5 text-[11px] text-ink-mute">
+                  {q.author} · {q.role} · {q.date}
+                </footer>
               </blockquote>
             ))}
           </Card>

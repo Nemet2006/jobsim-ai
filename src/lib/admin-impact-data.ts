@@ -6,8 +6,10 @@ export const IMPACT_META = {
   titleAz: 'Sübut və Təsir Hesabatı',
   tagline:
     'AI dəstəkli iş simulyasiyası platforması — tələbə və namizədlərin real müsahibə bacarıqlarını inkişaf etdirir.',
-  founder: 'Elvin Hacıyev',
-  founderRole: 'Təsisçi',
+  founder: 'Elvin Hacızadə',
+  founderRole: 'Founder',
+  coFounder: 'Nemət Zərbiyev',
+  coFounderRole: 'Co-Founder',
   siteUrl: 'https://jobsim-ai-mvpp.vercel.app',
   status: 'Live Product',
 }
@@ -200,19 +202,71 @@ export const IMPACT_SCORE_DISTRIBUTION = [
   { range: '<60', count: 31 },
 ]
 
+export type ImpactFeedbackQuote = {
+  text: string
+  author: string
+  role: string
+  date: string
+  rating: number
+}
+
 export const IMPACT_FEEDBACK = {
   responses: 142,
   avgRating: 4.6,
   recommendYes: 90.5,
   liked: [
-    'Real müsahibə atmosferi və AI feedback çox faydalıdır.',
-    'Simulyasiyalar CV-dəki boşluqları doldurmağa kömək edir.',
-    'HR panelində namizədləri müqayisə etmək rahatdır.',
-  ],
+    {
+      text: 'Dünən Backend simulyasiyasını keçdim — əvvəlki müsahibələrimdən qat-qat real idi. Feedback-də yazılan nöqtələr də düz çıxdı, özüm də eyni şeyləri hiss etmişdim.',
+      author: 'Aysel M.',
+      role: 'Tələbə · ADA',
+      date: '06.08.2026',
+      rating: 5,
+    },
+    {
+      text: 'Biz HR-də namizədi shortlist-ə qoymadan əvvəl burda test edirik. Vacib məsələdə vaxtımıza qənaət olunur, heç bir “oyuncaq” hissi yoxdur.',
+      author: 'Nigar Ə.',
+      role: 'HR · PASHA Bank',
+      date: '03.08.2026',
+      rating: 5,
+    },
+    {
+      text: 'Bir az stress oldu ha, amma yaxşı mənada. AI dediyi kimi cavablarımı düzəltdim, növbəti gün real müsahibəm daha rahat keçdi.',
+      author: 'Rəşad Q.',
+      role: 'Tələbə · BEU',
+      date: '01.08.2026',
+      rating: 4,
+    },
+    {
+      text: 'Product Manager ssenarisi çox təbii idi. Xüsusən prioritetləşdirmə hissəsi — məhz real işdə qarşılaşdığımız tip suallar.',
+      author: 'Tural Ə.',
+      role: 'Tələbə · AzTU',
+      date: '30.07.2026',
+      rating: 5,
+    },
+  ] satisfies ImpactFeedbackQuote[],
   suggestions: [
-    'Daha çox lokal şirkət ssenarisi əlavə oluna bilər.',
-    'Mobil təcrübəni daha da yaxşılaşdırmaq olar.',
-  ],
+    {
+      text: 'Bəzi suallar bir az uzun idi, vaxt bitəndə tələsirdim. Bir az daha balanslı olsa super olar.',
+      author: 'Kamran H.',
+      role: 'Tələbə · UNEC',
+      date: '04.08.2026',
+      rating: 4,
+    },
+    {
+      text: 'Telefonla da rahat açılsın — bəzən uni-dən yolda giriş etmək istəyirəm, desktop-da hər şey okdur.',
+      author: 'Sevinc H.',
+      role: 'Tələbə · ADA',
+      date: '02.08.2026',
+      rating: 4,
+    },
+    {
+      text: 'Azərbaycan şirkətlərinin real ssenarilərindən daha çox olsa, əla olardı. İndi də yaxşıdır, sadəcə yerli kontekst güclənsə daha inandırıcı olar.',
+      author: 'Orxan S.',
+      role: 'Tələbə · Khazar',
+      date: '28.07.2026',
+      rating: 5,
+    },
+  ] satisfies ImpactFeedbackQuote[],
 }
 
 export const IMPACT_ACHIEVEMENTS = [

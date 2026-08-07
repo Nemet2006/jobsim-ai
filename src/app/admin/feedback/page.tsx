@@ -50,24 +50,48 @@ export default function AdminFeedbackPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
-        <div className="rounded-2xl bg-white border border-navy/8 p-5 space-y-3">
+        <div className="rounded-2xl bg-white border border-navy/8 p-5 space-y-4">
           <p className="text-xs uppercase tracking-wider text-ink-mute font-semibold">
             Ən çox bəyənilən
           </p>
           {IMPACT_FEEDBACK.liked.map((q) => (
-            <p key={q} className="text-sm text-ink-mid border-l-2 border-gold pl-3">
-              {q}
-            </p>
+            <blockquote
+              key={`${q.author}-${q.date}`}
+              className="text-sm text-ink-mid border-l-2 border-gold pl-3"
+            >
+              <p className="leading-relaxed">“{q.text}”</p>
+              <footer className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-ink-mute">
+                <span className="font-semibold text-ink-mid">{q.author}</span>
+                <span>·</span>
+                <span>{q.role}</span>
+                <span>·</span>
+                <span>{q.date}</span>
+                <span className="inline-flex items-center gap-0.5 text-gold">
+                  <Star size={10} className="fill-gold" aria-hidden="true" />
+                  {q.rating}
+                </span>
+              </footer>
+            </blockquote>
           ))}
         </div>
-        <div className="rounded-2xl bg-white border border-navy/8 p-5 space-y-3">
+        <div className="rounded-2xl bg-white border border-navy/8 p-5 space-y-4">
           <p className="text-xs uppercase tracking-wider text-ink-mute font-semibold">
             Təkliflər
           </p>
           {IMPACT_FEEDBACK.suggestions.map((q) => (
-            <p key={q} className="text-sm text-ink-mid border-l-2 border-navy/20 pl-3">
-              {q}
-            </p>
+            <blockquote
+              key={`${q.author}-${q.date}`}
+              className="text-sm text-ink-mid border-l-2 border-navy/20 pl-3"
+            >
+              <p className="leading-relaxed">“{q.text}”</p>
+              <footer className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-ink-mute">
+                <span className="font-semibold text-ink-mid">{q.author}</span>
+                <span>·</span>
+                <span>{q.role}</span>
+                <span>·</span>
+                <span>{q.date}</span>
+              </footer>
+            </blockquote>
           ))}
         </div>
       </div>

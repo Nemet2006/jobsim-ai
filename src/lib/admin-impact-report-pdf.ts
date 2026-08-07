@@ -155,7 +155,11 @@ export async function generateImpactReportPdf(): Promise<{
   setPdfFont(doc, 'normal')
   doc.setFontSize(8)
   doc.setTextColor(190, 198, 208)
-  doc.text(`${IMPACT_META.founder} · ${generatedLabel}`, marginX, 34)
+  doc.text(
+    `Founder: ${IMPACT_META.founder} · Co-Founder: ${IMPACT_META.coFounder} · ${generatedLabel}`,
+    marginX,
+    34,
+  )
   drawSeal(doc, pageW - marginX - 10, 18, 8)
 
   y = 48
@@ -212,6 +216,9 @@ export async function generateImpactReportPdf(): Promise<{
   kv('Responses', IMPACT_FEEDBACK.responses, true)
   kv('Avg rating', `${IMPACT_FEEDBACK.avgRating}/5`)
   kv('Tövsiyə (Bəli)', `${IMPACT_FEEDBACK.recommendYes}%`)
+  for (const q of IMPACT_FEEDBACK.liked.slice(0, 3)) {
+    kv(`${q.author} · ${q.date}`, q.text.slice(0, 90) + (q.text.length > 90 ? '…' : ''))
+  }
   y += 2
 
   section('5', 'Impact Metrics')

@@ -8,6 +8,7 @@ import {
   getCertificateId,
   getCertificateGrade,
   formatCertificateDate,
+  CERTIFICATE_SIGNATORIES,
   type CertificateData,
 } from '@/lib/certificate'
 import { VerificationSeal } from '@/components/ui/VerificationSeal'
@@ -72,9 +73,26 @@ export function CertificateCard({
       </p>
 
       <p className={`text-sm font-semibold mb-1 ${isDark ? 'text-gold-soft' : 'text-gold-deep'}`}>{grade.az}</p>
-      <p className={`font-mono text-[10px] uppercase tracking-[0.14em] mb-6 ${isDark ? 'text-slate-400' : 'text-paper/70'}`}>
+      <p className={`font-mono text-[10px] uppercase tracking-[0.14em] mb-5 ${isDark ? 'text-slate-400' : 'text-paper/70'}`}>
         ID: {certId}
       </p>
+
+      <div
+        className={`mb-6 grid grid-cols-2 gap-4 max-w-md mx-auto pt-4 border-t ${
+          isDark ? 'border-white/10' : 'border-paper/20'
+        }`}
+      >
+        {CERTIFICATE_SIGNATORIES.map((s) => (
+          <div key={s.name} className="text-center">
+            <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-paper'}`}>
+              {s.name}
+            </p>
+            <p className={`text-[10px] uppercase tracking-[0.12em] mt-0.5 ${isDark ? 'text-slate-400' : 'text-paper/65'}`}>
+              {s.role}
+            </p>
+          </div>
+        ))}
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <button
