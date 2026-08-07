@@ -10,61 +10,87 @@ const config: Config = {
     extend: {
       fontFamily: {
         body: ['var(--font-body)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['var(--font-display)', 'ui-serif', 'Georgia', 'serif'],
+        display: ['var(--font-display)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       colors: {
-        // Forage palette — light, friendly, professional
-        cream: {
-          DEFAULT: '#FAF5EC',
-          deep: '#F5EBD9',
-          warm: '#FFF7ED',
-          paper: '#FDFAF3',
+        // Corporate ledger palette — trust, achievement, progress
+        navy: {
+          DEFAULT: '#16283D',
+          deep: '#0F1B2A',
+          rich: '#1E3A56',
+          soft: '#3A5674',
+          tint: '#D4DCE6',
+          wash: '#EEF2F6',
         },
-        // Forest green — primary brand
-        forest: {
-          DEFAULT: '#1F4E4A',
-          deep: '#143832',
-          rich: '#2A6660',
-          soft: '#3F857E',
-          mint: '#7FB5AE',
-          tint: '#D8E8E5',
-          wash: '#EEF5F3',
+        gold: {
+          DEFAULT: '#B8862E',
+          deep: '#8F6A1F',
+          soft: '#D4A84B',
+          tint: '#F5E9C8',
+          wash: '#FBF6EA',
         },
-        // Coral — CTAs, energy
-        coral: {
-          DEFAULT: '#F47E47',
-          deep: '#E26536',
-          soft: '#FAA277',
-          tint: '#FCE4D4',
-          wash: '#FFF4EC',
+        verdigris: {
+          DEFAULT: '#1E7A63',
+          deep: '#155A49',
+          soft: '#3FA88A',
+          tint: '#D5EDE6',
+          wash: '#EEF7F4',
         },
-        // Sunshine yellow — highlights, achievement
-        sun: {
-          DEFAULT: '#F5C842',
-          deep: '#E5B41E',
-          soft: '#FAD876',
-          tint: '#FCEFC2',
-          wash: '#FFF8E0',
+        paper: {
+          DEFAULT: '#F6F3EC',
+          deep: '#EDE8DC',
+          warm: '#FBF9F4',
+          card: '#FFFFFF',
         },
-        // Ink — text
         ink: {
-          DEFAULT: '#1A1A1A',
-          dim: '#3D3D3D',
-          mid: '#5C5C5C',
-          mute: '#8A8A8A',
-          subtle: '#B5B5B5',
-          ghost: '#E0E0E0',
+          DEFAULT: '#15181D',
+          dim: '#2C313A',
+          mid: '#4A5160',
+          mute: '#7A8290',
+          subtle: '#A8B0BC',
+          ghost: '#D5DAE2',
         },
-        // Semantic
-        success: { DEFAULT: '#22A06B', soft: '#7BC9A1', tint: '#D9EFE3' },
-        danger:  { DEFAULT: '#E14B4B', soft: '#F08585', tint: '#FBDADA' },
-        info:    { DEFAULT: '#2E6FE6', soft: '#7BA4F2', tint: '#DBE7FB' },
+        // Semantic — Alert Ember only for real danger
+        success: { DEFAULT: '#1E7A63', soft: '#3FA88A', tint: '#D5EDE6' },
+        danger:  { DEFAULT: '#C4432E', soft: '#E0705C', tint: '#F8DDD8' },
+        info:    { DEFAULT: '#2E5A8C', soft: '#6B8FB8', tint: '#D9E4F0' },
+
+        // Backward-compat aliases (map old forage tokens → new system)
+        cream: {
+          DEFAULT: '#F6F3EC',
+          deep: '#EDE8DC',
+          warm: '#FBF9F4',
+          paper: '#FFFFFF',
+        },
+        forest: {
+          DEFAULT: '#16283D',
+          deep: '#0F1B2A',
+          rich: '#1E3A56',
+          soft: '#3A5674',
+          mint: '#6B8FB8',
+          tint: '#D4DCE6',
+          wash: '#EEF2F6',
+        },
+        coral: {
+          DEFAULT: '#B8862E',
+          deep: '#8F6A1F',
+          soft: '#D4A84B',
+          tint: '#F5E9C8',
+          wash: '#FBF6EA',
+        },
+        sun: {
+          DEFAULT: '#B8862E',
+          deep: '#8F6A1F',
+          soft: '#D4A84B',
+          tint: '#F5E9C8',
+          wash: '#FBF6EA',
+        },
       },
       backgroundImage: {
-        'forest-radial': 'radial-gradient(ellipse 60% 40% at 50% 100%, rgba(31, 78, 74, 0.06), transparent 70%)',
-        'cream-glow': 'radial-gradient(ellipse 100% 60% at 50% 0%, rgba(244, 126, 71, 0.05), transparent 70%)',
-        'card-pattern': "radial-gradient(circle at 1px 1px, rgba(31,78,74,0.06) 1px, transparent 0)",
+        'navy-radial': 'radial-gradient(ellipse 60% 40% at 50% 100%, rgba(22, 40, 61, 0.06), transparent 70%)',
+        'paper-glow': 'radial-gradient(ellipse 100% 60% at 50% 0%, rgba(184, 134, 46, 0.04), transparent 70%)',
+        'card-pattern': "radial-gradient(circle at 1px 1px, rgba(22,40,61,0.05) 1px, transparent 0)",
       },
       borderRadius: {
         '4xl': '2rem',
@@ -81,14 +107,17 @@ const config: Config = {
         '85': '0.85',
       },
       boxShadow: {
-        'soft-sm':  '0 1px 2px rgba(20, 56, 50, 0.06), 0 1px 1px rgba(20, 56, 50, 0.04)',
-        'soft':     '0 4px 10px -2px rgba(20, 56, 50, 0.08), 0 2px 4px -1px rgba(20, 56, 50, 0.04)',
-        'soft-md':  '0 8px 20px -4px rgba(20, 56, 50, 0.1), 0 4px 8px -2px rgba(20, 56, 50, 0.06)',
-        'soft-lg':  '0 16px 32px -8px rgba(20, 56, 50, 0.12), 0 8px 16px -4px rgba(20, 56, 50, 0.06)',
-        'soft-xl':  '0 24px 48px -12px rgba(20, 56, 50, 0.14), 0 12px 24px -6px rgba(20, 56, 50, 0.08)',
-        'coral':    '0 8px 24px -6px rgba(244, 126, 71, 0.4)',
-        'forest':   '0 8px 24px -6px rgba(31, 78, 74, 0.35)',
-        'card':     '0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 4px 12px -2px rgba(20, 56, 50, 0.06)',
+        'soft-sm':  '0 1px 2px rgba(15, 27, 42, 0.05), 0 1px 1px rgba(15, 27, 42, 0.03)',
+        'soft':     '0 2px 8px -2px rgba(15, 27, 42, 0.07), 0 1px 3px -1px rgba(15, 27, 42, 0.04)',
+        'soft-md':  '0 6px 16px -4px rgba(15, 27, 42, 0.09), 0 2px 6px -2px rgba(15, 27, 42, 0.05)',
+        'soft-lg':  '0 12px 28px -8px rgba(15, 27, 42, 0.11), 0 4px 12px -4px rgba(15, 27, 42, 0.06)',
+        'soft-xl':  '0 20px 40px -12px rgba(15, 27, 42, 0.13), 0 8px 20px -6px rgba(15, 27, 42, 0.07)',
+        'navy':     '0 6px 20px -6px rgba(22, 40, 61, 0.35)',
+        'gold':     '0 6px 20px -6px rgba(184, 134, 46, 0.35)',
+        // Compat aliases
+        'coral':    '0 6px 20px -6px rgba(184, 134, 46, 0.35)',
+        'forest':   '0 6px 20px -6px rgba(22, 40, 61, 0.35)',
+        'card':     '0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 2px 8px -2px rgba(15, 27, 42, 0.06)',
       },
       animation: {
         'fade-up':       'fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards',

@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import type { UserRole } from '@/types'
+import LandingPage from '@/components/landing/LandingPage'
 
 const ROLE_REDIRECTS: Record<UserRole, string> = {
   student: '/student/dashboard',
@@ -27,5 +28,5 @@ export default async function HomePage() {
     }
   }
 
-  redirect('/login')
+  return <LandingPage />
 }

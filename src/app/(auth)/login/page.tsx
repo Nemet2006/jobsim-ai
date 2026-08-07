@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/client'
 import { track } from '@/lib/analytics-client'
 import type { UserRole } from '@/types'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
+import { VerificationSeal } from '@/components/ui/VerificationSeal'
 
 const ROLE_REDIRECTS: Record<UserRole, string> = {
   student: '/student/dashboard',
@@ -64,98 +65,92 @@ export default function LoginPage() {
     <div className="min-h-screen relative">
       <AuroraBackground variant="auth" />
 
-      {/* Top nav */}
       <header className="relative z-10 px-6 lg:px-8 py-5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2" aria-label="JobSim AI">
-            <div className="w-8 h-8 rounded-xl bg-forest flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="#FAF5EC" />
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="JobSim AI">
+            <div className="w-7 h-7 rounded-md bg-navy flex items-center justify-center">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 2L14 9L21 11L14 13L12 20L10 13L3 11L10 9L12 2Z" fill="#F6F3EC" />
               </svg>
             </div>
-            <span className="font-display text-2xl font-semibold">
-              JobSim<span className="text-coral">.</span>
+            <span className="font-display text-xl font-semibold">
+              JobSim<span className="text-gold">.</span>
             </span>
           </Link>
-          <Link
-            href="/register"
-            className="text-sm font-medium text-ink-mid hover:text-forest"
-          >
-            Hesabınız yoxdur? <span className="text-forest underline-offset-2 hover:underline">Qeydiyyat</span>
+          <Link href="/register" className="text-sm font-medium text-ink-mid hover:text-navy">
+            Hesabınız yoxdur? <span className="text-navy underline-offset-2 hover:underline">Qeydiyyat</span>
           </Link>
         </div>
       </header>
 
       <main id="main" className="relative z-10 px-6 lg:px-8 py-10 lg:py-16">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-
-          {/* Left: hero */}
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.section
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="order-2 lg:order-1"
           >
-            <span className="h-eyebrow-coral inline-block mb-5">Welcome back</span>
-            <h1 className="font-display text-[clamp(2.5rem,6vw,5rem)] leading-[1.02] font-semibold text-ink text-balance mb-5">
-              Get noticed.<br />
-              <span className="italic font-light text-forest">Get hired.</span>
+            <span className="h-eyebrow-gold inline-block mb-4">Welcome back</span>
+            <h1 className="h-display text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] mb-5 text-balance">
+              Sübut et.<br />
+              <span className="text-navy">Görün.</span>{' '}
+              <span className="text-gold">İşə düz.</span>
             </h1>
-            <p className="text-lg lg:text-xl text-ink-mid leading-relaxed max-w-lg mb-8 text-balance">
-              Real iş simulyasiyaları ilə bacarıqlarını sübut et. AI qiymətləndirməsi, ekspert geri-bildirimi və sertifikat.
+            <p className="text-base lg:text-lg text-ink-mid leading-relaxed max-w-md mb-7">
+              Real iş simulyasiyaları ilə bacarıqlarını sübut et. AI qiymətləndirməsi, sertifikat və verification seal.
             </p>
-
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-2.5 mb-8">
               {[
-                'Real şirkət simulyasiyaları (bank, telekom, audit)',
+                'Real şirkət simulyasiyaları',
                 'AI qiymətləndirmə və bacarıq pasportu',
                 'Universitet qrupu ilə inteqrasiya',
               ].map((text, i) => (
                 <motion.li
                   key={i}
-                  initial={{ opacity: 0, x: -8 }}
+                  initial={{ opacity: 0, x: -6 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + i * 0.08 }}
-                  className="flex items-center gap-3"
+                  transition={{ delay: 0.18 + i * 0.07 }}
+                  className="flex items-center gap-2.5"
                 >
-                  <CheckCircle2 size={18} className="text-forest shrink-0" aria-hidden="true" />
-                  <span className="text-base text-ink">{text}</span>
+                  <CheckCircle2 size={16} className="text-verdigris shrink-0" aria-hidden="true" />
+                  <span className="text-sm text-ink">{text}</span>
                 </motion.li>
               ))}
             </ul>
+            <VerificationSeal score={94} label="SCORE" size="sm" variant="gold" />
           </motion.section>
 
-          {/* Right: login card */}
           <motion.aside
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
             className="order-1 lg:order-2"
             aria-label="Daxil olma forması"
           >
-            <div className="card p-7 lg:p-9 max-w-md mx-auto lg:ml-auto lg:mr-0">
-              <h2 className="font-display text-3xl lg:text-4xl font-semibold mb-2">
-                Daxil ol<span className="text-coral">.</span>
+            <div className="card-dossier p-7 lg:p-8 max-w-md mx-auto lg:ml-auto lg:mr-0">
+              <h2 className="font-display text-2xl lg:text-3xl font-semibold mb-1.5">
+                Daxil ol<span className="text-gold">.</span>
               </h2>
-              <p className="text-sm text-ink-mid mb-7">
+              <p className="text-sm text-ink-mid mb-6">
                 Davam etmək üçün hesabınıza qoşulun.
               </p>
 
               {error && (
                 <motion.div
-                  initial={{ opacity: 0, y: -6 }}
+                  initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
                   role="alert"
                   aria-live="polite"
-                  className="mb-5 px-4 py-3 bg-danger-tint border border-danger/25 text-danger text-sm rounded-xl"
+                  className="mb-5 px-3.5 py-2.5 bg-danger-tint border border-danger/25 text-danger text-sm rounded-md"
                 >
                   {error}
                 </motion.div>
               )}
 
-              <form onSubmit={handleLogin} className="space-y-5">
+              <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-ink mb-2">
+                  <label htmlFor="email" className="block text-sm font-semibold text-ink mb-1.5">
                     Email
                   </label>
                   <input
@@ -173,14 +168,9 @@ export default function LoginPage() {
                   />
                 </div>
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label htmlFor="password" className="text-sm font-semibold text-ink">
-                      Şifrə
-                    </label>
-                    <Link href="/login" className="text-xs font-medium text-forest hover:text-forest-deep">
-                      Unutdunuz?
-                    </Link>
-                  </div>
+                  <label htmlFor="password" className="block text-sm font-semibold text-ink mb-1.5">
+                    Şifrə
+                  </label>
                   <input
                     id="password"
                     type="password"
@@ -194,7 +184,7 @@ export default function LoginPage() {
                   />
                 </div>
 
-                <button type="submit" disabled={loading} className="btn-coral w-full py-3.5 group">
+                <button type="submit" disabled={loading} className="btn-primary w-full py-3 group">
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
@@ -209,22 +199,15 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              <div className="mt-7 pt-6 border-t border-forest/8 text-center">
+              <div className="mt-6 pt-5 border-t border-navy/10 text-center">
                 <p className="text-sm text-ink-mid">
                   Yeni gəlmisiniz?{' '}
-                  <Link href="/register" className="font-semibold text-forest hover:text-forest-deep underline-offset-2 hover:underline">
+                  <Link href="/register" className="font-semibold text-navy hover:underline underline-offset-2">
                     Pulsuz hesab yaradın →
                   </Link>
                 </p>
               </div>
             </div>
-
-            <p className="mt-5 text-center text-xs text-ink-mute">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-success" aria-hidden="true" />
-                100% pulsuz · Self-paced · Open-access
-              </span>
-            </p>
           </motion.aside>
         </div>
       </main>

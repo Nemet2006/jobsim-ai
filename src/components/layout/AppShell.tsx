@@ -41,27 +41,22 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-cream">
-      {/* Top navbar (Forage style) */}
-      <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur-sm border-b border-forest/8">
+    <div className="min-h-screen bg-paper">
+      <header className="sticky top-0 z-40 bg-paper/95 backdrop-blur-sm border-b border-navy/10">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-18">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group" aria-label="JobSim AI ana səhifə">
-              <div className="relative">
-                <div className="w-8 h-8 rounded-xl bg-forest flex items-center justify-center">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="#FAF5EC" />
-                  </svg>
-                </div>
+          <div className="flex items-center justify-between h-14 lg:h-16">
+            <Link href="/" className="flex items-center gap-2.5 group" aria-label="JobSim AI ana səhifə">
+              <div className="w-7 h-7 rounded-md bg-navy flex items-center justify-center">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 2L14 9L21 11L14 13L12 20L10 13L3 11L10 9L12 2Z" fill="#F6F3EC" />
+                </svg>
               </div>
-              <span className="font-display text-2xl font-semibold tracking-tight">
-                JobSim<span className="text-coral">.</span>
+              <span className="font-display text-xl font-semibold tracking-tight text-ink">
+                JobSim<span className="text-gold">.</span>
               </span>
             </Link>
 
-            {/* Desktop nav */}
-            <nav className="hidden lg:flex items-center gap-1" aria-label="Əsas naviqasiya">
+            <nav className="hidden lg:flex items-center gap-0.5" aria-label="Əsas naviqasiya">
               {navItems.map((item) => {
                 const Icon = item.icon
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
@@ -70,37 +65,37 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
                     key={item.href}
                     href={item.href}
                     onClick={() => track('nav_click', { href: item.href, label: item.label })}
-                    className={`relative inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium ${
-                      isActive ? 'text-forest bg-forest-wash' : 'text-ink-mid hover:text-forest hover:bg-forest-wash/60'
+                    className={`relative inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium ${
+                      isActive
+                        ? 'text-navy bg-navy-wash'
+                        : 'text-ink-mid hover:text-navy hover:bg-navy-wash/70'
                     }`}
                     aria-current={isActive ? 'page' : undefined}
                   >
-                    <Icon size={15} strokeWidth={isActive ? 2.4 : 1.9} aria-hidden="true" />
+                    <Icon size={14} strokeWidth={isActive ? 2.4 : 1.9} aria-hidden="true" />
                     {item.label}
                   </Link>
                 )
               })}
             </nav>
 
-            {/* Right cluster: user menu */}
             <div className="flex items-center gap-2">
-              {/* User menu (desktop) */}
               <div className="hidden lg:block relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2.5 pl-1.5 pr-3 py-1.5 rounded-full border border-forest/12 bg-white hover:border-forest/30 hover:shadow-soft-sm"
+                  className="flex items-center gap-2 pl-1.5 pr-2.5 py-1 rounded-md border border-navy/12 bg-white hover:border-navy/25"
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
                   aria-label="Hesab menyusu"
                 >
-                  <div className="w-7 h-7 rounded-full bg-forest text-cream font-semibold text-xs flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-md bg-navy text-paper font-semibold text-[10px] flex items-center justify-center">
                     {user.full_name?.[0]?.toUpperCase() || 'U'}
                   </div>
-                  <span className="text-sm font-medium text-ink truncate max-w-[120px]">
+                  <span className="text-sm font-medium text-ink truncate max-w-[110px]">
                     {user.full_name?.split(' ')[0]}
                   </span>
-                  {user.is_premium && <span className="tag-coral text-[9px] py-0">PRO</span>}
-                  <ChevronDown size={14} className="text-ink-mute" aria-hidden="true" />
+                  {user.is_premium && <span className="tag-gold text-[9px] py-0">PRO</span>}
+                  <ChevronDown size={13} className="text-ink-mute" aria-hidden="true" />
                 </button>
 
                 <AnimatePresence>
@@ -108,24 +103,24 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
                     <>
                       <div className="fixed inset-0 z-30" onClick={() => setUserMenuOpen(false)} aria-hidden="true" />
                       <motion.div
-                        initial={{ opacity: 0, y: -6 }}
+                        initial={{ opacity: 0, y: -4 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
-                        transition={{ duration: 0.18 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.15 }}
                         role="menu"
-                        className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-soft-lg border border-forest/8 p-2 z-40"
+                        className="absolute right-0 top-full mt-1.5 w-60 bg-white rounded-lg shadow-soft-lg border border-navy/10 p-1.5 z-40"
                       >
-                        <div className="px-3 py-2.5 border-b border-forest/8 mb-1">
+                        <div className="px-3 py-2.5 border-b border-navy/8 mb-1">
                           <p className="text-sm font-semibold text-ink truncate">{user.full_name}</p>
                           <p className="text-xs text-ink-mute truncate">{user.email}</p>
-                          <p className="text-[10px] uppercase tracking-wider text-forest mt-1 font-semibold">{brand.section}</p>
+                          <p className="text-[10px] uppercase tracking-[0.14em] text-navy mt-1 font-semibold">{brand.section}</p>
                         </div>
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-danger hover:bg-danger-tint"
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-danger hover:bg-danger-tint"
                           role="menuitem"
                         >
-                          <LogOut size={15} aria-hidden="true" />
+                          <LogOut size={14} aria-hidden="true" />
                           Çıxış
                         </button>
                       </motion.div>
@@ -134,58 +129,55 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
                 </AnimatePresence>
               </div>
 
-              {/* Mobile menu button */}
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden w-10 h-10 rounded-full border border-forest/12 bg-white hover:bg-forest-wash flex items-center justify-center text-ink"
+                className="lg:hidden w-9 h-9 rounded-md border border-navy/12 bg-white hover:bg-navy-wash flex items-center justify-center text-ink"
                 aria-label="Menyunu aç"
               >
-                <Menu size={18} aria-hidden="true" />
+                <Menu size={16} aria-hidden="true" />
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile sidebar overlay */}
       <AnimatePresence>
         {sidebarOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="lg:hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-50"
+            className="lg:hidden fixed inset-0 bg-ink/25 backdrop-blur-sm z-50"
             onClick={() => setSidebarOpen(false)}
             aria-hidden="true"
           />
         )}
       </AnimatePresence>
 
-      {/* Mobile sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
           <motion.aside
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:hidden fixed right-0 top-0 h-full w-[300px] bg-cream z-50 shadow-soft-xl flex flex-col"
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:hidden fixed right-0 top-0 h-full w-[280px] bg-paper z-50 shadow-soft-xl flex flex-col"
             aria-label="Naviqasiya menyusu"
           >
-            <div className="flex items-center justify-between p-5 border-b border-forest/8">
-              <span className="font-display text-xl font-semibold">
-                Menu<span className="text-coral">.</span>
+            <div className="flex items-center justify-between p-4 border-b border-navy/10">
+              <span className="font-display text-lg font-semibold">
+                Menu<span className="text-gold">.</span>
               </span>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="w-9 h-9 rounded-full hover:bg-forest-wash flex items-center justify-center text-ink-mid hover:text-ink"
+                className="w-8 h-8 rounded-md hover:bg-navy-wash flex items-center justify-center text-ink-mid hover:text-ink"
                 aria-label="Menyunu bağla"
               >
-                <X size={18} aria-hidden="true" />
+                <X size={16} aria-hidden="true" />
               </button>
             </div>
 
-            <nav className="flex-1 p-3 space-y-1 overflow-y-auto" aria-label="Mobile naviqasiya">
+            <nav className="flex-1 p-2.5 space-y-0.5 overflow-y-auto" aria-label="Mobile naviqasiya">
               {navItems.map((item) => {
                 const Icon = item.icon
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
@@ -200,30 +192,30 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
                     className={isActive ? 'nav-link-active' : 'nav-link'}
                     aria-current={isActive ? 'page' : undefined}
                   >
-                    <Icon size={17} strokeWidth={isActive ? 2.2 : 1.9} aria-hidden="true" />
+                    <Icon size={16} strokeWidth={isActive ? 2.2 : 1.9} aria-hidden="true" />
                     <span>{item.label}</span>
                   </Link>
                 )
               })}
             </nav>
 
-            <div className="p-4 border-t border-forest/8 space-y-3">
-              <div className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-white border border-forest/8">
-                <div className="w-10 h-10 rounded-full bg-forest text-cream font-semibold text-sm flex items-center justify-center">
+            <div className="p-3 border-t border-navy/10 space-y-2.5">
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-navy/10">
+                <div className="w-9 h-9 rounded-md bg-navy text-paper font-semibold text-sm flex items-center justify-center">
                   {user.full_name?.[0]?.toUpperCase() || 'U'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-ink truncate">{user.full_name}</p>
                   <p className="text-xs text-ink-mute truncate">{user.email}</p>
                 </div>
-                {user.is_premium && <span className="tag-coral">PRO</span>}
+                {user.is_premium && <span className="tag-gold">PRO</span>}
               </div>
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-danger-tint text-danger font-medium text-sm hover:bg-danger/15"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-danger-tint text-danger font-medium text-sm"
                 aria-label="Hesabdan çıxış"
               >
-                <LogOut size={15} aria-hidden="true" />
+                <LogOut size={14} aria-hidden="true" />
                 Çıxış
               </button>
             </div>
@@ -231,22 +223,20 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
         )}
       </AnimatePresence>
 
-      {/* Main content */}
-      <main id="main" className="max-w-7xl mx-auto px-4 lg:px-8 py-8 lg:py-12">
+      <main id="main" className="max-w-7xl mx-auto px-4 lg:px-8 py-7 lg:py-10">
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="mt-20 border-t border-forest/8 bg-cream-paper/50">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="mt-16 border-t border-navy/10 bg-paper-warm/60">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-forest flex items-center justify-center">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="#FAF5EC" />
+            <div className="w-5 h-5 rounded bg-navy flex items-center justify-center">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 2L14 9L21 11L14 13L12 20L10 13L3 11L10 9L12 2Z" fill="#F6F3EC" />
               </svg>
             </div>
-            <span className="font-display text-base font-semibold">
-              JobSim<span className="text-coral">.</span>
+            <span className="font-display text-sm font-semibold">
+              JobSim<span className="text-gold">.</span>
             </span>
           </div>
           <p className="text-xs text-ink-mute">© 2026 JobSim AI · Get noticed. Get hired.</p>
