@@ -14,6 +14,11 @@ const MAX_BODY_BYTES = 4096
 
 export async function POST(request: Request) {
   try {
+    const { ANALYTICS_LIVE_TRACKING } = await import('@/lib/analytics-flags')
+    if (!ANALYTICS_LIVE_TRACKING) {
+      return NextResponse.json({ ok: true, tracking: 'disabled' })
+    }
+
     const ip = getClientIp(request)
     const rateLimited = await enforceRateLimit(`analytics:${ip}`, 120, 60)
     if (rateLimited) return rateLimited

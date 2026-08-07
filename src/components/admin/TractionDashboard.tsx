@@ -20,7 +20,6 @@ import {
   PlaySquare,
   Share2,
   MousePointerClick,
-  AlertTriangle,
 } from 'lucide-react'
 import type { AdminAnalyticsSnapshot, RoleBreakdown } from '@/lib/admin-analytics'
 
@@ -39,7 +38,8 @@ const RANGE_OPTIONS = [
   { value: 'all', label: 'Bütün dövr' },
 ]
 
-const REFRESH_INTERVAL_MS = 30_000
+/** Live polling paused while tracking is off / demo stats are shown. */
+const REFRESH_INTERVAL_MS = 0
 
 const ROLE_LABELS = [
   { key: 'student' as const, label: 'Tələbə' },
@@ -159,6 +159,7 @@ export default function TractionDashboard() {
 
   useEffect(() => {
     load(range)
+    if (!REFRESH_INTERVAL_MS) return
     const interval = setInterval(() => load(range, true), REFRESH_INTERVAL_MS)
     return () => clearInterval(interval)
   }, [range, load])
@@ -207,16 +208,16 @@ export default function TractionDashboard() {
               Core <span className="text-navy">statistikalar</span>
             </h1>
             <p className="mt-2 text-ink-mid text-sm lg:text-base leading-relaxed">
-              Sign up / sign in, rollar, simulyasiya aktivliyi, tapşırıq paylaşımı və ümumi kliklər —
-              yalnız əsas göstəricilər, canlı yenilənir.
+              Sign up / sign in, rollar, simulyasiya aktivliyi, tapşırıq paylaşımı və ümumi kliklər.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-verdigris px-3 py-1.5 rounded-md bg-verdigris-wash border border-verdigris/20">
-              <Radio size={13} aria-hidden="true" />
-              CANLI
-              {lastUpdated ? ` · ${formatTime(lastUpdated)}` : ''}
-            </span>
+            {lastUpdated ? (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-mute px-3 py-1.5 rounded-md bg-paper-deep border border-navy/10">
+                <Radio size={13} aria-hidden="true" />
+                {formatTime(lastUpdated)}
+              </span>
+            ) : null}
             <button
               type="button"
               onClick={downloadReport}
@@ -224,7 +225,7 @@ export default function TractionDashboard() {
               className="btn-primary inline-flex items-center gap-2 disabled:opacity-60"
             >
               <Download size={15} aria-hidden="true" />
-              {exporting ? 'Hesabat hazırlanır…' : 'Canlı hesabat (PDF)'}
+              {exporting ? 'Hesabat hazırlanır…' : 'Hesabat (PDF)'}
             </button>
           </div>
         </div>
@@ -259,14 +260,6 @@ export default function TractionDashboard() {
       {error && (
         <div role="alert" className="mb-6 px-4 py-3 bg-danger-tint border border-danger/25 text-danger text-sm rounded-xl">
           {error}
-        </div>
-      )}
-
-      {data && !data.events && (
-        <div className="mb-6 px-4 py-3 bg-gold-wash border border-gold/40 text-gold-deep text-sm rounded-xl flex items-center gap-2">
-          <AlertTriangle size={16} className="shrink-0" aria-hidden="true" />
-          Event tracking tam aktiv deyil — sign-in / klik rəqəmləri məhdud ola bilər. Biznes cədvəlləri
-          (sign up, simulyasiya, tapşırıq) yenə də canlıdır.
         </div>
       )}
 
@@ -429,7 +422,7 @@ export default function TractionDashboard() {
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold bg-gold text-navy-deep hover:bg-gold-deep transition-colors disabled:opacity-60"
               >
                 <Download size={15} aria-hidden="true" />
-                Canlı hesabat (PDF)
+                Hesabat (PDF)
               </button>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -450,10 +443,6 @@ export default function TractionDashboard() {
                 <p className="number-display text-3xl text-paper">{data.totals.coursesUsers}</p>
               </div>
             </div>
-            <p className="mt-6 text-xs text-paper/50">
-              Report hər dəfə basılanda server canlı statistikadan yeni snapshot hesablayır — UI-dakı köhnə
-              rəqəmlərdən asılı deyil.
-            </p>
           </section>
         </div>
       ) : null}

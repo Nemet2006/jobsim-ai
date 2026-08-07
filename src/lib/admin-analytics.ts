@@ -138,14 +138,22 @@ export function normalizeRange(input: string | null): AdminRange {
 }
 
 /**
- * Builds a live admin analytics snapshot from business tables + analytics_events.
- * Used by both the dashboard summary and the report export (always fresh).
+ * Builds an admin analytics snapshot.
+ * When ADMIN_USE_DEMO_STATS is on, returns curated presentation numbers
+ * (live DB queries + event tracking stay off until flags are flipped).
  */
 export async function buildAdminAnalyticsSnapshot(
   admin: AdminClient,
   rangeInput: string | null
 ): Promise<AdminAnalyticsSnapshot> {
   const range = normalizeRange(rangeInput)
+
+  const { ADMIN_USE_DEMO_STATS } = await import('@/lib/analytics-flags')
+  if (ADMIN_USE_DEMO_STATS) {
+    const { buildDemoAdminSnapshot } = await import('@/lib/admin-demo-stats')
+    return buildDemoAdminSnapshot(range)
+  }
+
   const since = sinceForRange(range)
   const head = { count: 'exact' as const, head: true }
 
