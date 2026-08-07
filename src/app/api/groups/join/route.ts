@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { ApiError, jsonError, requireRole } from '@/lib/api-auth'
 import { enforceRateLimit } from '@/lib/rate-limit'
+import { trackServerEvent } from '@/lib/analytics'
 
 export async function POST(request: Request) {
   try {
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
       throw new ApiError('Qrupa qoşulma uğursuz oldu', 500)
     }
 
-    const result = data as { ok: boolean; error?: string; group_name?: string }
+    const result = data as { ok: boolean; error?: string; group_id?: string; group_name?: string }
 
     if (!result?.ok) {
       const messages: Record<string, string> = {
@@ -33,6 +34,14 @@ export async function POST(request: Request) {
       }
       throw new ApiError(messages[result.error || ''] || 'Qoşulma uğursuz', 400)
     }
+
+    await trackServerEvent({
+      eventName: 'group_joined',
+      userId: user.id,
+      role: 'student',
+      eventId: result.group_id ? `group_joined:${result.group_id}:${user.id}` : null,
+      properties: result.group_id ? { group_id: result.group_id } : {},
+    })
 
     return NextResponse.json({
       ok: true,

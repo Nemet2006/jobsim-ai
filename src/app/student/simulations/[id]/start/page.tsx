@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import SimulationExam from '@/components/simulation/SimulationExam'
+import { trackServerEvent } from '@/lib/analytics'
 import { canStudentAccessSimulation } from '@/lib/simulation-access'
 import { normalizeQuestions } from '@/lib/questions'
 import type { Question } from '@/types'
@@ -45,6 +46,15 @@ export default async function SimulationStartPage({ params }: { params: Promise<
     .single()
 
   if (!attempt) notFound()
+
+  await trackServerEvent({
+    eventName: 'simulation_started',
+    userId: user.id,
+    role: 'student',
+    eventId: `simulation_started:${attempt.id}`,
+    pagePath: `/student/simulations/${id}/start`,
+    properties: { simulation_id: id, attempt_id: attempt.id },
+  })
 
   return (
     <SimulationExam

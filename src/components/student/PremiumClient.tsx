@@ -9,6 +9,7 @@ import {
   Infinity, Sparkles, Award, Users,
 } from 'lucide-react'
 import { EditorialHero } from '@/components/ui/EditorialHero'
+import { track } from '@/lib/analytics-client'
 
 interface PremiumClientProps {
   isPremium: boolean
@@ -34,6 +35,13 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [confirming, setConfirming] = useState(false)
+
+  // Track cancelled Stripe checkout returns
+  useEffect(() => {
+    if (searchParams.get('cancelled') === '1') {
+      track('premium_checkout_cancelled', { provider: 'stripe' })
+    }
+  }, [searchParams])
 
   // Handle Stripe redirect success
   useEffect(() => {
@@ -64,6 +72,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
   async function handleCheckout() {
     setCheckoutLoading(true)
     setError(null)
+    track('premium_checkout_started', { provider: 'stripe' })
     try {
       const res = await fetch('/api/premium/checkout', { method: 'POST' })
       const data = await res.json()
@@ -84,6 +93,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
     if (!promoCode.trim()) return
     setPromoLoading(true)
     setError(null)
+    track('premium_promo_submitted', { provider: 'promo' })
     try {
       const res = await fetch('/api/premium/activate', {
         method: 'POST',

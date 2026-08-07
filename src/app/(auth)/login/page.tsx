@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, Loader2, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/lib/analytics-client'
 import type { UserRole } from '@/types'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
 
@@ -13,6 +14,7 @@ const ROLE_REDIRECTS: Record<UserRole, string> = {
   student: '/student/dashboard',
   hr: '/hr/dashboard',
   courses: '/courses/dashboard',
+  admin: '/admin/dashboard',
 }
 
 export default function LoginPage() {
@@ -27,10 +29,12 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    track('login_attempt')
 
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
     if (signInError) {
+      track('login_failed')
       setError('Email və ya şifrə yanlışdır')
       setLoading(false)
       return
@@ -45,6 +49,7 @@ export default function LoginPage() {
         .single()
 
       if (profile?.role) {
+        track('login_success', { role: profile.role })
         router.push(ROLE_REDIRECTS[profile.role as UserRole])
         router.refresh()
         return

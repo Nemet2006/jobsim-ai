@@ -1,4 +1,4 @@
-export type UserRole = 'student' | 'hr' | 'courses'
+export type UserRole = 'student' | 'hr' | 'courses' | 'admin'
 export type Difficulty = 'easy' | 'medium' | 'hard'
 export type SimulationStatus = 'in_progress' | 'completed' | 'cancelled'
 export type QuestionType = 'open_ended' | 'multiple_choice' | 'code' | 'file_upload'

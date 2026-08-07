@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
+import { trackServerEvent } from '@/lib/analytics'
 
 export function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -21,6 +22,20 @@ interface ActivatePremiumParams {
   amountCents?: number | null
   currency?: string
   expiresAt?: string | null
+}
+
+async function trackPremiumActivated(params: ActivatePremiumParams): Promise<void> {
+  await trackServerEvent({
+    eventName: 'premium_activated',
+    userId: params.userId,
+    role: 'student',
+    // One activation per user (or per Stripe session) — deduplicated.
+    eventId: `premium_activated:${params.userId}:${params.stripeSessionId ?? params.provider}`,
+    properties: {
+      provider: params.provider,
+      plan: 'premium',
+    },
+  })
 }
 
 export async function activatePremium(params: ActivatePremiumParams): Promise<{ ok: boolean; error?: string }> {
@@ -59,9 +74,11 @@ export async function activatePremium(params: ActivatePremiumParams): Promise<{ 
       expires_at: params.expiresAt ?? null,
     }).then(() => {}) // ignore if table missing
 
+    await trackPremiumActivated(params)
     return { ok: true }
   }
 
+  await trackPremiumActivated(params)
   return { ok: true }
 }
 

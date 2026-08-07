@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/lib/analytics-client'
 import type { User } from '@/types'
 import { LogOut, Menu, X, ChevronDown, type LucideIcon } from 'lucide-react'
 
@@ -33,6 +34,7 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   async function handleLogout() {
+    track('logout', { section: brand.section })
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()
@@ -67,6 +69,7 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
                   <Link
                     key={item.href}
                     href={item.href}
+                    onClick={() => track('nav_click', { href: item.href, label: item.label })}
                     className={`relative inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium ${
                       isActive ? 'text-forest bg-forest-wash' : 'text-ink-mid hover:text-forest hover:bg-forest-wash/60'
                     }`}
@@ -190,7 +193,10 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={() => setSidebarOpen(false)}
+                    onClick={() => {
+                      track('nav_click', { href: item.href, label: item.label })
+                      setSidebarOpen(false)
+                    }}
                     className={isActive ? 'nav-link-active' : 'nav-link'}
                     aria-current={isActive ? 'page' : undefined}
                   >

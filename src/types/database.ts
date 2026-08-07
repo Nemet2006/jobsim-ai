@@ -14,7 +14,7 @@ export interface Database {
           id: string
           email: string
           full_name: string
-          role: 'student' | 'hr' | 'courses'
+          role: 'student' | 'hr' | 'courses' | 'admin'
           university: string | null
           company_name: string | null
           avatar_url: string | null
@@ -25,7 +25,7 @@ export interface Database {
           id: string
           email: string
           full_name: string
-          role: 'student' | 'hr' | 'courses'
+          role: 'student' | 'hr' | 'courses' | 'admin'
           university?: string | null
           company_name?: string | null
           avatar_url?: string | null
@@ -36,7 +36,7 @@ export interface Database {
           id?: string
           email?: string
           full_name?: string
-          role?: 'student' | 'hr' | 'courses'
+          role?: 'student' | 'hr' | 'courses' | 'admin'
           university?: string | null
           company_name?: string | null
           avatar_url?: string | null
@@ -301,6 +301,65 @@ export interface Database {
           { foreignKeyName: 'group_sim_assignments_instructor_id_fkey'; columns: ['instructor_id']; referencedRelation: 'users'; referencedColumns: ['id'] }
         ]
       }
+      analytics_events: {
+        Row: {
+          id: string
+          event_id: string | null
+          event_name: string
+          occurred_at: string
+          user_id: string | null
+          session_id: string | null
+          role: string | null
+          page_path: string | null
+          referrer: string | null
+          properties: Json
+        }
+        Insert: {
+          id?: string
+          event_id?: string | null
+          event_name: string
+          occurred_at?: string
+          user_id?: string | null
+          session_id?: string | null
+          role?: string | null
+          page_path?: string | null
+          referrer?: string | null
+          properties?: Json
+        }
+        Update: {
+          id?: string
+          event_id?: string | null
+          event_name?: string
+          occurred_at?: string
+          user_id?: string | null
+          session_id?: string | null
+          role?: string | null
+          page_path?: string | null
+          referrer?: string | null
+          properties?: Json
+        }
+        Relationships: [
+          { foreignKeyName: 'analytics_events_user_id_fkey'; columns: ['user_id']; referencedRelation: 'users'; referencedColumns: ['id'] }
+        ]
+      }
+      analytics_daily_metrics: {
+        Row: {
+          metric_date: string
+          metric_key: string
+          value_numeric: number
+        }
+        Insert: {
+          metric_date: string
+          metric_key: string
+          value_numeric?: number
+        }
+        Update: {
+          metric_date?: string
+          metric_key?: string
+          value_numeric?: number
+        }
+        Relationships: []
+      }
       premium_subscriptions: {
         Row: {
           id: string
@@ -414,9 +473,21 @@ export interface Database {
         }
         Returns: undefined
       }
+      analytics_summary: {
+        Args: { p_since: string }
+        Returns: Json
+      }
+      refresh_analytics_daily_metrics: {
+        Args: { p_day?: string }
+        Returns: undefined
+      }
+      cleanup_analytics_events: {
+        Args: { p_keep_days?: number }
+        Returns: undefined
+      }
     }
     Enums: {
-      user_role: 'student' | 'hr' | 'courses'
+      user_role: 'student' | 'hr' | 'courses' | 'admin'
       difficulty: 'easy' | 'medium' | 'hard'
       simulation_status: 'in_progress' | 'completed' | 'cancelled'
     }

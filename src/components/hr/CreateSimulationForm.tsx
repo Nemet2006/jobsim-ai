@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/lib/analytics-client'
 import type { Question, Difficulty, QuestionType } from '@/types'
 import { Plus, Trash2, GripVertical, ChevronLeft, ChevronRight, Eye, Code2, FileUp } from 'lucide-react'
 import { questionTypeLabel } from '@/lib/answers'
@@ -84,8 +85,13 @@ export default function CreateSimulationForm({ hrId }: CreateSimulationFormProps
       is_published: publish,
     })
     setSaving(false)
-    if (!error) router.push('/hr/simulations')
-    else alert('Xəta: ' + error.message)
+    if (!error) {
+      track('hr_simulation_created', {
+        question_count: questions.length,
+        status: publish ? 'published' : 'draft',
+      })
+      router.push('/hr/simulations')
+    } else alert('Xəta: ' + error.message)
   }
 
   const steps = ['Əsas Məlumatlar', 'Suallar', 'Nəzərdən Keç']
