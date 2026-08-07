@@ -3,6 +3,7 @@ import { enforceRateLimit } from '@/lib/rate-limit'
 import { createAdminClient } from '@/lib/premium'
 import { buildAdminAnalyticsSnapshot } from '@/lib/admin-analytics'
 import { generateAdminReportPdf } from '@/lib/admin-report-pdf'
+import { generateImpactReportPdf } from '@/lib/admin-impact-report-pdf'
 import { trackServerEvent } from '@/lib/analytics'
 
 export const dynamic = 'force-dynamic'
@@ -15,8 +16,33 @@ export async function GET(request: Request) {
 
     const url = new URL(request.url)
     const range = url.searchParams.get('range')
+    const format = url.searchParams.get('format') || 'core'
 
-    // Always rebuild from live DB — never trust client-sent stats.
+    if (format === 'impact') {
+      const { pdf, reportId, generatedAt } = await generateImpactReportPdf()
+      const stamp = new Date(generatedAt).toISOString().slice(0, 19).replace(/[:T]/g, '-')
+      const filename = sanitizeFilename(`jobsim-impact-hesabat-${stamp}`, 'jobsim-impact-hesabat')
+
+      await trackServerEvent({
+        eventName: 'admin_report_downloaded',
+        userId: user.id,
+        role: 'admin',
+        properties: { method: 'pdf', label: 'impact' },
+      })
+
+      return new Response(pdf, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `attachment; filename="${filename}.pdf"`,
+          'Cache-Control': 'no-store',
+          'X-Report-Generated-At': generatedAt,
+          'X-Report-Id': reportId,
+          'X-Report-Format': 'impact',
+        },
+      })
+    }
+
     const snapshot = await buildAdminAnalyticsSnapshot(createAdminClient(), range)
     const { pdf, reportId } = await generateAdminReportPdf(snapshot)
 

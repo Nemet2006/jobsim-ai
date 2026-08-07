@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
-import { LazyTractionDashboard as TractionDashboard } from '@/components/charts/lazy'
+import ImpactReportDashboard from '@/components/admin/ImpactReportDashboard'
 
 export default function AdminDashboardPage() {
-  return <TractionDashboard />
+  return <ImpactReportDashboard />
 }

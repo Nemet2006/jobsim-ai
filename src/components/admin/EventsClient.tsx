@@ -107,27 +107,25 @@ export default function EventsClient() {
 
   return (
     <div>
-      <header className="mb-8">
-        <p className="h-eyebrow mb-2">Platform Admin</p>
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="max-w-2xl">
-            <h1 className="font-display text-3xl lg:text-4xl font-semibold text-ink tracking-tight">
-              Hadisə <span className="text-navy">axını</span>
-            </h1>
-            <p className="mt-2 text-ink-mid text-sm lg:text-base leading-relaxed">
-              İzlənən hadisələr — filtre ilə bax və PDF hesabat çıxar.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={downloadReport}
-            disabled={exporting || loading}
-            className="btn-primary inline-flex items-center gap-2 disabled:opacity-60"
-          >
-            <Download size={15} aria-hidden="true" />
-            {exporting ? 'Hesabat hazırlanır…' : 'Hesabat (PDF)'}
-          </button>
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-ink-mute mb-1">
+            Hadisələr
+          </p>
+          <h1 className="font-display text-3xl font-semibold text-ink tracking-tight">
+            Event axını
+          </h1>
+          <p className="mt-1 text-sm text-ink-mid">Filtre ilə bax və PDF hesabat çıxar.</p>
         </div>
+        <button
+          type="button"
+          onClick={downloadReport}
+          disabled={exporting || loading}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-navy text-paper text-sm font-semibold hover:bg-navy-deep disabled:opacity-60"
+        >
+          <Download size={15} aria-hidden="true" />
+          {exporting ? 'Hesabat hazırlanır…' : 'Hesabat (PDF)'}
+        </button>
       </header>
 
       <div className="flex flex-wrap items-center gap-2 mb-6">
@@ -185,7 +183,7 @@ export default function EventsClient() {
         </div>
       )}
 
-      <div className="card-dossier overflow-x-auto">
+      <div className="rounded-2xl bg-white border border-navy/8 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs uppercase tracking-wider text-ink-mute border-b border-navy/8">
