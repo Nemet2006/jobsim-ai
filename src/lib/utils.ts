@@ -15,14 +15,14 @@ export function formatDate(date: string | Date) {
 
 export function getScoreColor(score: number): string {
   if (score <= 40) return 'text-danger'
-  if (score <= 70) return 'text-coral-deep'
-  return 'text-success'
+  if (score <= 70) return 'text-gold-deep'
+  return 'text-verdigris'
 }
 
 export function getScoreColorHex(score: number): string {
-  if (score <= 40) return '#E14B4B'
-  if (score <= 70) return '#E26536'
-  return '#22A06B'
+  if (score <= 40) return '#C4432E'
+  if (score <= 70) return '#8F6A1F'
+  return '#1E7A63'
 }
 
 export function getDifficultyLabel(difficulty: 'easy' | 'medium' | 'hard'): string {

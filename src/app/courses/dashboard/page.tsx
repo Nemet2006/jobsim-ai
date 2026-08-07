@@ -130,7 +130,7 @@ export default async function CoursesDashboard() {
                 const isTop3 = i < 3
                 const rankConfig = isTop3
                   ? [
-                      'bg-gold text-paper',
+                      'bg-gold text-navy-deep',
                       'bg-navy text-paper',
                       'bg-verdigris text-paper',
                     ][i]

@@ -119,7 +119,7 @@
     @apply inline-flex items-center justify-center gap-2 font-body font-medium text-sm rounded-md focus-visible:ring-2 focus-visible:ring-navy/40 focus-visible:ring-offset-2 focus-visible:ring-offset-paper touch-manipulation;
   }
   .btn-primary {
-    @apply btn px-5 py-2.5 bg-navy text-paper;
+    @apply btn px-5 py-2.5 bg-navy text-white;
   }
   .btn-primary:hover {
     @apply bg-navy-deep shadow-navy;
@@ -133,7 +133,7 @@
 
   .btn-coral,
   .btn-gold {
-    @apply btn px-5 py-2.5 bg-gold text-white;
+    @apply btn px-5 py-2.5 bg-gold text-navy-deep;
   }
   .btn-coral:hover,
   .btn-gold:hover {
@@ -285,8 +285,8 @@
     background-size: 20px 20px;
   }
 
-  /* HR panel remaps — keep for legacy class usage during migration */
-  .hr-theme .text-white { @apply text-ink; }
+  /* HR panel remaps — legacy dark-theme utilities on light shell.
+     Do NOT remap text-white globally: it breaks light text on navy/gold fills. */
   .hr-theme .text-slate-300 { @apply text-ink-mid; }
   .hr-theme .text-slate-400 { @apply text-ink-mute; }
   .hr-theme .text-slate-500 { @apply text-ink-mid; }
@@ -313,7 +313,6 @@
   .hr-theme .bg-blue-500\/20 { @apply bg-info-tint; }
   .hr-theme .hover\:bg-white\/2:hover { @apply hover:bg-navy-wash/60; }
   .hr-theme .hover\:border-white\/20:hover { @apply hover:border-navy/20; }
-  .hr-theme .hover\:text-white:hover { @apply hover:text-navy; }
   .hr-theme tr.border-b.border-white\/5 { @apply border-navy/8; }
 }
 

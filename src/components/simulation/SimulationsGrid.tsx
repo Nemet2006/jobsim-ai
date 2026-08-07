@@ -163,7 +163,7 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
                 onClick={() => setQuick(q.id)}
                 className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border ${
                   isActive
-                    ? 'bg-forest text-cream border-forest'
+                    ? 'bg-navy text-paper border-navy'
                     : 'bg-white text-ink-mid border-forest/12 hover:border-forest/30 hover:text-forest'
                 }`}
               >
@@ -182,7 +182,7 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
             <SlidersHorizontal size={12} aria-hidden="true" />
             Filter
             {activeFilterCount > 0 && (
-              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-coral text-white text-[9px]">
+              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gold text-navy-deep text-[9px]">
                 {activeFilterCount}
               </span>
             )}
@@ -313,7 +313,7 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
                   <Filter size={16} className="text-forest" aria-hidden="true" />
                   <h2 className="font-display text-xl font-semibold">Filterlər</h2>
                   {activeFilterCount > 0 && (
-                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-coral text-white text-[10px] font-semibold">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gold text-navy-deep text-[10px] font-semibold">
                       {activeFilterCount}
                     </span>
                   )}
@@ -460,12 +460,12 @@ function FacetCheckbox({
 }) {
   return (
     <label className={`group flex items-center gap-3 px-2 py-2 rounded-lg cursor-pointer ${
-      checked ? 'bg-forest-wash' : 'hover:bg-forest-wash/40'
+      checked ? 'bg-navy-wash' : 'hover:bg-navy-wash/40'
     }`}>
       <div className={`relative shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center ${
-        checked ? 'bg-forest border-forest' : 'border-forest/30 bg-white group-hover:border-forest/60'
+        checked ? 'bg-navy border-navy' : 'border-navy/30 bg-white group-hover:border-navy/60'
       }`}>
-        {checked && <CheckCircle2 size={10} className="text-cream" strokeWidth={3} aria-hidden="true" />}
+        {checked && <CheckCircle2 size={10} className="text-paper" strokeWidth={3} aria-hidden="true" />}
         <input
           type="checkbox"
           checked={checked}
@@ -474,7 +474,7 @@ function FacetCheckbox({
           aria-label={label}
         />
       </div>
-      <span className={`flex-1 text-sm ${checked ? 'text-forest font-semibold' : 'text-ink-mid group-hover:text-forest'}`}>
+      <span className={`flex-1 text-sm ${checked ? 'text-navy font-semibold' : 'text-ink-mid group-hover:text-navy'}`}>
         {label}
       </span>
       <span className="text-xs text-ink-mute font-medium">{count}</span>

@@ -71,7 +71,7 @@ export default function LandingPage() {
               <h1 className="h-display text-[clamp(2.5rem,6vw,4.25rem)] leading-[1.02] mb-5 text-balance">
                 Sübut et.<br />
                 <span className="text-navy">Görün.</span>{' '}
-                <span className="text-gold">İşə düz.</span>
+                <span className="text-gold-deep">İşə düz.</span>
               </h1>
               <p className="text-lg text-ink-mid leading-relaxed max-w-lg mb-8 text-balance">
                 Real iş simulyasiyaları, AI qiymətləndirmə və verification seal —
@@ -149,7 +149,7 @@ export default function LandingPage() {
                   transition={{ delay: i * 0.08, duration: 0.5 }}
                   className="card-dossier p-6"
                 >
-                  <span className="font-mono text-2xl font-semibold text-gold tabular-nums">{step.n}</span>
+                  <span className="font-mono text-2xl font-semibold text-gold-deep tabular-nums">{step.n}</span>
                   <h3 className="font-display text-xl font-semibold mt-3 mb-1.5">{step.title}</h3>
                   <p className="text-sm text-ink-mid">{step.text}</p>
                 </motion.div>
@@ -200,7 +200,7 @@ export default function LandingPage() {
               const Icon = a.icon
               return (
                 <div key={a.role}>
-                  <Icon size={20} className="text-gold mb-3" aria-hidden="true" />
+                  <Icon size={20} className="text-gold-deep mb-3" aria-hidden="true" />
                   <h3 className="font-display text-xl font-semibold mb-2">{a.role}</h3>
                   <p className="text-sm text-paper/75 leading-relaxed">{a.text}</p>
                 </div>

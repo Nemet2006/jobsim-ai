@@ -95,7 +95,7 @@ export default function LoginPage() {
             <h1 className="h-display text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] mb-5 text-balance">
               Sübut et.<br />
               <span className="text-navy">Görün.</span>{' '}
-              <span className="text-gold">İşə düz.</span>
+              <span className="text-gold-deep">İşə düz.</span>
             </h1>
             <p className="text-base lg:text-lg text-ink-mid leading-relaxed max-w-md mb-7">
               Real iş simulyasiyaları ilə bacarıqlarını sübut et. AI qiymətləndirməsi, sertifikat və verification seal.

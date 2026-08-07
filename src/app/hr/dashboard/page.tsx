@@ -137,7 +137,7 @@ export default async function HRDashboard() {
                           {attempt.student_name[0]?.toUpperCase() || 'N'}
                         </div>
                         {attempt.score !== null && attempt.score >= 80 && (
-                          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-md bg-gold text-paper flex items-center justify-center shadow-soft" aria-label="Top performer">
+                          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-md bg-gold text-navy-deep flex items-center justify-center shadow-soft" aria-label="Top performer">
                             <Star size={10} fill="currentColor" aria-hidden="true" />
                           </span>
                         )}

@@ -177,7 +177,7 @@ export default async function StudentDashboard() {
               <p className="text-sm text-paper/75 mb-5 leading-relaxed">
                 Premium abunəlik hələ aktiv deyil. Hazırda bütün simulyasiyalar açıqdır.
               </p>
-              <Link href="/student/premium" className="btn-secondary border-paper/25 bg-transparent text-paper hover:bg-white/10 w-full justify-center">
+              <Link href="/student/premium" className="inline-flex w-full items-center justify-center gap-2 px-5 py-2.5 rounded-md border border-paper/30 text-paper text-sm font-medium hover:bg-white/10">
                 Ətraflı
               </Link>
             </div>
