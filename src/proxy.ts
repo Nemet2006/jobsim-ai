@@ -12,7 +12,6 @@ const PROTECTED_PREFIXES = ['/student', '/hr', '/courses', '/admin']
 const AUTH_ROUTES = ['/login', '/register']
 
 const PROTECTED_API_PREFIXES = [
-  '/api/ai/',
   '/api/attempts/',
   '/api/reports/',
   '/api/groups/',

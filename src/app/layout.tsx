@@ -21,14 +21,39 @@ const mono = JetBrains_Mono({
   display: 'swap',
 })
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jobsim-ai-mvpp.vercel.app'
+
 export const metadata: Metadata = {
-  title: 'JobSim AI — Get noticed. Get hired.',
-  description: 'Real iş simulyasiyaları ilə bacarıqlarını sübut et. Pulsuz, self-paced, AI-powered.',
-  keywords: ['iş simulyasiyası', 'AI', 'karyera', 'işə qəbul', 'bacarıq', 'job simulation'],
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'JobSim AI — Get noticed. Get hired.',
+    template: '%s · JobSim AI',
+  },
+  description:
+    'Real iş simulyasiyaları ilə bacarıqlarını sübut et. AI qiymətləndirmə, sertifikat və bacarıq pasportu. Pulsuz, self-paced.',
+  keywords: ['iş simulyasiyası', 'AI', 'karyera', 'işə qəbul', 'bacarıq', 'job simulation', 'Azərbaycan'],
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  verification: {
+    google: 'z3cz_J0-qB_LGM8nLXf5qxhT25zoGQIwOgz1-WlZZ2w',
+  },
   openGraph: {
     title: 'JobSim AI — Get noticed. Get hired.',
-    description: 'Pulsuz iş simulyasiyaları ilə işə hazırlaş',
+    description: 'Pulsuz iş simulyasiyaları ilə işə hazırlaş. AI qiymətləndirmə və sertifikat.',
     type: 'website',
+    url: SITE_URL,
+    siteName: 'JobSim AI',
+    locale: 'az_AZ',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'JobSim AI — Get noticed. Get hired.',
+    description: 'Pulsuz iş simulyasiyaları ilə işə hazırlaş',
   },
 }
 
