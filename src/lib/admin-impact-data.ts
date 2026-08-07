@@ -216,10 +216,10 @@ export const IMPACT_FEEDBACK = {
 }
 
 export const IMPACT_ACHIEVEMENTS = [
-  { title: 'World Startup Championship', subtitle: 'Acceptance', year: '2025' },
-  { title: 'Sabah Hub', subtitle: 'İnkubasiya Proqramı', year: '2025' },
-  { title: 'Startup School', subtitle: 'Seçim sertifikatı', year: '2025' },
-  { title: 'Innovation Grant', subtitle: 'Shortlist', year: '2025' },
+  { title: 'World Startup Championship', subtitle: 'Acceptance', year: '2026' },
+  { title: 'Sabah Hub', subtitle: 'İnkubasiya Proqramı', year: '2026' },
+  { title: 'Startup School', subtitle: 'Seçim sertifikatı', year: '2026' },
+  { title: 'Innovation Grant', subtitle: 'Shortlist', year: '2026' },
 ]
 
 export const IMPACT_DOCUMENTS = [
