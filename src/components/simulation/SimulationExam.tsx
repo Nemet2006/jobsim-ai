@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ProctorCamera } from './ProctorCamera'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/lib/analytics-client'
 import { normalizeQuestions } from '@/lib/questions'
 import { hasQuestionAnswer, questionTypeLabel } from '@/lib/answers'
 import { QuestionAnswerInput } from './QuestionAnswerInput'
@@ -50,6 +51,16 @@ export default function SimulationExam({
 
   const questions = normalizeQuestions(simulation.questions)
 
+  useEffect(() => {
+    track('simulation_exam_started', {
+      simulation_id: simulation.id,
+      attempt_id: attemptId,
+      question_count: questions.length,
+      duration_minutes: simulation.duration_minutes,
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
@@ -71,6 +82,11 @@ export default function SimulationExam({
     setCheatCount(cheatCountRef.current)
     setShowCheatWarning(true)
     setTimeout(() => setShowCheatWarning(false), 3000)
+    track('simulation_cheat_detected', {
+      simulation_id: simulation.id,
+      attempt_id: attemptId,
+      cheat_count: cheatCountRef.current,
+    })
 
     await supabase
       .from('simulation_attempts')
@@ -91,6 +107,10 @@ export default function SimulationExam({
     setSubmitting(true)
     setAnalyzeError(null)
     setPhase('analyzing')
+    track('simulation_submitted', {
+      simulation_id: simulation.id,
+      attempt_id: attemptId,
+    })
 
     await supabase
       .from('simulation_attempts')
@@ -118,6 +138,10 @@ export default function SimulationExam({
       setPhase('done')
     } catch (err) {
       const message = err instanceof Error ? err.message : 'AI analizi uğursuz oldu'
+      track('simulation_exam_failed', {
+        simulation_id: simulation.id,
+        attempt_id: attemptId,
+      })
       setAnalyzeError(message)
       setPhase('error')
       setSubmitting(false)

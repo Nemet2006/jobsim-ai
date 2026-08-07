@@ -5,6 +5,7 @@ import {
   LineChart, Line, PieChart, Pie, Cell,
 } from 'recharts'
 import { Download, FileText } from 'lucide-react'
+import { track } from '@/lib/analytics-client'
 
 interface ReportsClientProps {
   companyName: string
@@ -57,6 +58,7 @@ export default function ReportsClient({ companyName, simulations, attempts, shor
   ]
 
   async function downloadPDF() {
+    track('hr_report_downloaded')
     const res = await fetch('/api/reports/pdf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

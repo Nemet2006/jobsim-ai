@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/premium'
 import { ApiError, getClientIp, jsonError } from '@/lib/api-auth'
 import { enforceRateLimit } from '@/lib/rate-limit'
+import { trackServerEvent } from '@/lib/analytics'
 import type { UserRole } from '@/types'
 
 function validateInvite(role: UserRole, inviteCode?: string): boolean {
@@ -79,6 +80,14 @@ export async function POST(request: Request) {
         throw new ApiError('Hesab yaradıldı, lakin rol təyin edilə bilmədi', 500)
       }
     }
+
+    await trackServerEvent({
+      eventName: 'user_registered',
+      userId: data.user.id,
+      role,
+      eventId: `user_registered:${data.user.id}`,
+      properties: { role },
+    })
 
     return NextResponse.json({
       ok: true,

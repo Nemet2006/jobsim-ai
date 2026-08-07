@@ -8,6 +8,7 @@ const ROLE_REDIRECTS: Record<UserRole, string> = {
   student: '/student/dashboard',
   hr: '/hr/dashboard',
   courses: '/courses/dashboard',
+  admin: '/admin/dashboard',
 }
 
 export default async function HomePage() {

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Briefcase, GraduationCap, Loader2, Users, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/lib/analytics-client'
 import type { UserRole } from '@/types'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
 
@@ -56,6 +57,7 @@ export default function RegisterPage() {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    track('register_attempt', { role })
 
     if (password.length < 8) {
       setError('Şifrə ən az 8 simvol olmalıdır')
@@ -80,6 +82,7 @@ export default function RegisterPage() {
     const payload = await res.json().catch(() => ({}))
 
     if (!res.ok) {
+      track('register_failed', { role })
       setError(payload.error || 'Qeydiyyat uğursuz oldu')
       setLoading(false)
       return
@@ -97,6 +100,7 @@ export default function RegisterPage() {
       student: '/student/dashboard',
       hr: '/hr/dashboard',
       courses: '/courses/dashboard',
+      admin: '/admin/dashboard',
     }
     router.push(redirects[role])
     router.refresh()
@@ -180,7 +184,11 @@ export default function RegisterPage() {
                         type="button"
                         role="radio"
                         aria-checked={isActive}
-                        onClick={() => { setRole(option.value); setInviteCode('') }}
+                        onClick={() => {
+                          setRole(option.value)
+                          setInviteCode('')
+                          track('register_role_selected', { role: option.value })
+                        }}
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 + idx * 0.06 }}

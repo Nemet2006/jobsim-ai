@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/premium'
 import { ApiError, getClientIp, jsonError, requireRole } from '@/lib/api-auth'
 import { enforceRateLimit } from '@/lib/rate-limit'
 import { runAiAnalysis } from '@/lib/ai-analyze'
+import { trackServerEvent } from '@/lib/analytics'
 import { formatAnswerForAI, questionTypeLabel } from '@/lib/answers'
 import { normalizeQuestions } from '@/lib/questions'
 import type { Json } from '@/types/database'
@@ -99,6 +100,18 @@ export async function POST(request: Request) {
           updated_at: completedAt,
         })
     }
+
+    await trackServerEvent({
+      eventName: 'simulation_completed',
+      userId: user.id,
+      role: 'student',
+      eventId: `simulation_completed:${attemptId}`,
+      properties: {
+        simulation_id: attempt.simulation_id,
+        attempt_id: attemptId,
+        score: analysis.score,
+      },
+    })
 
     return NextResponse.json({
       ...analysis,
