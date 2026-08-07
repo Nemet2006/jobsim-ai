@@ -285,6 +285,7 @@ Supabase SQL Editor-də sıra ilə işə salın:
 3. `SQL_PREMIUM.sql`
 4. `SQL_STORAGE.sql`
 5. `SQL_SECURITY.sql` — **production security (roles, scoring, rate limits)**
+6. `SQL_ANALYTICS.sql` — **traction/analytics sistemi + admin rolu**
 
 ### 5. Development server
 
@@ -306,8 +307,38 @@ Brauzer: [http://localhost:3000](http://localhost:3000)
 | `SQL_SECURITY.sql` | Role/scoring protection, secure join, rate limits |
 | `SQL_FIX_POLICIES.sql` | INSERT policy düzəlişləri |
 | `SQL_GROUPS_*.sql` | Qrup modulu migration/fix |
+| `SQL_ANALYTICS.sql` | Traction/analytics eventləri, admin rolu, rollup/cleanup |
 
-**Əsas cədvəllər:** `users`, `simulations`, `simulation_attempts`, `skill_passport`, `shortlist`, `course_groups`, `group_members`, `assignments`
+**Əsas cədvəllər:** `users`, `simulations`, `simulation_attempts`, `skill_passport`, `shortlist`, `course_groups`, `group_members`, `assignments`, `analytics_events`
+
+---
+
+## Traction / Analytics sistemi
+
+Platforma öz first-party analytics sisteminə malikdir — bütün məlumat Supabase-də qalır, üçüncü tərəf tracker yoxdur.
+
+**Nə izlənir:**
+
+- Səhifə baxışları və unikal ziyarətçilər (anonim `session_id`, PII yoxdur) — `src/instrumentation-client.ts`
+- Klik/funnel eventləri: nav, login/register, simulyasiya imtahanı, premium CTA — `src/lib/analytics-client.ts`
+- Server-təsdiqli conversion-lar: `user_registered`, `simulation_started`, `simulation_completed`, `premium_activated`, `group_joined` — `src/lib/analytics.ts`
+
+**Privacy qaydaları:** email, ad, cavablar və xam IP heç vaxt saxlanılmır. Yalnız whitelist edilmiş property açarları qəbul olunur (`src/lib/analytics-shared.ts`).
+
+**Quraşdırma:**
+
+1. Supabase SQL Editor-də `SQL_ANALYTICS.sql` işlədin.
+2. Öz hesabınızı admin edin:
+
+```sql
+UPDATE public.users SET role = 'admin' WHERE email = 'siz@example.com';
+```
+
+3. `/admin/dashboard` — canlı traction paneli (30 saniyədə bir avtomatik yenilənir), `/admin/events` — raw event axını.
+
+**Cron (tövsiyə):** Supabase-də `pg_cron` aktivləşdirib `SQL_ANALYTICS.sql` faylının sonundakı `cron.schedule` nümunələri ilə gündəlik rollup (`refresh_analytics_daily_metrics`) və retention cleanup (`cleanup_analytics_events`) qurun.
+
+**Qeyd:** qeydiyyat/simulyasiya/premium metrikaları biznes cədvəllərindən hesablandığı üçün tracking-dən əvvəlki tarixçəni də əhatə edir; səhifə baxışı və klik metrikaları yalnız tracking aktivləşən tarixdən yığılır.
 
 ---
 

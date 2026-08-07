@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test:analytics": "node --experimental-strip-types --test scripts/analytics.test.ts",
     "seed:real": "node scripts/seed-real-content.mjs",
     "seed:hr": "node --env-file=.env.local scripts/seed-hr-panel.mjs --all",
     "seed:it": "node --env-file=.env.local scripts/seed-it-simulations.mjs",
