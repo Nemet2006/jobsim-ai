@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 
     // Always rebuild from live DB — never trust client-sent stats.
     const snapshot = await buildAdminAnalyticsSnapshot(createAdminClient(), range)
-    const pdf = await generateAdminReportPdf(snapshot)
+    const { pdf, reportId } = await generateAdminReportPdf(snapshot)
 
     const stamp = new Date(snapshot.generatedAt).toISOString().slice(0, 19).replace(/[:T]/g, '-')
     const filename = sanitizeFilename(
@@ -44,6 +44,7 @@ export async function GET(request: Request) {
         'Cache-Control': 'no-store',
         'X-Report-Generated-At': snapshot.generatedAt,
         'X-Report-Range': snapshot.range,
+        'X-Report-Id': reportId,
       },
     })
   } catch (error) {

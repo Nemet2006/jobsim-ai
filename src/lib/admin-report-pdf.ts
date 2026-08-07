@@ -1,5 +1,9 @@
 import { registerPdfUnicodeFontsServer, setPdfFontServer } from '@/lib/pdf-fonts-server'
 import type { AdminAnalyticsSnapshot } from '@/lib/admin-analytics'
+import {
+  buildProofQrDataUrl,
+  createReportProof,
+} from '@/lib/admin-report-proof'
 
 const setPdfFont = setPdfFontServer
 
@@ -35,13 +39,43 @@ function formatAzDateTime(iso: string): string {
   return `${day} ${month} ${year}, ${hh}:${mm}`
 }
 
-/** Numbers-only admin report — category labels + figures, no narrative. */
+function drawVerificationSeal(
+  doc: {
+    setDrawColor: (...args: number[]) => void
+    setFillColor: (...args: number[]) => void
+    setLineWidth: (w: number) => void
+    circle: (x: number, y: number, r: number, style?: string) => void
+    line: (x1: number, y1: number, x2: number, y2: number) => void
+  },
+  cx: number,
+  cy: number,
+  r: number
+) {
+  doc.setDrawColor(30, 122, 99)
+  doc.setLineWidth(1.1)
+  doc.circle(cx, cy, r, 'S')
+  doc.setLineWidth(0.35)
+  doc.circle(cx, cy, r - 2.2, 'S')
+  doc.setFillColor(238, 247, 244)
+  doc.circle(cx, cy, r - 3.2, 'F')
+
+  // Checkmark
+  doc.setDrawColor(30, 122, 99)
+  doc.setLineWidth(1.3)
+  doc.line(cx - 4.5, cy + 0.5, cx - 1.2, cy + 3.5)
+  doc.line(cx - 1.2, cy + 3.5, cx + 5.2, cy - 3.8)
+}
+
+/** Numbers-only admin report + cryptographic QR proof (no narrative). */
 export async function generateAdminReportPdf(
   snapshot: AdminAnalyticsSnapshot
-): Promise<ArrayBuffer> {
+): Promise<{ pdf: ArrayBuffer; reportId: string }> {
   const { default: jsPDF } = await import('jspdf')
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
   await registerPdfUnicodeFontsServer(doc)
+
+  const proof = createReportProof(snapshot)
+  const qrDataUrl = await buildProofQrDataUrl(proof.verifyUrl)
 
   const pageW = doc.internal.pageSize.getWidth()
   const pageH = doc.internal.pageSize.getHeight()
@@ -49,6 +83,7 @@ export async function generateAdminReportPdf(
   const c = snapshot.core
   const rangeLabel = RANGE_LABEL[snapshot.range] || snapshot.range
   const generatedLabel = formatAzDateTime(snapshot.generatedAt)
+  const reportId = proof.payload.id
 
   let y = 0
   let page = 1
@@ -58,9 +93,9 @@ export async function generateAdminReportPdf(
     doc.setLineWidth(0.2)
     doc.line(marginX, pageH - 12, pageW - marginX, pageH - 12)
     setPdfFont(doc, 'normal')
-    doc.setFontSize(8)
+    doc.setFontSize(7.5)
     doc.setTextColor(138, 138, 138)
-    doc.text('JobSim AI · Admin hesabat', marginX, pageH - 7)
+    doc.text(reportId, marginX, pageH - 7)
     doc.text(`Səhifə ${page}`, pageW - marginX, pageH - 7, { align: 'right' })
   }
 
@@ -115,9 +150,45 @@ export async function generateAdminReportPdf(
   doc.setFontSize(9)
   doc.setTextColor(190, 198, 208)
   doc.text(`Dövr: ${rangeLabel}`, marginX, 36)
-  doc.text(generatedLabel, pageW - marginX, 36, { align: 'right' })
+  doc.text(generatedLabel, pageW - marginX - 28, 36, { align: 'right' })
+
+  // Header seal
+  drawVerificationSeal(doc, pageW - marginX - 10, 20, 9)
 
   y = 52
+
+  // Proof strip: QR + report id (machine-verifiable, no narrative)
+  ensureSpace(36)
+  doc.setFillColor(238, 242, 246)
+  doc.roundedRect(marginX, y, pageW - marginX * 2, 34, 2, 2, 'F')
+
+  const qrSize = 28
+  doc.addImage(qrDataUrl, 'PNG', marginX + 3, y + 3, qrSize, qrSize)
+
+  drawVerificationSeal(doc, marginX + 48, y + 17, 10)
+
+  setPdfFont(doc, 'bold')
+  doc.setFontSize(9)
+  doc.setTextColor(22, 40, 61)
+  doc.text(reportId, marginX + 62, y + 12)
+
+  setPdfFont(doc, 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(90, 94, 102)
+  doc.text(proof.payload.generatedAt, marginX + 62, y + 19)
+
+  // Hash fingerprint strip (visual, not a paragraph)
+  const fingerprint = reportId.replace('JSIM-', '')
+  doc.setFillColor(22, 40, 61)
+  const barX = marginX + 62
+  const barY = y + 24
+  for (let i = 0; i < fingerprint.length; i++) {
+    const code = fingerprint.charCodeAt(i)
+    const h = 3 + (code % 5)
+    doc.rect(barX + i * 2.2, barY + (8 - h) * 0.35, 1.4, h * 0.7, 'F')
+  }
+
+  y += 40
 
   sectionTitle('Platform baza')
   kvRow('Ümumi istifadəçi', snapshot.totals.totalUsers, true)
@@ -167,5 +238,5 @@ export async function generateAdminReportPdf(
   }
 
   drawFooter()
-  return doc.output('arraybuffer')
+  return { pdf: doc.output('arraybuffer'), reportId }
 }
