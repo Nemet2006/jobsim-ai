@@ -5,17 +5,20 @@ const RANGE_LABEL: Record<string, string> = {
   all: 'Bütün dövr',
 }
 
-interface Metrics {
-  totalUsers: number
-  signUps: number
-  signIns: number
-  uniqueSimulators: number
-  simulationsStarted: number
-  simulationsCompleted: number
-  tasksShared: number
-  totalClicks: number
-  pageViews: number
-  avgScore: number | null
+const METRIC_LABELS: Record<string, string> = {
+  totalUsers: 'Ümumi user',
+  signUps: 'Sign up',
+  signIns: 'Sign in',
+  uniqueSimulators: 'Sim. edənlər',
+  simulationsStarted: 'Sim. başladı',
+  simulationsCompleted: 'Tamamlanan',
+  tasksShared: 'Tapşırıq',
+  totalClicks: 'Klik',
+  pageViews: 'Səhifə baxışı',
+  avgScore: 'Orta bal',
+  totalEvents: 'Ümumi hadisə',
+  uniqueSessions: 'Unikal session',
+  uniqueUsers: 'Unikal user',
 }
 
 interface ReportProofViewProps {
@@ -23,16 +26,30 @@ interface ReportProofViewProps {
   reportId: string | null
   range: string | null
   generatedAt: string | null
-  metrics: Metrics | null
+  kind?: 'core' | 'events' | null
+  metrics: Record<string, number | string | null> | null
 }
 
 function Metric({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="rounded-lg border border-navy/10 bg-white px-4 py-3">
-      <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-ink-mute">{label}</p>
+      <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-ink-mute truncate">
+        {label}
+      </p>
       <p className="mt-1 number-display text-2xl text-ink">{value}</p>
     </div>
   )
+}
+
+function rangeLabel(range: string | null): string {
+  if (!range) return ''
+  if (RANGE_LABEL[range]) return RANGE_LABEL[range]
+  const m = range.match(/^(\d+)d(?::(.+))?$/)
+  if (m) {
+    const base = `${m[1]} gün`
+    return m[2] ? `${base} · ${m[2]}` : base
+  }
+  return range
 }
 
 export function ReportProofView({
@@ -40,8 +57,17 @@ export function ReportProofView({
   reportId,
   range,
   generatedAt,
+  kind,
   metrics,
 }: ReportProofViewProps) {
+  const entries = metrics
+    ? Object.entries(metrics).map(([key, value]) => ({
+        key,
+        label: METRIC_LABELS[key] || key,
+        value: value ?? '—',
+      }))
+    : []
+
   return (
     <div className="min-h-screen bg-paper text-ink px-5 py-10">
       <div className="max-w-xl mx-auto">
@@ -95,8 +121,13 @@ export function ReportProofView({
           {reportId ? (
             <p className="font-mono text-xs text-ink-mute tracking-wide">{reportId}</p>
           ) : null}
+          {kind ? (
+            <p className="mt-1 text-[11px] uppercase tracking-[0.14em] font-semibold text-navy">
+              {kind === 'events' ? 'Hadisələr' : 'Core stats'}
+            </p>
+          ) : null}
           {range ? (
-            <p className="mt-1 text-sm text-ink-mid">{RANGE_LABEL[range] || range}</p>
+            <p className="mt-1 text-sm text-ink-mid">{rangeLabel(range)}</p>
           ) : null}
           {generatedAt ? (
             <p className="mt-0.5 text-xs text-ink-mute font-mono">
@@ -113,18 +144,11 @@ export function ReportProofView({
           ) : null}
         </div>
 
-        {valid && metrics ? (
+        {valid && entries.length > 0 ? (
           <div className="grid grid-cols-2 gap-3">
-            <Metric label="Ümumi user" value={metrics.totalUsers} />
-            <Metric label="Sign up" value={metrics.signUps} />
-            <Metric label="Sign in" value={metrics.signIns} />
-            <Metric label="Sim. edənlər" value={metrics.uniqueSimulators} />
-            <Metric label="Sim. başladı" value={metrics.simulationsStarted} />
-            <Metric label="Tamamlanan" value={metrics.simulationsCompleted} />
-            <Metric label="Tapşırıq" value={metrics.tasksShared} />
-            <Metric label="Klik" value={metrics.totalClicks} />
-            <Metric label="Səhifə baxışı" value={metrics.pageViews} />
-            <Metric label="Orta bal" value={metrics.avgScore ?? '—'} />
+            {entries.map((m) => (
+              <Metric key={m.key} label={m.label} value={m.value} />
+            ))}
           </div>
         ) : (
           <div className="card-dossier p-8 text-center text-sm text-ink-mute">—</div>

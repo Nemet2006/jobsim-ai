@@ -21,6 +21,7 @@ export default async function VerifyReportPage({
         reportId={null}
         range={null}
         generatedAt={null}
+        kind={null}
         metrics={null}
       />
     )
@@ -32,6 +33,7 @@ export default async function VerifyReportPage({
       reportId={result.payload.id}
       range={result.payload.range}
       generatedAt={result.payload.generatedAt}
+      kind={result.payload.kind}
       metrics={result.payload.metrics}
     />
   )

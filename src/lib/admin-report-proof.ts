@@ -1,21 +1,14 @@
 import { createHmac, createHash, timingSafeEqual } from 'node:crypto'
 import type { AdminAnalyticsSnapshot } from '@/lib/admin-analytics'
+import type { EventsSummary } from '@/lib/admin-events-stats'
 
-export interface ReportProofMetrics {
-  totalUsers: number
-  signUps: number
-  signIns: number
-  uniqueSimulators: number
-  simulationsStarted: number
-  simulationsCompleted: number
-  tasksShared: number
-  totalClicks: number
-  pageViews: number
-  avgScore: number | null
-}
+export type ReportProofKind = 'core' | 'events'
+
+export type ReportProofMetrics = Record<string, number | string | null>
 
 export interface ReportProofPayload {
   v: 1
+  kind: ReportProofKind
   id: string
   range: string
   generatedAt: string
@@ -43,7 +36,44 @@ function fromBase64Url(input: string): string {
   return Buffer.from(padded, 'base64').toString('utf8')
 }
 
-function canonicalMetrics(snapshot: AdminAnalyticsSnapshot): ReportProofMetrics {
+function signBody(body: string): string {
+  return createHmac('sha256', proofSecret()).update(body).digest('hex')
+}
+
+function makeReportId(kind: ReportProofKind, generatedAt: string, metrics: ReportProofMetrics): string {
+  const digest = createHash('sha256')
+    .update(`${kind}|${generatedAt}|${JSON.stringify(metrics)}`)
+    .digest('hex')
+    .slice(0, 10)
+    .toUpperCase()
+  const day = generatedAt.slice(0, 10).replace(/-/g, '')
+  const prefix = kind === 'events' ? 'JSIM-EVT' : 'JSIM'
+  return `${prefix}-${day}-${digest}`
+}
+
+function createSignedProof(
+  kind: ReportProofKind,
+  range: string,
+  generatedAt: string,
+  metrics: ReportProofMetrics
+): { payload: ReportProofPayload; token: string; verifyUrl: string } {
+  const payload: ReportProofPayload = {
+    v: 1,
+    kind,
+    id: makeReportId(kind, generatedAt, metrics),
+    range,
+    generatedAt,
+    metrics,
+  }
+  const body = toBase64Url(JSON.stringify(payload))
+  const sig = signBody(body)
+  const token = `${body}.${sig}`
+  const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://jobsim-ai-mvpp.vercel.app'
+  const verifyUrl = `${site.replace(/\/$/, '')}/verify/report?t=${encodeURIComponent(token)}`
+  return { payload, token, verifyUrl }
+}
+
+function coreMetrics(snapshot: AdminAnalyticsSnapshot): ReportProofMetrics {
   return {
     totalUsers: snapshot.totals.totalUsers,
     signUps: snapshot.core.signUps.total,
@@ -58,42 +88,33 @@ function canonicalMetrics(snapshot: AdminAnalyticsSnapshot): ReportProofMetrics 
   }
 }
 
-function makeReportId(snapshot: AdminAnalyticsSnapshot): string {
-  const digest = createHash('sha256')
-    .update(
-      `${snapshot.generatedAt}|${snapshot.range}|${JSON.stringify(canonicalMetrics(snapshot))}`
-    )
-    .digest('hex')
-    .slice(0, 10)
-    .toUpperCase()
-  const day = snapshot.generatedAt.slice(0, 10).replace(/-/g, '')
-  return `JSIM-${day}-${digest}`
-}
-
-function signBody(body: string): string {
-  return createHmac('sha256', proofSecret()).update(body).digest('hex')
-}
-
-export function createReportProof(snapshot: AdminAnalyticsSnapshot): {
-  payload: ReportProofPayload
-  token: string
-  verifyUrl: string
-} {
-  const payload: ReportProofPayload = {
-    v: 1,
-    id: makeReportId(snapshot),
-    range: snapshot.range,
-    generatedAt: snapshot.generatedAt,
-    metrics: canonicalMetrics(snapshot),
+function eventsMetrics(summary: EventsSummary): ReportProofMetrics {
+  const top = summary.byEvent.slice(0, 8)
+  const metrics: ReportProofMetrics = {
+    totalEvents: summary.totalEvents,
+    uniqueSessions: summary.uniqueSessions,
+    uniqueUsers: summary.uniqueUsers,
   }
-  const body = toBase64Url(JSON.stringify(payload))
-  const sig = signBody(body)
-  const token = `${body}.${sig}`
+  for (const row of top) {
+    metrics[row.event_name] = row.total
+  }
+  return metrics
+}
 
-  const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://jobsim-ai-mvpp.vercel.app'
-  const verifyUrl = `${site.replace(/\/$/, '')}/verify/report?t=${encodeURIComponent(token)}`
+export function createReportProof(snapshot: AdminAnalyticsSnapshot) {
+  return createSignedProof(
+    'core',
+    snapshot.range,
+    snapshot.generatedAt,
+    coreMetrics(snapshot)
+  )
+}
 
-  return { payload, token, verifyUrl }
+export function createEventsReportProof(summary: EventsSummary) {
+  const range = summary.eventFilter
+    ? `${summary.days}d:${summary.eventFilter}`
+    : `${summary.days}d`
+  return createSignedProof('events', range, summary.generatedAt, eventsMetrics(summary))
 }
 
 export function verifyReportProofToken(
@@ -118,6 +139,8 @@ export function verifyReportProofToken(
     if (parsed?.v !== 1 || !parsed.id || !parsed.metrics) {
       return { ok: false, error: 'invalid_payload' }
     }
+    // Older tokens may omit kind — treat as core.
+    if (parsed.kind !== 'events') parsed.kind = 'core'
     return { ok: true, payload: parsed }
   } catch {
     return { ok: false, error: 'parse_failed' }
