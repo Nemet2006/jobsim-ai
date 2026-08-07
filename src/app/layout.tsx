@@ -39,6 +39,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  verification: {
+    google: 'z3cz_J0-qB_LGM8nLXf5qxhT25zoGQIwOgz1-WlZZ2w',
+  },
   openGraph: {
     title: 'JobSim AI — Get noticed. Get hired.',
     description: 'Pulsuz iş simulyasiyaları ilə işə hazırlaş. AI qiymətləndirmə və sertifikat.',
