@@ -44,8 +44,8 @@ export default function ShortlistClient({ items, hrId }: ShortlistClientProps) {
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Shortlist</h1>
-          <p className="text-slate-400 text-sm mt-1">{items.length} namizəd</p>
+          <h1 className="font-display text-2xl font-semibold text-ink">Shortlist</h1>
+          <p className="text-ink-mute text-sm mt-1">{items.length} namizəd</p>
         </div>
         {selected.size >= 2 && (
           <Link
@@ -59,9 +59,9 @@ export default function ShortlistClient({ items, hrId }: ShortlistClientProps) {
       </div>
 
       {items.length === 0 ? (
-        <div className="glass-card p-12 text-center">
-          <Star size={40} className="text-slate-600 mx-auto mb-4" />
-          <p className="text-slate-400">Shortlist boşdur. Namizədlər səhifəsindən əlavə edin.</p>
+        <div className="card-dossier p-12 text-center">
+          <Star size={40} className="text-ink-mute mx-auto mb-4" />
+          <p className="text-ink-mute">Shortlist boşdur. Namizədlər səhifəsindən əlavə edin.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -72,24 +72,24 @@ export default function ShortlistClient({ items, hrId }: ShortlistClientProps) {
             return (
               <div
                 key={item.id}
-                className={`glass-card-hover p-5 flex flex-col gap-4 cursor-pointer transition-all ${
-                  isSelected ? 'border-teal-500/40 bg-teal-500/5' : ''
+                className={`card-dossier-hover p-5 flex flex-col gap-4 cursor-pointer transition-all ${
+                  isSelected ? 'border-navy/30 bg-navy-wash' : ''
                 }`}
                 onClick={() => toggleSelect(item.id)}
               >
                 <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-lg">
+                  <div className="w-12 h-12 rounded-xl bg-navy-wash border border-navy/25 flex items-center justify-center text-navy font-bold text-lg">
                     {item.student?.full_name?.[0]?.toUpperCase() || <User size={20} />}
                   </div>
                   <div className="flex items-center gap-2">
                     {isSelected && (
-                      <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">✓</span>
+                      <div className="w-5 h-5 rounded-md bg-navy flex items-center justify-center">
+                        <span className="text-paper text-xs font-bold">✓</span>
                       </div>
                     )}
                     <button
                       onClick={(e) => { e.stopPropagation(); removeFromShortlist(item.id) }}
-                      className="text-slate-500 hover:text-red-400 transition-colors"
+                      className="text-ink-mute hover:text-danger transition-colors"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -97,16 +97,16 @@ export default function ShortlistClient({ items, hrId }: ShortlistClientProps) {
                 </div>
 
                 <div>
-                  <p className="font-semibold text-white">{item.student?.full_name}</p>
+                  <p className="font-semibold text-ink">{item.student?.full_name}</p>
                   {item.student?.university && (
-                    <p className="text-xs text-slate-400 mt-0.5">{item.student.university}</p>
+                    <p className="text-xs text-ink-mute mt-0.5">{item.student.university}</p>
                   )}
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-slate-400">{item.simulation?.role_type}</p>
-                    <p className="text-xs text-slate-500 truncate max-w-[120px]">{item.simulation?.title}</p>
+                    <p className="text-xs text-ink-mute">{item.simulation?.role_type}</p>
+                    <p className="text-xs text-ink-mute truncate max-w-[120px]">{item.simulation?.title}</p>
                   </div>
                   {score !== null && (
                     <div className={`text-2xl font-bold ${getScoreColor(score)}`}>
@@ -121,7 +121,7 @@ export default function ShortlistClient({ items, hrId }: ShortlistClientProps) {
       )}
 
       {selected.size === 1 && (
-        <p className="text-center text-xs text-slate-500">Müqayisə üçün ən az 2 namizəd seçin (maks. 4)</p>
+        <p className="text-center text-xs text-ink-mute">Müqayisə üçün ən az 2 namizəd seçin (maks. 4)</p>
       )}
     </div>
   )

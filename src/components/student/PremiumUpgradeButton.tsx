@@ -36,7 +36,7 @@ export function PremiumUpgradeButton({
   return (
     <Link
       href="/student/premium"
-      className={`${base} bg-coral hover:bg-coral-deep text-white px-5 py-3 rounded-full ${className}`}
+      className={`${base} bg-coral hover:bg-coral-deep text-white px-5 py-3 rounded-md ${className}`}
     >
       <Zap size={16} aria-hidden="true" />
       {children || 'İndi Yüksəlt'}

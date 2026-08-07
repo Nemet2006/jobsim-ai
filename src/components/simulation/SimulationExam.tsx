@@ -159,15 +159,15 @@ export default function SimulationExam({
 
   if (phase === 'analyzing') {
     return (
-      <div className="fixed inset-0 bg-[#0A1628] flex flex-col items-center justify-center z-50">
+      <div className="fixed inset-0 bg-[#0F1B2A] flex flex-col items-center justify-center z-50">
         <div className="relative">
-          <div className="w-24 h-24 border-4 border-teal-500/20 rounded-full" />
-          <div className="absolute inset-0 w-24 h-24 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-24 h-24 border-4 border-verdigris/20 rounded-full" />
+          <div className="absolute inset-0 w-24 h-24 border-4 border-verdigris border-t-transparent rounded-full animate-spin" />
         </div>
         <h2 className="text-xl font-bold text-white mt-8 mb-2">AI cavabınızı analiz edir</h2>
         <div className="flex gap-1.5 mt-4">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+            <div key={i} className="w-2 h-2 bg-verdigris rounded-md animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
           ))}
         </div>
         <div className="mt-6 max-w-xs text-center space-y-2">
@@ -181,7 +181,7 @@ export default function SimulationExam({
 
   if (phase === 'done' && finalScore !== null && finalCompletedAt) {
     return (
-      <div className="fixed inset-0 bg-[#0A1628] flex items-center justify-center z-50 px-4 py-8 overflow-y-auto">
+      <div className="fixed inset-0 bg-[#0F1B2A] flex items-center justify-center z-50 px-4 py-8 overflow-y-auto">
         <div className="w-full max-w-lg">
           <CertificateCard
             variant="dark"
@@ -204,7 +204,7 @@ export default function SimulationExam({
 
   if (phase === 'error') {
     return (
-      <div className="fixed inset-0 bg-[#0A1628] flex items-center justify-center z-50 px-4">
+      <div className="fixed inset-0 bg-[#0F1B2A] flex items-center justify-center z-50 px-4">
         <div className="exam-card max-w-md w-full text-center">
           <AlertTriangle size={40} className="text-red-400 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">AI analizi uğursuz oldu</h2>
@@ -230,7 +230,7 @@ export default function SimulationExam({
 
   if (questions.length === 0) {
     return (
-      <div className="fixed inset-0 bg-[#0A1628] flex items-center justify-center z-50 px-4">
+      <div className="fixed inset-0 bg-[#0F1B2A] flex items-center justify-center z-50 px-4">
         <div className="exam-card max-w-md w-full text-center">
           <AlertTriangle size={40} className="text-amber-400 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">Suallar tapılmadı</h2>
@@ -243,7 +243,7 @@ export default function SimulationExam({
   const q = questions[currentQ]
 
   return (
-    <div className="fixed inset-0 bg-[#0A1628] overflow-auto">
+    <div className="fixed inset-0 bg-[#0F1B2A] overflow-auto">
       <ProctorCamera onCheatDetected={handleCheat} cheatCount={cheatCount} />
 
       {/* Cheat Warning */}
@@ -255,22 +255,22 @@ export default function SimulationExam({
       )}
 
       {/* Header */}
-      <div className="sticky top-0 bg-[#112240]/95 backdrop-blur border-b border-white/5 px-4 py-3 z-40">
+      <div className="sticky top-0 bg-[#1A2F48]/95 backdrop-blur border-b border-white/5 px-4 py-3 z-40">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
           <div>
             <h1 className="text-sm font-semibold text-white truncate">{simulation.title}</h1>
             <p className="text-xs text-slate-400">{answeredCount}/{questions.length} cavablandı</p>
           </div>
-          <div className={`flex items-center gap-2 font-mono font-bold text-lg ${timeLeft < 300 ? 'text-red-400 animate-pulse' : 'text-teal-400'}`}>
+          <div className={`flex items-center gap-2 font-mono font-bold text-lg ${timeLeft < 300 ? 'text-red-400 animate-pulse' : 'text-verdigris-soft'}`}>
             <Clock size={18} />
             {formatTime(timeLeft)}
           </div>
         </div>
         {/* Progress bar */}
         <div className="max-w-3xl mx-auto mt-2">
-          <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-white/5 rounded-md overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-teal-600 to-teal-400 rounded-full transition-all duration-500"
+              className="h-full bg-gradient-to-r from-verdigris-deep to-verdigris-soft rounded-sm transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -281,7 +281,7 @@ export default function SimulationExam({
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="exam-card mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <span className="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/30 text-teal-300 font-bold text-sm flex items-center justify-center">
+            <span className="w-8 h-8 rounded-md bg-verdigris/20 border border-verdigris/30 text-verdigris-soft font-bold text-sm flex items-center justify-center">
               {currentQ + 1}
             </span>
             <span className="text-xs text-slate-300 uppercase tracking-wide">
@@ -337,9 +337,9 @@ export default function SimulationExam({
               onClick={() => setCurrentQ(i)}
               className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
                 i === currentQ
-                  ? 'bg-teal-500 text-white'
+                  ? 'bg-verdigris text-white'
                   : hasQuestionAnswer(answers, questions[i])
-                  ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30'
+                  ? 'bg-verdigris/20 text-verdigris-soft border border-verdigris/30'
                   : 'bg-white/5 text-slate-400 border border-white/10'
               }`}
             >

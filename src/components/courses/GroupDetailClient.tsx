@@ -204,10 +204,10 @@ function MembersTab({
         <div>
           <span className="h-eyebrow block mb-1">Qrup üzvləri</span>
           <h2 className="font-display text-2xl font-semibold">
-            {members.length} tələbə<span className="text-coral">.</span>
+            {members.length} tələbə<span className="text-gold">.</span>
           </h2>
         </div>
-        <button onClick={onAddClick} className="btn-coral">
+        <button onClick={onAddClick} className="btn-primary">
           <UserPlus size={15} aria-hidden="true" />
           Tələbə əlavə et
         </button>
@@ -230,7 +230,7 @@ function MembersTab({
                 className="card p-5 flex items-center gap-4 group"
               >
                 {/* Avatar */}
-                <div className="w-12 h-12 rounded-2xl bg-forest text-cream font-display text-lg font-semibold flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-navy text-paper font-display text-lg font-semibold flex items-center justify-center shrink-0">
                   {m.full_name[0]?.toUpperCase()}
                 </div>
 
@@ -238,7 +238,7 @@ function MembersTab({
                 <div className="flex-1 min-w-0">
                   <p className="font-display text-base font-semibold text-ink truncate">{m.full_name}</p>
                   <p className="text-xs text-ink-mute truncate">{m.email}</p>
-                  {m.university && <p className="text-xs text-forest font-medium truncate">{m.university}</p>}
+                  {m.university && <p className="text-xs text-navy font-medium truncate">{m.university}</p>}
                 </div>
 
                 {/* Progress */}
@@ -247,9 +247,9 @@ function MembersTab({
                     <p className="text-xs text-ink-mute uppercase tracking-wider font-semibold mb-1">
                       {stats.completed}/{simAssigns.length} tamamlandı
                     </p>
-                    <div className="w-28 h-1.5 bg-forest/10 rounded-full overflow-hidden">
+                    <div className="w-28 h-1.5 bg-navy/10 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-forest rounded-full transition-all"
+                        className="h-full bg-navy rounded-full transition-all"
                         style={{ width: `${progress}%` }}
                         role="progressbar"
                         aria-valuenow={progress}
@@ -287,14 +287,14 @@ function MembersTab({
         </div>
       ) : (
         <div className="card p-12 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-forest-wash flex items-center justify-center">
-            <Users size={28} className="text-forest" aria-hidden="true" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-navy-wash flex items-center justify-center">
+            <Users size={28} className="text-navy" aria-hidden="true" />
           </div>
           <h3 className="font-display text-2xl font-semibold mb-2">Bu qrupda tələbə yoxdur</h3>
           <p className="text-ink-mid text-sm mb-6 max-w-sm mx-auto">
             Sistemdəki tələbələri axtarıb bu qrupa daxil edin.
           </p>
-          <button onClick={onAddClick} className="btn-coral inline-flex">
+          <button onClick={onAddClick} className="btn-primary inline-flex">
             <UserPlus size={14} aria-hidden="true" />
             İlk tələbəni əlavə et
           </button>
@@ -346,10 +346,10 @@ function SimulationsTab({
         <div>
           <span className="h-eyebrow block mb-1">Bu qrupa verilmiş</span>
           <h2 className="font-display text-2xl font-semibold">
-            {simAssigns.length} simulyasiya<span className="text-coral">.</span>
+            {simAssigns.length} simulyasiya<span className="text-gold">.</span>
           </h2>
         </div>
-        <button onClick={onAssignClick} className="btn-coral">
+        <button onClick={onAssignClick} className="btn-primary">
           <Plus size={15} aria-hidden="true" />
           Simulyasiya ver
         </button>
@@ -375,7 +375,7 @@ function SimulationsTab({
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-forest text-cream font-display font-semibold text-base flex items-center justify-center shrink-0">
+                    <div className="w-11 h-11 rounded-xl bg-navy text-paper font-display font-semibold text-base flex items-center justify-center shrink-0">
                       {(sim?.creator?.company_name || sim?.title || 'J')[0]?.toUpperCase()}
                     </div>
                     <div className="min-w-0">
@@ -417,7 +417,7 @@ function SimulationsTab({
                 </div>
 
                 {/* Progress */}
-                <div className="border-t border-forest/8 pt-3">
+                <div className="border-t border-navy/8 pt-3">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-xs text-ink-mute font-medium">
                       {stats.completed}/{members.length} tamamladı
@@ -428,9 +428,9 @@ function SimulationsTab({
                       </p>
                     )}
                   </div>
-                  <div className="h-1.5 bg-forest/10 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-navy/10 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-coral rounded-full transition-all"
+                      className="h-full bg-gold rounded-full transition-all"
                       style={{ width: `${progress}%` }}
                       role="progressbar"
                       aria-valuenow={progress}
@@ -451,14 +451,14 @@ function SimulationsTab({
         </div>
       ) : (
         <div className="card p-12 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-coral-wash flex items-center justify-center">
-            <ClipboardList size={28} className="text-coral-deep" aria-hidden="true" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gold-wash flex items-center justify-center">
+            <ClipboardList size={28} className="text-gold-deep" aria-hidden="true" />
           </div>
           <h3 className="font-display text-2xl font-semibold mb-2">Heç bir simulyasiya yoxdur</h3>
           <p className="text-ink-mid text-sm mb-6 max-w-sm mx-auto">
             HR şirkətlərinin simulyasiyalarından seçin, bu qrupa verin.
           </p>
-          <button onClick={onAssignClick} className="btn-coral inline-flex">
+          <button onClick={onAssignClick} className="btn-primary inline-flex">
             <Plus size={14} aria-hidden="true" />
             Simulyasiya ver
           </button>
@@ -482,7 +482,7 @@ function ProgressTab({
   if (members.length === 0 || simAssigns.length === 0) {
     return (
       <div className="card p-12 text-center">
-        <BarChart2 size={32} className="text-forest mx-auto mb-4" aria-hidden="true" />
+        <BarChart2 size={32} className="text-navy mx-auto mb-4" aria-hidden="true" />
         <h3 className="font-display text-2xl font-semibold mb-2">Hələ məlumat yoxdur</h3>
         <p className="text-ink-mid text-sm max-w-sm mx-auto">
           Tələbə və simulyasiya əlavə edildikdən sonra tərəqqi burada görünəcək.
@@ -503,7 +503,7 @@ function ProgressTab({
       <div className="card overflow-x-auto">
         <table className="w-full min-w-[600px]" aria-label="Tərəqqi matrisi">
           <thead>
-            <tr className="border-b border-forest/8">
+            <tr className="border-b border-navy/8">
               <th className="text-left p-4 text-xs uppercase tracking-wider text-ink-mute font-semibold w-[180px]">
                 Tələbə
               </th>
@@ -538,10 +538,10 @@ function ProgressTab({
                 : null
 
               return (
-                <tr key={member.id} className="border-b border-forest/5 hover:bg-forest-wash/30 transition-colors">
+                <tr key={member.id} className="border-b border-navy/8 hover:bg-navy-wash/30 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-forest text-cream font-display text-sm font-semibold flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-navy text-paper font-display text-sm font-semibold flex items-center justify-center shrink-0">
                         {member.full_name[0]?.toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -566,9 +566,9 @@ function ProgressTab({
                             <p className="text-[9px] text-ink-mute font-semibold">/ 100</p>
                           </div>
                         ) : inProgress ? (
-                          <span className="tag-coral text-[10px]">Davam edir</span>
+                          <span className="tag-gold text-[10px]">Davam edir</span>
                         ) : (
-                          <span className="w-7 h-7 rounded-full bg-cream-deep border border-forest/10 inline-flex items-center justify-center" aria-label="Başlanmayıb">
+                          <span className="w-7 h-7 rounded-full bg-paper-deep border border-navy/10 inline-flex items-center justify-center" aria-label="Başlanmayıb">
                             <span className="w-2 h-2 rounded-full bg-ink-mute/30" aria-hidden="true" />
                           </span>
                         )}
@@ -643,7 +643,7 @@ function AddStudentsModal({
     >
       {allStudents.length === 0 ? (
         <div className="py-8 text-center">
-          <Users size={32} className="text-forest mx-auto mb-3" aria-hidden="true" />
+          <Users size={32} className="text-navy mx-auto mb-3" aria-hidden="true" />
           <p className="text-ink-mid text-sm">Bütün tələbələr artıq bu qrupdadır</p>
         </div>
       ) : (
@@ -671,12 +671,12 @@ function AddStudentsModal({
                   onClick={() => toggle(s.id)}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all ${
                     isSelected
-                      ? 'border-forest bg-forest-wash'
-                      : 'border-transparent bg-cream-paper hover:border-forest/20'
+                      ? 'border-navy bg-navy-wash'
+                      : 'border-transparent bg-paper hover:border-navy/20'
                   }`}
                 >
                   <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-display font-semibold text-sm ${
-                    isSelected ? 'bg-forest text-cream' : 'bg-forest-wash text-forest'
+                    isSelected ? 'bg-navy text-paper' : 'bg-navy-wash text-navy'
                   }`}>
                     {s.full_name[0]?.toUpperCase()}
                   </div>
@@ -684,7 +684,7 @@ function AddStudentsModal({
                     <p className="text-sm font-semibold text-ink truncate">{s.full_name}</p>
                     {s.university && <p className="text-xs text-ink-mute truncate">{s.university}</p>}
                   </div>
-                  {isSelected && <CheckCircle2 size={16} className="text-forest shrink-0" aria-hidden="true" />}
+                  {isSelected && <CheckCircle2 size={16} className="text-navy shrink-0" aria-hidden="true" />}
                 </button>
               )
             })}
@@ -695,7 +695,7 @@ function AddStudentsModal({
             <button
               onClick={handleAdd}
               disabled={loading || selected.size === 0}
-              className="btn-coral flex-1 py-3 disabled:opacity-50"
+              className="btn-primary flex-1 py-3 disabled:opacity-50"
             >
               {loading
                 ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
@@ -773,7 +773,7 @@ function AssignSimModal({
     >
       {available.length === 0 ? (
         <div className="py-8 text-center">
-          <ClipboardList size={32} className="text-forest mx-auto mb-3" aria-hidden="true" />
+          <ClipboardList size={32} className="text-navy mx-auto mb-3" aria-hidden="true" />
           <p className="text-ink-mid text-sm">Bütün mövcud simulyasiyalar artıq bu qrupa verilib</p>
         </div>
       ) : (
@@ -802,12 +802,12 @@ function AssignSimModal({
                   onClick={() => toggle(sim.id)}
                   className={`w-full flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all ${
                     isSelected
-                      ? 'border-forest bg-forest-wash'
-                      : 'border-transparent bg-cream-paper hover:border-forest/20'
+                      ? 'border-navy bg-navy-wash'
+                      : 'border-transparent bg-paper hover:border-navy/20'
                   }`}
                 >
                   <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-display font-semibold text-base ${
-                    isSelected ? 'bg-forest text-cream' : 'bg-forest-wash text-forest'
+                    isSelected ? 'bg-navy text-paper' : 'bg-navy-wash text-navy'
                   }`}>
                     {(sim.creator?.company_name || sim.title)[0]?.toUpperCase()}
                   </div>
@@ -832,7 +832,7 @@ function AssignSimModal({
                     </div>
                   </div>
                   {isSelected && (
-                    <CheckCircle2 size={18} className="text-forest shrink-0 mt-0.5" aria-hidden="true" />
+                    <CheckCircle2 size={18} className="text-navy shrink-0 mt-0.5" aria-hidden="true" />
                   )}
                 </button>
               )
@@ -857,7 +857,7 @@ function AssignSimModal({
             <button
               onClick={handleAssign}
               disabled={loading || selectedSims.size === 0}
-              className="btn-coral flex-1 py-3 disabled:opacity-50"
+              className="btn-primary flex-1 py-3 disabled:opacity-50"
             >
               {loading
                 ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
@@ -910,12 +910,12 @@ function ModalShell({
             <div>
               <span className="h-eyebrow block mb-1.5">{eyebrow}</span>
               <h2 className="font-display text-2xl font-semibold">
-                {title}<span className="text-coral">.</span>
+                {title}<span className="text-gold">.</span>
               </h2>
             </div>
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-full hover:bg-forest-wash flex items-center justify-center text-ink-mid hover:text-forest"
+              className="w-9 h-9 rounded-full hover:bg-navy-wash flex items-center justify-center text-ink-mid hover:text-navy"
               aria-label="Bağla"
             >
               <X size={18} aria-hidden="true" />

@@ -23,7 +23,7 @@ export default async function AssignPage() {
         eyebrow="Tapşırıq idarəsi"
         title={
           <>
-            Simulyasiyanı <span className="italic font-light text-forest">qrupa</span> verin.
+            Simulyasiyanı <span className="text-navy">qrupa</span> verin.
           </>
         }
         dek={
@@ -36,14 +36,14 @@ export default async function AssignPage() {
 
       {(groups || []).length === 0 ? (
         <div className="card p-12 text-center max-w-lg mx-auto">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-forest-wash flex items-center justify-center">
-            <Folders size={28} className="text-forest" aria-hidden="true" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-navy-wash flex items-center justify-center">
+            <Folders size={28} className="text-navy" aria-hidden="true" />
           </div>
           <h3 className="font-display text-2xl font-semibold mb-2">Hələ qrup yoxdur</h3>
           <p className="text-ink-mid text-sm mb-6 leading-relaxed max-w-xs mx-auto">
             Simulyasiya vermək üçün əvvəlcə bir qrup yaratmalısınız.
           </p>
-          <Link href="/courses/groups" className="btn-coral inline-flex">
+          <Link href="/courses/groups" className="btn-primary inline-flex">
             <Plus size={14} aria-hidden="true" />
             Qrup yarat
           </Link>
@@ -58,25 +58,25 @@ export default async function AssignPage() {
               <StaggerItem key={group.id}>
                 <Link
                   href={`/courses/groups/${group.id}?tab=simulations`}
-                  className="group block card p-6 hover:shadow-soft-md hover:border-forest/20 transition-all hover:-translate-y-1"
+                  className="group block card p-6 hover:shadow-soft-md hover:border-navy/20 transition-all hover:-translate-y-1"
                 >
                   <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-2xl bg-forest text-cream font-display text-xl font-semibold flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-2xl bg-navy text-paper font-display text-xl font-semibold flex items-center justify-center group-hover:scale-105 transition-transform">
                       {group.name[0]?.toUpperCase()}
                     </div>
                     <ArrowRight
                       size={18}
-                      className="text-ink-mute group-hover:text-coral group-hover:translate-x-0.5 transition-all"
+                      className="text-ink-mute group-hover:text-gold group-hover:translate-x-0.5 transition-all"
                       aria-hidden="true"
                     />
                   </div>
-                  <h3 className="font-display text-xl font-semibold text-ink group-hover:text-forest transition-colors mb-1">
+                  <h3 className="font-display text-xl font-semibold text-ink group-hover:text-navy transition-colors mb-1">
                     {group.name}
                   </h3>
                   {group.description && (
                     <p className="text-sm text-ink-mid line-clamp-2">{group.description}</p>
                   )}
-                  <p className="mt-4 text-xs font-medium text-coral-deep">
+                  <p className="mt-4 text-xs font-medium text-gold-deep">
                     Simulyasiya ver →
                   </p>
                 </Link>

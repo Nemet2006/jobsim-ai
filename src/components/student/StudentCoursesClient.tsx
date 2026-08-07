@@ -36,7 +36,7 @@ export function StudentCoursesClient({ studentId, groups }: Props) {
         eyebrow="Kurslarım"
         title={
           <>
-            Kursa <span className="italic font-light text-forest">qoşulun</span>,<br />
+            Kursa <span className="text-forest">qoşulun</span>,<br />
             tapşırıqları görün.
           </>
         }
@@ -112,12 +112,12 @@ function GroupMemberCard({ group, studentId }: { group: Group; studentId: string
     <motion.article className="card p-6 group relative" whileHover={{ y: -2 }}>
       {/* Top */}
       <div className="flex items-start justify-between mb-4">
-        <div className="w-12 h-12 rounded-2xl bg-forest text-cream font-display text-xl font-semibold flex items-center justify-center group-hover:scale-105 transition-transform">
+        <div className="w-12 h-12 rounded-lg bg-forest text-cream font-display text-xl font-semibold flex items-center justify-center group-hover:scale-105 transition-transform">
           {group.name[0]?.toUpperCase()}
         </div>
         <button
           onClick={() => setShowConfirm(true)}
-          className="w-8 h-8 rounded-full hover:bg-danger-tint flex items-center justify-center text-ink-mute hover:text-danger opacity-0 group-hover:opacity-100 transition-all"
+          className="w-8 h-8 rounded-md hover:bg-danger-tint flex items-center justify-center text-ink-mute hover:text-danger opacity-0 group-hover:opacity-100 transition-all"
           aria-label={`${group.name} qrupunu tərk et`}
         >
           <LogOut size={14} aria-hidden="true" />
@@ -159,7 +159,7 @@ function GroupMemberCard({ group, studentId }: { group: Group; studentId: string
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-cream/95 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 text-center z-10"
+            className="absolute inset-0 bg-cream/95 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center p-6 text-center z-10"
           >
             <LogOut size={24} className="text-danger mb-3" aria-hidden="true" />
             <p className="font-semibold text-ink mb-1">Qrupu tərk et?</p>
@@ -176,7 +176,7 @@ function GroupMemberCard({ group, studentId }: { group: Group; studentId: string
               <button
                 onClick={leaveGroup}
                 disabled={leaving}
-                className="flex-1 py-2 text-sm font-medium rounded-full bg-danger text-white hover:bg-danger/90 flex items-center justify-center gap-2 disabled:opacity-60"
+                className="flex-1 py-2 text-sm font-medium rounded-md bg-danger text-white hover:bg-danger/90 flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 {leaving
                   ? <Loader2 size={14} className="animate-spin" aria-hidden="true" />
@@ -196,7 +196,7 @@ function GroupMemberCard({ group, studentId }: { group: Group; studentId: string
 function EmptyState({ onJoinClick }: { onJoinClick: () => void }) {
   return (
     <div className="card p-12 lg:p-16 text-center max-w-2xl mx-auto">
-      <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-forest-wash flex items-center justify-center">
+      <div className="w-20 h-20 mx-auto mb-6 rounded-xl bg-forest-wash flex items-center justify-center">
         <GraduationCap size={36} className="text-forest" aria-hidden="true" />
       </div>
       <h3 className="font-display text-3xl font-semibold mb-3">
@@ -303,7 +303,7 @@ function JoinGroupModal({
           {/* Success */}
           {success ? (
             <div className="text-center py-4">
-              <div className="w-16 h-16 rounded-2xl bg-success text-white flex items-center justify-center mx-auto mb-5">
+              <div className="w-16 h-16 rounded-lg bg-success text-white flex items-center justify-center mx-auto mb-5">
                 <CheckCircle2 size={28} aria-hidden="true" />
               </div>
               <span className="h-eyebrow block mb-2">Uğurlu!</span>
@@ -339,7 +339,7 @@ function JoinGroupModal({
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-9 h-9 rounded-full hover:bg-forest-wash flex items-center justify-center text-ink-mid hover:text-forest"
+                  className="w-9 h-9 rounded-md hover:bg-forest-wash flex items-center justify-center text-ink-mid hover:text-forest"
                   aria-label="Bağla"
                 >
                   <X size={18} aria-hidden="true" />

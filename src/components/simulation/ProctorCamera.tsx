@@ -57,7 +57,7 @@ export function ProctorCamera({ onCheatDetected, cheatCount }: ProctorCameraProp
 
   return (
     <div className="fixed top-4 right-4 z-50">
-      <div className="relative w-32 h-24 rounded-lg overflow-hidden border-2 border-teal-500 shadow-lg shadow-teal-500/20">
+      <div className="relative w-32 h-24 rounded-lg overflow-hidden border-2 border-verdigris shadow-lg shadow-verdigris/20">
         {cameraError ? (
           <div className="w-full h-full bg-[#162035] flex items-center justify-center">
             <AlertTriangle size={20} className="text-red-400" />
@@ -72,7 +72,7 @@ export function ProctorCamera({ onCheatDetected, cheatCount }: ProctorCameraProp
           />
         )}
         <div className="absolute bottom-1 left-1 flex items-center gap-1">
-          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-red-500 rounded-md animate-pulse" />
           <span className="text-white text-[10px] font-medium drop-shadow">AI izləyir</span>
         </div>
         {cheatCount > 0 && (

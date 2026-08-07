@@ -55,7 +55,7 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
           placeholder={question.placeholder || '// Kodunuzu buraya yazın...'}
           rows={14}
           spellCheck={false}
-          className="exam-input text-sm leading-relaxed font-mono bg-[#0d1117] text-teal-100 border-teal-500/20 placeholder:text-slate-500"
+          className="exam-input text-sm leading-relaxed font-mono bg-[#0d1117] text-teal-100 border-verdigris/20 placeholder:text-slate-500"
         />
       </div>
     )
@@ -74,8 +74,8 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
         </p>
 
         {fileAnswer ? (
-          <div className="flex items-center gap-3 p-4 rounded-xl border border-teal-500/40 bg-teal-500/10">
-            <FileText size={22} className="text-teal-300 shrink-0" aria-hidden="true" />
+          <div className="flex items-center gap-3 p-4 rounded-xl border border-verdigris/40 bg-verdigris/10">
+            <FileText size={22} className="text-verdigris-soft shrink-0" aria-hidden="true" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">{fileAnswer.name}</p>
               <p className="text-xs text-slate-400">{Math.round(fileAnswer.size / 1024)} KB · yükləndi</p>
@@ -94,10 +94,10 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
             type="button"
             disabled={uploading}
             onClick={() => inputRef.current?.click()}
-            className="w-full flex flex-col items-center justify-center gap-2 p-8 rounded-xl border-2 border-dashed border-white/20 hover:border-teal-500/50 hover:bg-white/5 transition-colors disabled:opacity-60"
+            className="w-full flex flex-col items-center justify-center gap-2 p-8 rounded-xl border-2 border-dashed border-white/20 hover:border-verdigris/50 hover:bg-white/5 transition-colors disabled:opacity-60"
           >
             {uploading ? (
-              <Loader2 className="w-8 h-8 animate-spin text-teal-400" aria-hidden="true" />
+              <Loader2 className="w-8 h-8 animate-spin text-verdigris-soft" aria-hidden="true" />
             ) : (
               <Upload className="w-8 h-8 text-slate-400" aria-hidden="true" />
             )}
@@ -137,12 +137,12 @@ export function QuestionAnswerInput({ question, value, attemptId, onChange }: Qu
             onClick={() => onChange(opt)}
             className={`w-full text-left p-4 rounded-xl border transition-all duration-200 ${
               value === opt
-                ? 'border-teal-500/50 bg-teal-500/10 text-white'
+                ? 'border-verdigris/50 bg-verdigris/10 text-white'
                 : 'border-white/10 bg-white/3 text-slate-300 hover:border-white/20 hover:bg-white/5'
             }`}
           >
-            <span className={`inline-flex w-6 h-6 rounded-full border mr-3 items-center justify-center text-xs font-bold ${
-              value === opt ? 'border-teal-500 bg-teal-500 text-white' : 'border-white/20 text-slate-400'
+            <span className={`inline-flex w-6 h-6 rounded-md border mr-3 items-center justify-center text-xs font-bold ${
+              value === opt ? 'border-verdigris bg-verdigris text-white' : 'border-white/20 text-slate-400'
             }`}>
               {String.fromCharCode(65 + i)}
             </span>

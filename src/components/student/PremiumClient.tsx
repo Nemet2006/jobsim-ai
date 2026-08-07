@@ -131,7 +131,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
         animate={{ opacity: 1, scale: 1 }}
         className="card-feature p-10 lg:p-14 text-cream text-center max-w-2xl mx-auto"
       >
-        <div className="w-20 h-20 rounded-3xl bg-coral flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 rounded-xl bg-coral flex items-center justify-center mx-auto mb-6">
           <Zap size={36} fill="currentColor" aria-hidden="true" />
         </div>
         <span className="h-eyebrow text-sun block mb-3">Premium Aktiv</span>
@@ -141,7 +141,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
         <p className="text-cream/80 mb-8 leading-relaxed">
           Bütün simulyasiyalara limitsiz giriş, dərin AI analiz və sertifikat imkanlarınız aktivdir.
         </p>
-        <Link href="/student/simulations" className="inline-flex items-center gap-2 bg-coral hover:bg-coral-deep text-white font-medium px-7 py-3.5 rounded-full transition-colors">
+        <Link href="/student/simulations" className="inline-flex items-center gap-2 bg-coral hover:bg-coral-deep text-white font-medium px-7 py-3.5 rounded-md transition-colors">
           Simulyasiyalara keç
           <ArrowRight size={16} aria-hidden="true" />
         </Link>
@@ -155,12 +155,12 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
         eyebrow="Premium"
         title={
           <>
-            Get noticed.<br />
-            <span className="italic font-light text-forest">Get hired.</span>{' '}
-            <span className="text-coral">Premium</span> ilə.
+            Sübut et.<br />
+            <span className="text-navy">Görün.</span>{' '}
+            <span className="text-gold">Premium</span> ilə.
           </>
         }
-        dek="Sınırsız simulyasiya, dərin AI analiz, sertifikat — karyeranızı sürətləndirin."
+        dek="Sınırsız simulyasiya, dərin AI analiz və verification seal — karyeranızı sürətləndirin."
       />
 
       {searchParams.get('cancelled') === '1' && (
@@ -209,7 +209,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
             <button
               onClick={handleCheckout}
               disabled={checkoutLoading}
-              className="w-full flex items-center justify-center gap-2 bg-coral hover:bg-coral-deep disabled:opacity-60 text-white font-semibold px-6 py-4 rounded-full transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-coral hover:bg-coral-deep disabled:opacity-60 text-white font-semibold px-6 py-4 rounded-md transition-colors"
             >
               {checkoutLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />

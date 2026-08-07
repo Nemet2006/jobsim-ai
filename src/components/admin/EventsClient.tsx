@@ -71,7 +71,7 @@ export default function EventsClient() {
         eyebrow="Raw Events"
         title={
           <>
-            Hadisə <span className="italic font-light text-forest">axını</span>
+            Hadisə <span className="text-navy">axını</span>
           </>
         }
         dek="Platformada baş verən bütün izlənən hadisələr — PII saxlanılmır, yalnız anonim identifikatorlar."
@@ -100,10 +100,10 @@ export default function EventsClient() {
               setDays(opt.value)
               setPage(0)
             }}
-            className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+            className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
               days === opt.value
-                ? 'bg-forest text-cream border-forest'
-                : 'bg-white text-ink-mid border-forest/12 hover:border-forest/30'
+                ? 'bg-navy text-paper border-navy'
+                : 'bg-white text-ink-mid border-navy/12 hover:border-navy/30'
             }`}
           >
             {opt.label}
@@ -112,7 +112,7 @@ export default function EventsClient() {
 
         <button
           onClick={load}
-          className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white border border-forest/12 text-ink-mid hover:border-forest/30"
+          className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium bg-white border border-navy/12 text-ink-mid hover:border-navy/30"
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} aria-hidden="true" />
           Yenilə
@@ -125,10 +125,10 @@ export default function EventsClient() {
         </div>
       )}
 
-      <div className="card overflow-x-auto">
+      <div className="card-dossier overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs uppercase tracking-wider text-ink-mute border-b border-forest/8">
+            <tr className="text-left text-xs uppercase tracking-wider text-ink-mute border-b border-navy/8">
               <th className="px-4 py-3">Vaxt</th>
               <th className="px-4 py-3">Event</th>
               <th className="px-4 py-3">Rol</th>
@@ -139,12 +139,12 @@ export default function EventsClient() {
           </thead>
           <tbody>
             {(data?.items ?? []).map((row) => (
-              <tr key={row.id} className="border-b border-forest/8 last:border-0 align-top">
+              <tr key={row.id} className="border-b border-navy/8 last:border-0 align-top">
                 <td className="px-4 py-3 whitespace-nowrap text-ink-mid">
                   {new Date(row.occurred_at).toLocaleString('az-AZ')}
                 </td>
                 <td className="px-4 py-3">
-                  <span className="font-mono text-xs bg-forest-wash text-forest px-2 py-1 rounded-lg">
+                  <span className="font-mono text-xs bg-navy-wash text-navy px-2 py-1 rounded-lg">
                     {row.event_name}
                   </span>
                 </td>
@@ -181,7 +181,7 @@ export default function EventsClient() {
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="inline-flex items-center gap-1 px-4 py-2 rounded-full border border-forest/12 bg-white disabled:opacity-40"
+            className="inline-flex items-center gap-1 px-4 py-2 rounded-md border border-navy/12 bg-white disabled:opacity-40"
           >
             <ChevronLeft size={14} aria-hidden="true" />
             Əvvəlki
@@ -189,7 +189,7 @@ export default function EventsClient() {
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={page + 1 >= totalPages}
-            className="inline-flex items-center gap-1 px-4 py-2 rounded-full border border-forest/12 bg-white disabled:opacity-40"
+            className="inline-flex items-center gap-1 px-4 py-2 rounded-md border border-navy/12 bg-white disabled:opacity-40"
           >
             Növbəti
             <ChevronRight size={14} aria-hidden="true" />

@@ -52,7 +52,7 @@ export default async function CourseGroupsPage() {
         eyebrow="Qrup İdarəsi"
         title={
           <>
-            Siniflərinizi <span className="italic font-light text-forest">qruplara</span> bölün.
+            Siniflərinizi <span className="text-navy">qruplara</span> bölün.
           </>
         }
         dek={

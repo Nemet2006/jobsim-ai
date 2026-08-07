@@ -37,29 +37,27 @@ export function SimCard({ href, title, company, category, difficulty, duration, 
     >
       <Link
         href={href}
-        className="group block card p-5 lg:p-6 h-full hover:shadow-soft-md hover:border-forest/20 transition-all hover:-translate-y-1"
+        className="group block card-dossier p-5 h-full hover:shadow-soft-md hover:border-navy/20 transition-all"
       >
-        {/* Top row: logo + badge */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-forest text-cream font-display text-lg font-semibold flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-md bg-navy text-paper font-display text-base font-semibold flex items-center justify-center shrink-0">
               {initial}
             </div>
             {company && (
               <div className="min-w-0">
-                <p className="text-[11px] uppercase tracking-wider text-ink-mute font-semibold">From</p>
+                <p className="text-[10px] uppercase tracking-[0.14em] text-ink-mute font-semibold">From</p>
                 <p className="text-sm font-semibold text-ink truncate">{company}</p>
               </div>
             )}
           </div>
-          {badge && <span className="tag-coral">{badge}</span>}
+          {badge && <span className="tag-gold">{badge}</span>}
           {!badge && completions !== undefined && completions > 0 && (
             <span className="tag-neutral">{completions.toLocaleString('az-AZ')} tamamlanmış</span>
           )}
         </div>
 
-        {/* Title */}
-        <h3 className="font-display text-xl lg:text-2xl font-semibold text-ink mb-2 leading-tight group-hover:text-forest transition-colors text-balance">
+        <h3 className="font-display text-lg lg:text-xl font-semibold text-ink mb-2 leading-tight group-hover:text-navy transition-colors text-balance">
           {title}
         </h3>
 

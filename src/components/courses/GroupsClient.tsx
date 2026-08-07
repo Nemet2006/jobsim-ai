@@ -37,7 +37,7 @@ export function GroupsClient({ groups, instructorId }: GroupsClientProps) {
           <span className="font-semibold text-ink">{groups.length}</span>{' '}
           qrup yaradılıb
         </p>
-        <button onClick={() => setShowCreate(true)} className="btn-coral">
+        <button onClick={() => setShowCreate(true)} className="btn-primary">
           <Plus size={15} aria-hidden="true" />
           Yeni qrup yarat
         </button>
@@ -84,7 +84,7 @@ function JoinCodeBadge({ code }: { code: string }) {
     <button
       onClick={copy}
       title="Kodu kopyala"
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-forest/15 bg-forest-wash text-forest font-mono text-xs font-bold hover:bg-forest hover:text-cream transition-colors group"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-navy/15 bg-navy-wash text-navy font-mono text-xs font-bold hover:bg-navy hover:text-paper transition-colors group"
       aria-label={`Qoşulma kodu: ${code}. Kopyalamaq üçün kliklə.`}
     >
       <Hash size={10} aria-hidden="true" />
@@ -100,20 +100,20 @@ function GroupCard({ group }: { group: Group }) {
   return (
     <Link
       href={`/courses/groups/${group.id}`}
-      className="group block card p-6 hover:shadow-soft-md hover:border-forest/20 transition-all hover:-translate-y-1"
+      className="group block card p-6 hover:shadow-soft-md hover:border-navy/20 transition-all hover:-translate-y-1"
     >
       <div className="flex items-start justify-between mb-4">
-        <div className="w-12 h-12 rounded-2xl bg-forest text-cream flex items-center justify-center font-display text-xl font-semibold group-hover:scale-105 transition-transform">
+        <div className="w-12 h-12 rounded-2xl bg-navy text-paper flex items-center justify-center font-display text-xl font-semibold group-hover:scale-105 transition-transform">
           {group.name[0]?.toUpperCase()}
         </div>
         <ArrowRight
           size={18}
-          className="text-ink-mute group-hover:text-coral group-hover:translate-x-0.5 transition-all"
+          className="text-ink-mute group-hover:text-gold group-hover:translate-x-0.5 transition-all"
           aria-hidden="true"
         />
       </div>
 
-      <h3 className="font-display text-xl font-semibold text-ink mb-1 leading-tight group-hover:text-forest transition-colors">
+      <h3 className="font-display text-xl font-semibold text-ink mb-1 leading-tight group-hover:text-navy transition-colors">
         {group.name}
       </h3>
       {group.description && (
@@ -130,13 +130,13 @@ function GroupCard({ group }: { group: Group }) {
         </div>
       )}
 
-      <div className="flex items-center gap-4 pt-3 border-t border-forest/8">
+      <div className="flex items-center gap-4 pt-3 border-t border-navy/8">
         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-mid">
-          <Users size={12} className="text-forest" aria-hidden="true" />
+          <Users size={12} className="text-navy" aria-hidden="true" />
           {group.memberCount} tələbə
         </span>
         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-mid">
-          <ClipboardList size={12} className="text-coral-deep" aria-hidden="true" />
+          <ClipboardList size={12} className="text-gold-deep" aria-hidden="true" />
           {group.simCount} simulyasiya
         </span>
       </div>
@@ -149,8 +149,8 @@ function GroupCard({ group }: { group: Group }) {
 function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
   return (
     <div className="card p-14 text-center">
-      <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-forest-wash flex items-center justify-center">
-        <Folders size={36} className="text-forest" aria-hidden="true" />
+      <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-navy-wash flex items-center justify-center">
+        <Folders size={36} className="text-navy" aria-hidden="true" />
       </div>
       <h3 className="font-display text-3xl font-semibold mb-3">Hələ qrup yoxdur</h3>
       <p className="text-ink-mid text-base mb-8 max-w-md mx-auto leading-relaxed">
@@ -158,7 +158,7 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
         dashboard-larından kodu daxil edib qrupa qoşulacaqlar.
       </p>
 
-      <button onClick={onCreateClick} className="btn-coral px-6 py-3 mb-10">
+      <button onClick={onCreateClick} className="btn-primary px-6 py-3 mb-10">
         <Plus size={15} aria-hidden="true" />
         İlk qrupu yarat
       </button>
@@ -170,8 +170,8 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
           { n: '2', t: 'Kodu paylaş', d: 'Tələbələrə 6 simvolluk kodu göndərin (WhatsApp, e-mail və s.).' },
           { n: '3', t: 'Simulyasiya ver', d: 'HR şirkət simulyasiyalarından seçin, bütün qrupa bir anda verin.' },
         ].map((step) => (
-          <div key={step.n} className="card-cream p-4">
-            <div className="w-8 h-8 rounded-full bg-forest text-cream font-display font-semibold text-sm flex items-center justify-center mb-3">
+          <div key={step.n} className="card-dossier p-4">
+            <div className="w-8 h-8 rounded-full bg-navy text-paper font-display font-semibold text-sm flex items-center justify-center mb-3">
               {step.n}
             </div>
             <h4 className="font-semibold text-ink text-sm mb-1">{step.t}</h4>
@@ -253,18 +253,18 @@ function CreateGroupModal({
           {/* Success view */}
           {created ? (
             <div className="text-center py-4">
-              <div className="w-16 h-16 rounded-2xl bg-forest text-cream flex items-center justify-center font-display text-2xl font-semibold mx-auto mb-5">
+              <div className="w-16 h-16 rounded-2xl bg-navy text-paper flex items-center justify-center font-display text-2xl font-semibold mx-auto mb-5">
                 {created.name[0]?.toUpperCase()}
               </div>
               <span className="h-eyebrow block mb-2">Qrup yaradıldı!</span>
               <h2 className="font-display text-2xl font-semibold mb-1">
-                {created.name}<span className="text-coral">.</span>
+                {created.name}<span className="text-gold">.</span>
               </h2>
               <p className="text-sm text-ink-mid mb-6">
                 Bu kodu tələbələrə göndərin — onlar öz dashboard-larından qrupa qoşulacaqlar.
               </p>
-              <div className="bg-forest text-cream rounded-2xl px-6 py-5 mb-6">
-                <p className="text-xs uppercase tracking-wider text-cream/60 font-semibold mb-2">Qoşulma kodu</p>
+              <div className="bg-navy text-paper rounded-2xl px-6 py-5 mb-6">
+                <p className="text-xs uppercase tracking-wider text-paper/60 font-semibold mb-2">Qoşulma kodu</p>
                 <p className="font-mono text-4xl font-bold tracking-widest">{created.join_code}</p>
               </div>
               <button
@@ -276,7 +276,7 @@ function CreateGroupModal({
                 <Copy size={14} aria-hidden="true" />
                 Kodu kopyala
               </button>
-              <button onClick={onClose} className="btn-coral w-full">
+              <button onClick={onClose} className="btn-primary w-full">
                 Bağla
               </button>
             </div>
@@ -286,12 +286,12 @@ function CreateGroupModal({
                 <div>
                   <span className="h-eyebrow block mb-1.5">Yeni qrup</span>
                   <h2 id="create-group-title" className="font-display text-2xl font-semibold">
-                    Qrup yarat<span className="text-coral">.</span>
+                    Qrup yarat<span className="text-gold">.</span>
                   </h2>
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-9 h-9 rounded-full hover:bg-forest-wash flex items-center justify-center text-ink-mid hover:text-forest"
+                  className="w-9 h-9 rounded-full hover:bg-navy-wash flex items-center justify-center text-ink-mid hover:text-navy"
                   aria-label="Bağla"
                 >
                   <X size={18} aria-hidden="true" />
@@ -307,7 +307,7 @@ function CreateGroupModal({
               <form onSubmit={handleCreate} className="space-y-5">
                 <div>
                   <label htmlFor="group-name" className="block text-sm font-semibold text-ink mb-2">
-                    Qrup adı <span className="text-coral">*</span>
+                    Qrup adı <span className="text-gold">*</span>
                   </label>
                   <input
                     id="group-name"
@@ -345,7 +345,7 @@ function CreateGroupModal({
                   <button
                     type="submit"
                     disabled={loading || !name.trim()}
-                    className="btn-coral flex-1 py-3 disabled:opacity-50"
+                    className="btn-primary flex-1 py-3 disabled:opacity-50"
                   >
                     {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />

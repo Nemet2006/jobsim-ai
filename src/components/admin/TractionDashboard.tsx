@@ -9,13 +9,13 @@ import { RefreshCw, AlertTriangle, Radio } from 'lucide-react'
 import { EditorialHero } from '@/components/ui/EditorialHero'
 import { StatGrid, type StatItem } from '@/components/ui/StatGrid'
 
-const CHART_COLORS = ['#1F4E4A', '#F47E47', '#3B82F6', '#F5C842', '#22A06B']
+const CHART_COLORS = ['#16283D', '#B8862E', '#3B82F6', '#1E7A63', '#C4432E']
 const CHART_TICK = '#8A8A8A'
 const CHART_TOOLTIP = {
   backgroundColor: '#FFFFFF',
-  border: '1px solid rgba(31, 78, 74, 0.12)',
+  border: '1px solid rgba(22, 40, 61, 0.12)',
   borderRadius: '12px',
-  color: '#1A1A1A',
+  color: '#15181D',
 }
 
 const RANGE_OPTIONS = [
@@ -134,19 +134,19 @@ export default function TractionDashboard() {
 
   const statsRow1: StatItem[] = data
     ? [
-        { label: 'Ümumi istifadəçi', value: data.totals.totalUsers, icon: 'users', accent: 'forest' },
-        { label: 'Yeni qeydiyyat', value: data.totals.newRegistrations, icon: 'trending', accent: 'coral', meta: 'seçilən dövrdə' },
+        { label: 'Ümumi istifadəçi', value: data.totals.totalUsers, icon: 'users', accent: 'navy' },
+        { label: 'Yeni qeydiyyat', value: data.totals.newRegistrations, icon: 'trending', accent: 'gold', meta: 'seçilən dövrdə' },
         { label: 'Səhifə baxışı', value: data.events?.page_views ?? 0, icon: 'chart', accent: 'info', meta: data.events ? 'canlı tracking' : 'tracking aktiv deyil' },
-        { label: 'Unikal ziyarətçi', value: data.events?.unique_visitors ?? 0, icon: 'target', accent: 'sun', meta: data.events ? 'anonim daxil' : 'tracking aktiv deyil' },
+        { label: 'Unikal ziyarətçi', value: data.events?.unique_visitors ?? 0, icon: 'target', accent: 'gold', meta: data.events ? 'anonim daxil' : 'tracking aktiv deyil' },
       ]
     : []
 
   const statsRow2: StatItem[] = data
     ? [
-        { label: 'Sim. başladı', value: data.totals.attemptsStarted, icon: 'play', accent: 'forest' },
-        { label: 'Sim. tamamlandı', value: data.totals.attemptsCompleted, icon: 'check', accent: 'success', meta: `tamamlama ${data.totals.completionRate}%` },
-        { label: 'Orta bal', value: data.totals.avgScore ?? '—', icon: 'star', accent: 'sun' },
-        { label: 'Premium', value: data.totals.premiumUsers, icon: 'zap', accent: 'coral', meta: `${data.totals.premiumActivations} aktivasiya dövrdə` },
+        { label: 'Sim. başladı', value: data.totals.attemptsStarted, icon: 'play', accent: 'navy' },
+        { label: 'Sim. tamamlandı', value: data.totals.attemptsCompleted, icon: 'check', accent: 'verdigris', meta: `tamamlama ${data.totals.completionRate}%` },
+        { label: 'Orta bal', value: data.totals.avgScore ?? '—', icon: 'star', accent: 'gold' },
+        { label: 'Premium', value: data.totals.premiumUsers, icon: 'zap', accent: 'gold', meta: `${data.totals.premiumActivations} aktivasiya dövrdə` },
       ]
     : []
 
@@ -156,7 +156,7 @@ export default function TractionDashboard() {
         eyebrow="Platform Traction"
         title={
           <>
-            Canlı <span className="italic font-light text-forest">traction</span> paneli
+            Canlı <span className="text-navy">traction</span> ledger
           </>
         }
         dek="Qeydiyyat, kliklər, simulyasiya funnel-i və premium conversion — hamısı bir yerdə, 30 saniyədə bir yenilənir."
@@ -176,10 +176,10 @@ export default function TractionDashboard() {
           <button
             key={opt.value}
             onClick={() => setRange(opt.value)}
-            className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+            className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
               range === opt.value
-                ? 'bg-forest text-cream border-forest'
-                : 'bg-white text-ink-mid border-forest/12 hover:border-forest/30'
+                ? 'bg-navy text-paper border-navy'
+                : 'bg-white text-ink-mid border-navy/12 hover:border-navy/30'
             }`}
           >
             {opt.label}
@@ -187,7 +187,7 @@ export default function TractionDashboard() {
         ))}
         <button
           onClick={() => load(range)}
-          className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white border border-forest/12 text-ink-mid hover:border-forest/30"
+          className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium bg-white border border-navy/12 text-ink-mid hover:border-navy/30"
           aria-label="Yenilə"
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} aria-hidden="true" />
@@ -206,7 +206,7 @@ export default function TractionDashboard() {
       )}
 
       {data && !data.events && (
-        <div className="mb-6 px-4 py-3 bg-sun-wash border border-sun/40 text-sun-deep text-sm rounded-xl flex items-center gap-2">
+        <div className="mb-6 px-4 py-3 bg-gold-wash border border-gold/40 text-gold-deep text-sm rounded-xl flex items-center gap-2">
           <AlertTriangle size={16} className="shrink-0" aria-hidden="true" />
           Event tracking cədvəli tapılmadı — Supabase-də <code className="font-mono">SQL_ANALYTICS.sql</code> migration-ını işlədin.
           Biznes metrikaları (qeydiyyat, simulyasiya, premium) yenə də göstərilir.
@@ -214,8 +214,8 @@ export default function TractionDashboard() {
       )}
 
       {loading && !data ? (
-        <div className="card p-16 text-center">
-          <RefreshCw className="w-8 h-8 animate-spin text-forest mx-auto mb-3" aria-hidden="true" />
+        <div className="card-dossier p-16 text-center">
+          <RefreshCw className="w-8 h-8 animate-spin text-navy mx-auto mb-3" aria-hidden="true" />
           <p className="text-sm text-ink-mid">Traction məlumatları yüklənir…</p>
         </div>
       ) : data ? (
@@ -225,7 +225,7 @@ export default function TractionDashboard() {
 
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Traffic over time */}
-            <div className="card p-6">
+            <div className="card-dossier p-6">
               <h2 className="font-display text-lg font-semibold text-ink mb-1">Trafik dinamikası</h2>
               <p className="text-xs text-ink-mute mb-4">
                 Səhifə baxışı və unikal ziyarətçi · tracking aktivləşən tarixdən etibarən
@@ -237,8 +237,8 @@ export default function TractionDashboard() {
                     <YAxis tick={{ fill: CHART_TICK, fontSize: 11 }} allowDecimals={false} />
                     <Tooltip contentStyle={CHART_TOOLTIP} />
                     <Legend />
-                    <Line type="monotone" dataKey="page_views" name="Baxış" stroke="#1F4E4A" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="visitors" name="Ziyarətçi" stroke="#F47E47" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="page_views" name="Baxış" stroke="#16283D" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="visitors" name="Ziyarətçi" stroke="#B8862E" strokeWidth={2} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
@@ -247,7 +247,7 @@ export default function TractionDashboard() {
             </div>
 
             {/* Registrations over time */}
-            <div className="card p-6">
+            <div className="card-dossier p-6">
               <h2 className="font-display text-lg font-semibold text-ink mb-1">Qeydiyyat dinamikası</h2>
               <p className="text-xs text-ink-mute mb-4">
                 users cədvəlindən · tracking-dən əvvəlki tarixçə də daxildir
@@ -258,7 +258,7 @@ export default function TractionDashboard() {
                     <XAxis dataKey="day" tick={{ fill: CHART_TICK, fontSize: 11 }} />
                     <YAxis tick={{ fill: CHART_TICK, fontSize: 11 }} allowDecimals={false} />
                     <Tooltip contentStyle={CHART_TOOLTIP} />
-                    <Bar dataKey="count" name="Qeydiyyat" fill="#1F4E4A" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="count" name="Qeydiyyat" fill="#16283D" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
@@ -269,7 +269,7 @@ export default function TractionDashboard() {
 
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Funnel */}
-            <div className="card p-6">
+            <div className="card-dossier p-6">
               <h2 className="font-display text-lg font-semibold text-ink mb-1">Konversiya funnel-i</h2>
               <p className="text-xs text-ink-mute mb-5">ziyarət → qeydiyyat → simulyasiya → premium</p>
               {funnelRows.length > 0 ? (
@@ -280,9 +280,9 @@ export default function TractionDashboard() {
                         <span className="text-ink font-medium">{row.label}</span>
                         <span className="text-ink-mid font-semibold">{row.value}</span>
                       </div>
-                      <div className="h-3 bg-cream-deep rounded-full overflow-hidden">
+                      <div className="h-3 bg-paper-deep rounded-md overflow-hidden">
                         <div
-                          className="h-full rounded-full transition-all duration-700"
+                          className="h-full rounded-md transition-all duration-700"
                           style={{ width: `${row.pct}%`, backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
                         />
                       </div>
@@ -295,7 +295,7 @@ export default function TractionDashboard() {
             </div>
 
             {/* Role breakdown */}
-            <div className="card p-6">
+            <div className="card-dossier p-6">
               <h2 className="font-display text-lg font-semibold text-ink mb-1">İstifadəçi bölgüsü</h2>
               <p className="text-xs text-ink-mute mb-4">rol üzrə bütün qeydiyyatlar</p>
               {roleData.length > 0 ? (
@@ -318,12 +318,12 @@ export default function TractionDashboard() {
 
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Top pages */}
-            <div className="card p-6">
+            <div className="card-dossier p-6">
               <h2 className="font-display text-lg font-semibold text-ink mb-4">Ən çox baxılan səhifələr</h2>
               {data.events && data.events.top_pages.length > 0 ? (
                 <div className="space-y-2">
                   {data.events.top_pages.map((p) => (
-                    <div key={p.page_path} className="flex items-center justify-between py-2 border-b border-forest/8 last:border-0 text-sm">
+                    <div key={p.page_path} className="flex items-center justify-between py-2 border-b border-navy/8 last:border-0 text-sm">
                       <span className="font-mono text-xs text-ink truncate max-w-[60%]">{p.page_path}</span>
                       <span className="text-ink-mid">
                         <strong className="text-ink">{p.views}</strong> baxış · {p.visitors} ziyarətçi
@@ -337,12 +337,12 @@ export default function TractionDashboard() {
             </div>
 
             {/* Top events */}
-            <div className="card p-6">
+            <div className="card-dossier p-6">
               <h2 className="font-display text-lg font-semibold text-ink mb-4">Ən çox baş verən hadisələr</h2>
               {data.events && data.events.top_events.length > 0 ? (
                 <div className="space-y-2">
                   {data.events.top_events.map((e) => (
-                    <div key={e.event_name} className="flex items-center justify-between py-2 border-b border-forest/8 last:border-0 text-sm">
+                    <div key={e.event_name} className="flex items-center justify-between py-2 border-b border-navy/8 last:border-0 text-sm">
                       <span className="font-mono text-xs text-ink">{e.event_name}</span>
                       <span className="font-semibold text-ink">{e.total}</span>
                     </div>
@@ -355,7 +355,7 @@ export default function TractionDashboard() {
           </div>
 
           {/* Secondary metrics */}
-          <div className="card p-6">
+          <div className="card-dossier p-6">
             <h2 className="font-display text-lg font-semibold text-ink mb-4">Digər göstəricilər</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
               <div>
