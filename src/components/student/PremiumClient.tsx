@@ -117,7 +117,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
   if (confirming) {
     return (
       <div className="card p-16 text-center max-w-lg mx-auto">
-        <Loader2 className="w-10 h-10 animate-spin text-forest mx-auto mb-4" aria-hidden="true" />
+        <Loader2 className="w-10 h-10 animate-spin text-navy mx-auto mb-4" aria-hidden="true" />
         <p className="font-display text-xl font-semibold text-ink">Ödəniş təsdiqlənir…</p>
         <p className="text-sm text-ink-mid mt-2">Bir neçə saniyə gözləyin</p>
       </div>
@@ -129,19 +129,19 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="card-feature p-10 lg:p-14 text-cream text-center max-w-2xl mx-auto"
+        className="card-feature p-10 lg:p-14 text-paper text-center max-w-2xl mx-auto"
       >
-        <div className="w-20 h-20 rounded-xl bg-coral flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 rounded-xl bg-gold flex items-center justify-center mx-auto mb-6">
           <Zap size={36} fill="currentColor" aria-hidden="true" />
         </div>
         <span className="h-eyebrow text-sun block mb-3">Premium Aktiv</span>
         <h2 className="font-display text-4xl font-semibold mb-3">
           {studentName.split(' ')[0]}, siz <span className="italic text-sun">Premium</span>siniz!
         </h2>
-        <p className="text-cream/80 mb-8 leading-relaxed">
+        <p className="text-paper/80 mb-8 leading-relaxed">
           Bütün simulyasiyalara limitsiz giriş, dərin AI analiz və sertifikat imkanlarınız aktivdir.
         </p>
-        <Link href="/student/simulations" className="inline-flex items-center gap-2 bg-coral hover:bg-coral-deep text-white font-medium px-7 py-3.5 rounded-md transition-colors">
+        <Link href="/student/simulations" className="inline-flex items-center gap-2 bg-gold hover:bg-gold-deep text-white font-medium px-7 py-3.5 rounded-md transition-colors">
           Simulyasiyalara keç
           <ArrowRight size={16} aria-hidden="true" />
         </Link>
@@ -164,13 +164,13 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
       />
 
       {searchParams.get('cancelled') === '1' && (
-        <div className="mb-6 px-4 py-3 bg-coral-wash border border-coral/25 text-coral-deep text-sm rounded-xl">
+        <div className="mb-6 px-4 py-3 bg-gold-wash border border-gold/25 text-gold-deep text-sm rounded-xl">
           Ödəniş ləğv edildi. İstədiyiniz vaxt yenidən cəhd edə bilərsiniz.
         </div>
       )}
 
       {searchParams.get('locked') === '1' && (
-        <div className="mb-6 px-4 py-3 bg-coral-wash border border-coral/25 text-coral-deep text-sm rounded-xl">
+        <div className="mb-6 px-4 py-3 bg-gold-wash border border-gold/25 text-gold-deep text-sm rounded-xl">
           Bu simulyasiya Premium üzvlər üçündür. Promo kod və ya ödəniş ilə aktivləşdirin.
         </div>
       )}
@@ -183,7 +183,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
 
       <div className="grid lg:grid-cols-2 gap-8 max-w-4xl">
         {/* Pricing card */}
-        <div className="card-feature p-8 lg:p-10 text-cream">
+        <div className="card-feature p-8 lg:p-10 text-paper">
           <div className="flex items-center gap-2 mb-6">
             <Zap size={20} className="text-sun" aria-hidden="true" />
             <span className="text-sm font-semibold uppercase tracking-wider text-sun">Premium Plan</span>
@@ -191,14 +191,14 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
 
           <div className="mb-6">
             <p className="font-display text-5xl font-semibold leading-none">
-              $9<span className="text-2xl text-cream/70">.99</span>
+              $9<span className="text-2xl text-paper/70">.99</span>
             </p>
-            <p className="text-sm text-cream/70 mt-2">Birdəfəlik · bütün imtiyazlar</p>
+            <p className="text-sm text-paper/70 mt-2">Birdəfəlik · bütün imtiyazlar</p>
           </div>
 
           <ul className="space-y-3 mb-8">
             {FEATURES.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-center gap-3 text-sm text-cream/90">
+              <li key={text} className="flex items-center gap-3 text-sm text-paper/90">
                 <CheckCircle2 size={16} className="text-sun shrink-0" aria-hidden="true" />
                 {text}
               </li>
@@ -209,7 +209,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
             <button
               onClick={handleCheckout}
               disabled={checkoutLoading}
-              className="w-full flex items-center justify-center gap-2 bg-coral hover:bg-coral-deep disabled:opacity-60 text-white font-semibold px-6 py-4 rounded-md transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-gold hover:bg-gold-deep disabled:opacity-60 text-white font-semibold px-6 py-4 rounded-md transition-colors"
             >
               {checkoutLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
@@ -219,7 +219,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
               Kartla ödə və aktivləşdir
             </button>
           ) : (
-            <p className="text-sm text-cream/70 text-center py-2">
+            <p className="text-sm text-paper/70 text-center py-2">
               Online ödəniş tezliklə aktiv olacaq. Aşağıdakı promo kodu istifadə edin.
             </p>
           )}
@@ -230,7 +230,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
           {promoEnabled && (
             <div className="card p-7">
               <div className="flex items-center gap-2 mb-4">
-                <Hash size={18} className="text-forest" aria-hidden="true" />
+                <Hash size={18} className="text-navy" aria-hidden="true" />
                 <h3 className="font-display text-xl font-semibold text-ink">Promo kod ilə aktivləşdir</h3>
               </div>
               <p className="text-sm text-ink-mid mb-5">
@@ -248,7 +248,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
                 <button
                   type="submit"
                   disabled={promoLoading || !promoCode.trim()}
-                  className="btn-coral px-5 shrink-0 disabled:opacity-50"
+                  className="btn-primary px-5 shrink-0 disabled:opacity-50"
                 >
                   {promoLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Aktiv et'}
                 </button>
@@ -268,7 +268,7 @@ export function PremiumClient({ isPremium, stripeEnabled, promoEnabled, studentN
                 <div key={row.f} className="grid grid-cols-3 gap-2 py-2 border-b border-forest/8 last:border-0">
                   <span className="text-ink-mid font-medium">{row.f}</span>
                   <span className="text-ink-mute text-center">{row.free}</span>
-                  <span className="text-forest font-semibold text-center">{row.pro}</span>
+                  <span className="text-navy font-semibold text-center">{row.pro}</span>
                 </div>
               ))}
             </div>

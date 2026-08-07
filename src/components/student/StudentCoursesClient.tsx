@@ -36,7 +36,7 @@ export function StudentCoursesClient({ studentId, groups }: Props) {
         eyebrow="Kurslarım"
         title={
           <>
-            Kursa <span className="text-forest">qoşulun</span>,<br />
+            Kursa <span className="text-navy">qoşulun</span>,<br />
             tapşırıqları görün.
           </>
         }
@@ -48,7 +48,7 @@ export function StudentCoursesClient({ studentId, groups }: Props) {
           </>
         }
         actions={
-          <button onClick={() => setShowJoin(true)} className="btn-coral">
+          <button onClick={() => setShowJoin(true)} className="btn-primary">
             <Hash size={15} aria-hidden="true" />
             Koda ilə qrupa qoşul
           </button>
@@ -112,7 +112,7 @@ function GroupMemberCard({ group, studentId }: { group: Group; studentId: string
     <motion.article className="card p-6 group relative" whileHover={{ y: -2 }}>
       {/* Top */}
       <div className="flex items-start justify-between mb-4">
-        <div className="w-12 h-12 rounded-lg bg-forest text-cream font-display text-xl font-semibold flex items-center justify-center group-hover:scale-105 transition-transform">
+        <div className="w-12 h-12 rounded-lg bg-navy text-paper font-display text-xl font-semibold flex items-center justify-center group-hover:scale-105 transition-transform">
           {group.name[0]?.toUpperCase()}
         </div>
         <button
@@ -126,7 +126,7 @@ function GroupMemberCard({ group, studentId }: { group: Group; studentId: string
 
       {/* Instructor badge */}
       {group.instructor && (
-        <p className="text-[10px] uppercase tracking-wider text-forest font-semibold mb-1">
+        <p className="text-[10px] uppercase tracking-wider text-navy font-semibold mb-1">
           {group.instructor.full_name}
         </p>
       )}
@@ -140,12 +140,12 @@ function GroupMemberCard({ group, studentId }: { group: Group; studentId: string
 
       <div className="flex items-center justify-between pt-4 border-t border-forest/8">
         <span className="inline-flex items-center gap-1.5 text-xs text-ink-mid font-medium">
-          <ClipboardList size={12} className="text-coral-deep" aria-hidden="true" />
+          <ClipboardList size={12} className="text-gold-deep" aria-hidden="true" />
           {group.simCount} simulyasiya
         </span>
         <Link
           href="/student/simulations"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-forest hover:text-forest-deep"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-navy hover:text-navy-deep"
         >
           Görüntülə
           <ArrowRight size={12} aria-hidden="true" />
@@ -196,8 +196,8 @@ function GroupMemberCard({ group, studentId }: { group: Group; studentId: string
 function EmptyState({ onJoinClick }: { onJoinClick: () => void }) {
   return (
     <div className="card p-12 lg:p-16 text-center max-w-2xl mx-auto">
-      <div className="w-20 h-20 mx-auto mb-6 rounded-xl bg-forest-wash flex items-center justify-center">
-        <GraduationCap size={36} className="text-forest" aria-hidden="true" />
+      <div className="w-20 h-20 mx-auto mb-6 rounded-xl bg-navy-wash flex items-center justify-center">
+        <GraduationCap size={36} className="text-navy" aria-hidden="true" />
       </div>
       <h3 className="font-display text-3xl font-semibold mb-3">
         Heç bir kursunuz yoxdur
@@ -207,21 +207,21 @@ function EmptyState({ onJoinClick }: { onJoinClick: () => void }) {
         Həmin kodu daxil edərək qrupa qoşulun.
       </p>
 
-      <button onClick={onJoinClick} className="btn-coral px-8 py-3.5 mb-10">
+      <button onClick={onJoinClick} className="btn-primary px-8 py-3.5 mb-10">
         <Hash size={15} aria-hidden="true" />
         Kod ilə qrupa qoşul
       </button>
 
       <div className="grid sm:grid-cols-2 gap-4 text-left max-w-xl mx-auto">
         <div className="card-cream p-5">
-          <Sparkles size={18} className="text-coral mb-3" aria-hidden="true" />
+          <Sparkles size={18} className="text-gold mb-3" aria-hidden="true" />
           <h4 className="font-semibold text-ink mb-1">Kurs tapşırıqları</h4>
           <p className="text-sm text-ink-mid leading-relaxed">
             Qrupa qoşulduqdan sonra müəllimin verdiyi HR simulyasiyaları avtomatik görünür.
           </p>
         </div>
         <div className="card-cream p-5">
-          <BookOpen size={18} className="text-forest mb-3" aria-hidden="true" />
+          <BookOpen size={18} className="text-navy mb-3" aria-hidden="true" />
           <h4 className="font-semibold text-ink mb-1">Premium + Kurs birlikdə</h4>
           <p className="text-sm text-ink-mid leading-relaxed">
             Free/Premium abunəliyiniz ayrı davam edir. Kurs tapşırıqları əlavə olaraq gəlir.
@@ -308,17 +308,17 @@ function JoinGroupModal({
               </div>
               <span className="h-eyebrow block mb-2">Uğurlu!</span>
               <h2 className="font-display text-2xl font-semibold mb-2">
-                Qrupa qoşuldunuz<span className="text-coral">.</span>
+                Qrupa qoşuldunuz<span className="text-gold">.</span>
               </h2>
               <p className="text-sm text-ink-mid mb-6 leading-relaxed">
-                <strong className="text-forest">{success.groupName}</strong> qrupuna qoşuldunuz.
+                <strong className="text-navy">{success.groupName}</strong> qrupuna qoşuldunuz.
                 Müəllimin verdiyi simulyasiyalar artıq &ldquo;Simulyasiyalar&rdquo; səhifəsinizdə görünür.
               </p>
               <div className="flex flex-col gap-2">
                 <Link
                   href="/student/simulations"
                   onClick={onClose}
-                  className="btn-coral w-full justify-center py-3"
+                  className="btn-primary w-full justify-center py-3"
                 >
                   Simulyasiyalara keç
                   <ArrowRight size={14} aria-hidden="true" />
@@ -334,12 +334,12 @@ function JoinGroupModal({
                 <div>
                   <span className="h-eyebrow block mb-1.5">Qrupa qoşul</span>
                   <h2 id="join-group-title" className="font-display text-2xl font-semibold">
-                    Kod daxil edin<span className="text-coral">.</span>
+                    Kod daxil edin<span className="text-gold">.</span>
                   </h2>
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-9 h-9 rounded-md hover:bg-forest-wash flex items-center justify-center text-ink-mid hover:text-forest"
+                  className="w-9 h-9 rounded-md hover:bg-navy-wash flex items-center justify-center text-ink-mid hover:text-navy"
                   aria-label="Bağla"
                 >
                   <X size={18} aria-hidden="true" />
@@ -382,7 +382,7 @@ function JoinGroupModal({
                   <button
                     type="submit"
                     disabled={loading || code.trim().length < 4}
-                    className="btn-coral flex-1 py-3 disabled:opacity-50"
+                    className="btn-primary flex-1 py-3 disabled:opacity-50"
                   >
                     {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />

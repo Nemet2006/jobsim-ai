@@ -26,7 +26,7 @@ export function PremiumUpgradeButton({
 
   if (variant === 'coral') {
     return (
-      <Link href="/student/premium" className={`btn-coral ${className}`}>
+      <Link href="/student/premium" className={`btn-primary ${className}`}>
         <Zap size={14} aria-hidden="true" />
         {children || 'Premium Al'}
       </Link>
@@ -36,7 +36,7 @@ export function PremiumUpgradeButton({
   return (
     <Link
       href="/student/premium"
-      className={`${base} bg-coral hover:bg-coral-deep text-white px-5 py-3 rounded-md ${className}`}
+      className={`${base} bg-gold hover:bg-gold-deep text-white px-5 py-3 rounded-md ${className}`}
     >
       <Zap size={16} aria-hidden="true" />
       {children || 'İndi Yüksəlt'}
