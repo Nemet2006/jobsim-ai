@@ -38,6 +38,7 @@ export default function AdminSimulationsPage() {
           <thead>
             <tr className="text-left text-[11px] uppercase tracking-wider text-ink-mute border-b border-navy/8">
               <th className="px-4 py-3">#</th>
+              <th className="px-4 py-3">Namizəd</th>
               <th className="px-4 py-3">Interview Type</th>
               <th className="px-4 py-3">Date</th>
               <th className="px-4 py-3">Score</th>
@@ -45,10 +46,14 @@ export default function AdminSimulationsPage() {
           </thead>
           <tbody>
             {IMPACT_SIM_RECORDS.map((s, i) => (
-              <tr key={`${s.type}-${s.date}`} className="border-b border-navy/6 last:border-0">
+              <tr key={`${s.email}-${s.date}`} className="border-b border-navy/6 last:border-0">
                 <td className="px-4 py-3 text-ink-mute">{i + 1}</td>
-                <td className="px-4 py-3 font-medium">{s.type}</td>
-                <td className="px-4 py-3 text-ink-mid">{s.date}</td>
+                <td className="px-4 py-3">
+                  <p className="font-medium">{s.candidate}</p>
+                  <p className="font-mono text-[10px] text-ink-mute">{s.email}</p>
+                </td>
+                <td className="px-4 py-3 text-ink-mid">{s.type}</td>
+                <td className="px-4 py-3 text-ink-mid text-xs whitespace-nowrap">{s.date}</td>
                 <td className="px-4 py-3 font-semibold text-verdigris">{s.score}</td>
               </tr>
             ))}

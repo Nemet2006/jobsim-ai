@@ -194,8 +194,8 @@ export async function generateImpactReportPdf(): Promise<{
   kv('New Users (30 gün)', IMPACT_KPIS.newUsers30d)
   kv('People Engaged', IMPACT_KPIS.peopleEngaged)
   y += 1
-  for (const u of IMPACT_RECENT_USERS.slice(0, 6)) {
-    kv(u.name, u.joined)
+  for (const u of IMPACT_RECENT_USERS.slice(0, 8)) {
+    kv(u.name, u.email)
   }
   y += 2
 
@@ -204,7 +204,7 @@ export async function generateImpactReportPdf(): Promise<{
   kv('Tamamlanan', IMPACT_KPIS.simulationsCompleted)
   kv('Orta bal', IMPACT_KPIS.avgScore)
   for (const s of IMPACT_SIM_RECORDS.slice(0, 6)) {
-    kv(s.type, `${s.score} · ${s.date}`)
+    kv(`${s.candidate} · ${s.type}`, `${s.score}`)
   }
   y += 2
 

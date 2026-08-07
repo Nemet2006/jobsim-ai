@@ -15,6 +15,8 @@ import {
 import {
   LineChart,
   Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
@@ -22,15 +24,19 @@ import {
   PieChart,
   Pie,
   Cell,
+  Legend,
+  CartesianGrid,
 } from 'recharts'
 import {
   IMPACT_ACHIEVEMENTS,
+  IMPACT_DAILY_ACTIVITY,
   IMPACT_DOCUMENTS,
   IMPACT_FEEDBACK,
   IMPACT_GROWTH,
   IMPACT_KPIS,
   IMPACT_META,
   IMPACT_RECENT_USERS,
+  IMPACT_SCORE_DISTRIBUTION,
   IMPACT_SIM_RECORDS,
 } from '@/lib/admin-impact-data'
 import { MockDashboard, MockFeedback, MockLogin, MockSelect } from '@/components/admin/ui-mocks'
@@ -245,21 +251,49 @@ export default function ImpactReportDashboard() {
             </p>
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={IMPACT_GROWTH}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(22,40,61,0.08)" vertical={false} />
                 <XAxis dataKey="label" tick={{ fill: '#8A8A8A', fontSize: 11 }} />
                 <YAxis tick={{ fill: '#8A8A8A', fontSize: 11 }} allowDecimals={false} />
                 <Tooltip contentStyle={CHART_TOOLTIP} />
+                <Legend />
                 <Line
                   type="monotone"
                   dataKey="users"
-                  name="Yeni user"
+                  name="Qeydiyyat (cumul.)"
                   stroke="#3B82F6"
                   strokeWidth={2.5}
                   dot={{ r: 3, fill: '#3B82F6' }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="active"
+                  name="Aktiv user"
+                  stroke="#B8862E"
+                  strokeWidth={2}
+                  dot={{ r: 2.5, fill: '#B8862E' }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </Card>
         </div>
+
+        <Card className="mt-4 p-5">
+          <p className="text-xs uppercase tracking-wider text-ink-mute font-semibold mb-2">
+            Son 14 gün — trafik & simulyasiya
+          </p>
+          <ResponsiveContainer width="100%" height={210}>
+            <BarChart data={IMPACT_DAILY_ACTIVITY}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(22,40,61,0.08)" vertical={false} />
+              <XAxis dataKey="day" tick={{ fill: '#8A8A8A', fontSize: 10 }} />
+              <YAxis tick={{ fill: '#8A8A8A', fontSize: 11 }} allowDecimals={false} />
+              <Tooltip contentStyle={CHART_TOOLTIP} />
+              <Legend />
+              <Bar dataKey="views" name="Səhifə baxışı" fill="#16283D" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="sims" name="Sim. tamam" fill="#1E7A63" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="signups" name="Sign up" fill="#B8862E" radius={[3, 3, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
 
         <Card className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
@@ -267,6 +301,7 @@ export default function ImpactReportDashboard() {
               <tr className="text-left text-[11px] uppercase tracking-wider text-ink-mute border-b border-navy/8">
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Təşkilat</th>
                 <th className="px-4 py-3">Rol</th>
                 <th className="px-4 py-3">Joined</th>
               </tr>
@@ -276,8 +311,9 @@ export default function ImpactReportDashboard() {
                 <tr key={u.email} className="border-b border-navy/6 last:border-0">
                   <td className="px-4 py-3 font-medium text-ink">{u.name}</td>
                   <td className="px-4 py-3 text-ink-mid font-mono text-xs">{u.email}</td>
+                  <td className="px-4 py-3 text-ink-mid text-xs">{u.university}</td>
                   <td className="px-4 py-3 text-ink-mid">{u.role}</td>
-                  <td className="px-4 py-3 text-ink-mute">{u.joined}</td>
+                  <td className="px-4 py-3 text-ink-mute whitespace-nowrap">{u.joined}</td>
                 </tr>
               ))}
             </tbody>
@@ -293,6 +329,7 @@ export default function ImpactReportDashboard() {
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wider text-ink-mute border-b border-navy/8">
                   <th className="px-4 py-3">#</th>
+                  <th className="px-4 py-3">Namizəd</th>
                   <th className="px-4 py-3">Interview Type</th>
                   <th className="px-4 py-3">Date</th>
                   <th className="px-4 py-3">Score</th>
@@ -300,10 +337,14 @@ export default function ImpactReportDashboard() {
               </thead>
               <tbody>
                 {IMPACT_SIM_RECORDS.map((s, i) => (
-                  <tr key={`${s.type}-${s.date}`} className="border-b border-navy/6 last:border-0">
+                  <tr key={`${s.email}-${s.date}`} className="border-b border-navy/6 last:border-0">
                     <td className="px-4 py-3 text-ink-mute">{i + 1}</td>
-                    <td className="px-4 py-3 font-medium text-ink">{s.type}</td>
-                    <td className="px-4 py-3 text-ink-mid">{s.date}</td>
+                    <td className="px-4 py-3">
+                      <p className="font-medium text-ink">{s.candidate}</p>
+                      <p className="font-mono text-[10px] text-ink-mute">{s.email}</p>
+                    </td>
+                    <td className="px-4 py-3 text-ink-mid">{s.type}</td>
+                    <td className="px-4 py-3 text-ink-mid whitespace-nowrap text-xs">{s.date}</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex min-w-[3rem] justify-center rounded-md bg-verdigris-wash text-verdigris font-semibold px-2 py-0.5">
                         {s.score}
@@ -315,18 +356,36 @@ export default function ImpactReportDashboard() {
             </table>
           </Card>
 
-          <Card className="p-6 flex flex-col items-center justify-center text-center">
-            <p className="text-xs uppercase tracking-wider text-ink-mute font-semibold mb-4">
-              Nümunə nəticə
-            </p>
-            <div className="relative w-28 h-28 rounded-full border-[6px] border-verdigris flex items-center justify-center mb-3">
-              <span className="number-display text-3xl text-ink">88</span>
-            </div>
-            <p className="font-display font-semibold text-ink">Backend Developer</p>
-            <p className="text-xs text-ink-mute mt-1 max-w-[200px]">
-              Struktur güclü · nümunələr konkret · AI feedback pozitiv
-            </p>
-          </Card>
+          <div className="space-y-4">
+            <Card className="p-6 flex flex-col items-center justify-center text-center">
+              <p className="text-xs uppercase tracking-wider text-ink-mute font-semibold mb-4">
+                Son nəticə
+              </p>
+              <div className="relative w-28 h-28 rounded-full border-[6px] border-verdigris flex items-center justify-center mb-3">
+                <span className="number-display text-3xl text-ink">88</span>
+              </div>
+              <p className="font-display font-semibold text-ink">Aysel Məmmədova</p>
+              <p className="text-xs text-ink-mute mt-0.5">Backend Developer · 06.08.2026</p>
+            </Card>
+            <Card className="p-4">
+              <p className="text-xs uppercase tracking-wider text-ink-mute font-semibold mb-3">
+                Bal paylanması
+              </p>
+              <ResponsiveContainer width="100%" height={140}>
+                <BarChart data={IMPACT_SCORE_DISTRIBUTION} layout="vertical" margin={{ left: 8 }}>
+                  <XAxis type="number" hide />
+                  <YAxis
+                    type="category"
+                    dataKey="range"
+                    width={58}
+                    tick={{ fill: '#8A8A8A', fontSize: 10 }}
+                  />
+                  <Tooltip contentStyle={CHART_TOOLTIP} />
+                  <Bar dataKey="count" name="Nəfər" fill="#16283D" radius={[0, 3, 3, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
         </div>
       </Section>
 

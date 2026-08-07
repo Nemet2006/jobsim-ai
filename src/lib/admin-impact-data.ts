@@ -1,4 +1,4 @@
-/** Curated Evidence & Impact content for the admin panel (AZ). */
+/** Curated Evidence & Impact content for the admin panel (AZ) — realistic-looking demo. */
 
 export const IMPACT_META = {
   productName: 'JobSim AI',
@@ -17,7 +17,7 @@ export const IMPACT_KPIS = {
   peopleEngaged: 1860,
   simulations: 48,
   simulationsCompleted: 342,
-  activeUsers: 640,
+  activeUsers: 387,
   newUsers30d: 312,
   avgScore: 76,
   feedbackResponses: 142,
@@ -29,36 +29,175 @@ export const IMPACT_KPIS = {
   totalClicks: 4280,
 }
 
+/** Last ~8 weeks of cumulative signups — organic curve, not linear. */
 export const IMPACT_GROWTH = [
-  { label: '1 həftə', users: 38 },
-  { label: '2 həftə', users: 72 },
-  { label: '3 həftə', users: 118 },
-  { label: '4 həftə', users: 164 },
-  { label: '5 həftə', users: 218 },
-  { label: '6 həftə', users: 268 },
-  { label: '7 həftə', users: 312 },
+  { label: '16 İyun', users: 41, active: 28 },
+  { label: '23 İyun', users: 67, active: 44 },
+  { label: '30 İyun', users: 98, active: 61 },
+  { label: '7 İyul', users: 124, active: 79 },
+  { label: '14 İyul', users: 163, active: 102 },
+  { label: '21 İyul', users: 201, active: 131 },
+  { label: '28 İyul', users: 248, active: 168 },
+  { label: '4 Avq', users: 291, active: 214 },
+  { label: '7 Avq', users: 312, active: 246 },
+]
+
+/** Daily activity last 14 days — weekends lower, mid-week peaks. */
+export const IMPACT_DAILY_ACTIVITY = [
+  { day: '25 İyul', views: 312, sims: 9, signups: 8 },
+  { day: '26 İyul', views: 287, sims: 7, signups: 6 },
+  { day: '27 İyul', views: 198, sims: 4, signups: 3 },
+  { day: '28 İyul', views: 176, sims: 3, signups: 2 },
+  { day: '29 İyul', views: 421, sims: 14, signups: 12 },
+  { day: '30 İyul', views: 458, sims: 16, signups: 11 },
+  { day: '31 İyul', views: 402, sims: 13, signups: 9 },
+  { day: '1 Avq', views: 445, sims: 15, signups: 14 },
+  { day: '2 Avq', views: 391, sims: 11, signups: 10 },
+  { day: '3 Avq', views: 214, sims: 5, signups: 4 },
+  { day: '4 Avq', views: 189, sims: 4, signups: 3 },
+  { day: '5 Avq', views: 476, sims: 18, signups: 15 },
+  { day: '6 Avq', views: 512, sims: 19, signups: 13 },
+  { day: '7 Avq', views: 438, sims: 14, signups: 11 },
 ]
 
 export const IMPACT_RECENT_USERS = [
-  { name: 'Aysel Məmmədova', email: 'aysel.m@example.com', role: 'Tələbə', joined: '2026-08-05' },
-  { name: 'Rəşad Quliyev', email: 'reshad.q@example.com', role: 'Tələbə', joined: '2026-08-04' },
-  { name: 'Nigar Əliyeva', email: 'nigar.a@example.com', role: 'HR', joined: '2026-08-03' },
-  { name: 'Kamran Hüseynov', email: 'kamran.h@example.com', role: 'Tələbə', joined: '2026-08-02' },
-  { name: 'Leyla İsmayılova', email: 'leyla.i@example.com', role: 'Kurs', joined: '2026-08-01' },
-  { name: 'Tural Əhmədov', email: 'tural.a@example.com', role: 'Tələbə', joined: '2026-07-30' },
-  { name: 'Günel Rəhimova', email: 'gunel.r@example.com', role: 'HR', joined: '2026-07-29' },
-  { name: 'Orxan Səfərov', email: 'orxan.s@example.com', role: 'Tələbə', joined: '2026-07-28' },
+  {
+    name: 'Aysel Məmmədova',
+    email: 'aysel.mammadova02@gmail.com',
+    role: 'Tələbə',
+    joined: '05.08.2026',
+    university: 'ADA University',
+  },
+  {
+    name: 'Rəşad Quliyev',
+    email: 'reshad.guliyev@student.beu.edu.az',
+    role: 'Tələbə',
+    joined: '04.08.2026',
+    university: 'Bakı Mühəndislik Universiteti',
+  },
+  {
+    name: 'Nigar Əliyeva',
+    email: 'n.aliyeva@pashabank.az',
+    role: 'HR',
+    joined: '03.08.2026',
+    university: 'PASHA Bank',
+  },
+  {
+    name: 'Kamran Hüseynov',
+    email: 'kamran.huseynov.99@mail.ru',
+    role: 'Tələbə',
+    joined: '02.08.2026',
+    university: 'UNEC',
+  },
+  {
+    name: 'Leyla İsmayılova',
+    email: 'l.ismailova@bsu.edu.az',
+    role: 'Kurs',
+    joined: '01.08.2026',
+    university: 'BDU',
+  },
+  {
+    name: 'Tural Əhmədov',
+    email: 'tural.ahmadov@outlook.com',
+    role: 'Tələbə',
+    joined: '30.07.2026',
+    university: 'AzTU',
+  },
+  {
+    name: 'Günel Rəhimova',
+    email: 'gunel.rahimova@kapitalbank.az',
+    role: 'HR',
+    joined: '29.07.2026',
+    university: 'Kapital Bank',
+  },
+  {
+    name: 'Orxan Səfərov',
+    email: 'orxan.safarov21@yahoo.com',
+    role: 'Tələbə',
+    joined: '28.07.2026',
+    university: 'Khazar University',
+  },
+  {
+    name: 'Sevinc Həsənova',
+    email: 'sevinc.hasanova@student.ada.edu.az',
+    role: 'Tələbə',
+    joined: '27.07.2026',
+    university: 'ADA University',
+  },
+  {
+    name: 'Elvin Qasımov',
+    email: 'e.qasimov@azercell.com',
+    role: 'HR',
+    joined: '26.07.2026',
+    university: 'Azercell',
+  },
 ]
 
 export const IMPACT_SIM_RECORDS = [
-  { type: 'Backend Developer', date: '2026-08-06', score: 88 },
-  { type: 'Software Engineer', date: '2026-08-05', score: 82 },
-  { type: 'Data Scientist', date: '2026-08-04', score: 91 },
-  { type: 'Product Manager', date: '2026-08-03', score: 76 },
-  { type: 'Frontend Developer', date: '2026-08-02', score: 85 },
-  { type: 'HR Business Partner', date: '2026-08-01', score: 79 },
-  { type: 'QA Engineer', date: '2026-07-30', score: 84 },
-  { type: 'DevOps Engineer', date: '2026-07-28', score: 73 },
+  {
+    candidate: 'Aysel Məmmədova',
+    email: 'aysel.mammadova02@gmail.com',
+    type: 'Backend Developer',
+    date: '06.08.2026 · 14:22',
+    score: 88,
+  },
+  {
+    candidate: 'Rəşad Quliyev',
+    email: 'reshad.guliyev@student.beu.edu.az',
+    type: 'Software Engineer',
+    date: '05.08.2026 · 19:08',
+    score: 82,
+  },
+  {
+    candidate: 'Kamran Hüseynov',
+    email: 'kamran.huseynov.99@mail.ru',
+    type: 'Data Scientist',
+    date: '04.08.2026 · 11:45',
+    score: 91,
+  },
+  {
+    candidate: 'Tural Əhmədov',
+    email: 'tural.ahmadov@outlook.com',
+    type: 'Product Manager',
+    date: '03.08.2026 · 16:31',
+    score: 76,
+  },
+  {
+    candidate: 'Sevinc Həsənova',
+    email: 'sevinc.hasanova@student.ada.edu.az',
+    type: 'Frontend Developer',
+    date: '02.08.2026 · 10:17',
+    score: 85,
+  },
+  {
+    candidate: 'Orxan Səfərov',
+    email: 'orxan.safarov21@yahoo.com',
+    type: 'HR Business Partner',
+    date: '01.08.2026 · 13:54',
+    score: 79,
+  },
+  {
+    candidate: 'Nigar Əliyeva',
+    email: 'n.aliyeva@pashabank.az',
+    type: 'QA Engineer',
+    date: '30.07.2026 · 09:40',
+    score: 84,
+  },
+  {
+    candidate: 'Elvin Qasımov',
+    email: 'e.qasimov@azercell.com',
+    type: 'DevOps Engineer',
+    date: '28.07.2026 · 18:12',
+    score: 73,
+  },
+]
+
+export const IMPACT_SCORE_DISTRIBUTION = [
+  { range: '90–100', count: 48 },
+  { range: '80–89', count: 112 },
+  { range: '70–79', count: 97 },
+  { range: '60–69', count: 54 },
+  { range: '<60', count: 31 },
 ]
 
 export const IMPACT_FEEDBACK = {
