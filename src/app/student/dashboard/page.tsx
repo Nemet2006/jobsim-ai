@@ -169,16 +169,19 @@ export default async function StudentDashboard() {
             <div className="card-feature p-6 text-paper">
               <div className="flex items-center gap-2 mb-4">
                 <Zap size={15} aria-hidden="true" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">Premium</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">Abunəlik · B2C</span>
               </div>
               <h3 className="font-display text-2xl font-semibold mb-2 leading-tight text-paper">
-                Tezliklə aktivləşəcək
+                $9.99 / ay
               </h3>
+              <p className="text-sm text-paper/75 mb-1 leading-relaxed">
+                İllik $79.99 — 2 ay pulsuz.
+              </p>
               <p className="text-sm text-paper/75 mb-5 leading-relaxed">
-                Premium abunəlik hələ aktiv deyil. Hazırda bütün simulyasiyalar açıqdır.
+                Limitsiz simulyasiya, AI feedback və rəsmi sertifikat.
               </p>
               <Link href="/student/premium" className="inline-flex w-full items-center justify-center gap-2 px-5 py-2.5 rounded-md border border-paper/30 text-paper text-sm font-medium hover:bg-white/10">
-                Ətraflı
+                Planları gör
               </Link>
             </div>
           </FadeInUp>

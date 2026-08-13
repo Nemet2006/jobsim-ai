@@ -15,7 +15,7 @@ export function PremiumUpgradeButton({
   children,
   variant = 'coral-full',
 }: PremiumUpgradeButtonProps) {
-  const label = children || 'Premium (tezliklə)'
+  const label = children || 'Abunəlik'
 
   if (variant === 'link') {
     return (

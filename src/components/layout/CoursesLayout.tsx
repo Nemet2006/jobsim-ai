@@ -8,6 +8,7 @@ import {
   Trophy,
   GraduationCap,
   Folders,
+  Zap,
 } from 'lucide-react'
 import { AppShell, type NavItem } from './AppShell'
 
@@ -22,6 +23,7 @@ const navItems: NavItem[] = [
   { href: '/courses/students',   label: 'Tələbələr',        icon: Users },
   { href: '/courses/assign',     label: 'Tapşırıq Ver',     icon: ClipboardList },
   { href: '/courses/leaderboard',label: 'Reytinq',          icon: Trophy },
+  { href: '/courses/abonelik',   label: 'Abunəlik',         icon: Zap },
 ]
 
 export default function CoursesLayout({ children, user }: CoursesLayoutProps) {
