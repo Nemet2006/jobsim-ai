@@ -169,7 +169,7 @@ export default async function StudentDashboard() {
             <div className="card-feature p-6 text-paper">
               <div className="flex items-center gap-2 mb-4">
                 <Zap size={15} aria-hidden="true" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">Abunəlik · B2C</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">Abunəlik</span>
               </div>
               <h3 className="font-display text-2xl font-semibold mb-2 leading-tight text-paper">
                 $9.99 / ay

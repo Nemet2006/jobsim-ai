@@ -16,7 +16,7 @@ export function PremiumClient({ studentName }: PremiumClientProps) {
   return (
     <div>
       <EditorialHero
-        eyebrow="Abunəlik · B2C"
+        eyebrow="Abunəlik"
         title={
           <>
             {firstName}, planını <span className="text-navy">seç</span>.
@@ -26,7 +26,6 @@ export function PremiumClient({ studentName }: PremiumClientProps) {
         meta={[
           { label: 'Aylıq', value: '$9.99' },
           { label: 'İllik', value: '$79.99' },
-          { label: 'Auditoriya', value: 'B2C' },
         ]}
       />
 

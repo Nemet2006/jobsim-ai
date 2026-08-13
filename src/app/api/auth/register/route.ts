@@ -16,7 +16,7 @@ function validateInvite(role: UserRole, inviteCode?: string): boolean {
 export async function POST(request: Request) {
   try {
     const ip = getClientIp(request)
-    const rateLimited = await enforceRateLimit(`register:${ip}`, 5, 3600)
+    const rateLimited = await enforceRateLimit(`signup:${ip}`, 40, 900)
     if (rateLimited) return rateLimited
 
     const body = await request.json().catch(() => ({}))

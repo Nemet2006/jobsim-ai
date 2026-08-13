@@ -239,7 +239,7 @@ export default async function HRDashboard() {
 
           <Link href="/hr/abonelik" className="card-feature p-5 mt-6 block text-paper hover:shadow-soft-md transition-shadow">
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-soft mb-2">
-              Abunəlik · B2B
+              Abunəlik
             </p>
             <p className="font-display text-2xl font-semibold mb-1">$499 / il</p>
             <p className="text-sm text-paper/75 leading-relaxed mb-3">
