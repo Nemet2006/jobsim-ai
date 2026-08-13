@@ -42,9 +42,6 @@ export function PricingCards({ plans, showDemoNotice = true }: PricingCardsProps
               </span>
             )}
 
-            <p className="text-[10px] uppercase tracking-[0.16em] font-semibold text-ink-mute mb-2">
-              {plan.audienceLabel}
-            </p>
             <h3 className="font-display text-2xl font-semibold text-ink mb-4">{plan.name}</h3>
 
             <div className="mb-5">

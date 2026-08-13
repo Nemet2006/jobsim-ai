@@ -14,7 +14,7 @@ export function HRSubscriptionClient({ companyName }: HRSubscriptionClientProps)
   return (
     <div>
       <EditorialHero
-        eyebrow="Abunəlik · B2B"
+        eyebrow="Abunəlik"
         title={
           <>
             {companyName} üçün <span className="text-navy">Company</span> planı.
@@ -23,7 +23,6 @@ export function HRSubscriptionClient({ companyName }: HRSubscriptionClientProps)
         dek="HR / şirkət abunəliyi illik $499. Namizəd pipeline, shortlist, müqayisə və hesabatlar — bir komanda lisenziyasında."
         meta={[
           { label: 'İllik', value: '$499' },
-          { label: 'Auditoriya', value: 'B2B' },
         ]}
       />
 

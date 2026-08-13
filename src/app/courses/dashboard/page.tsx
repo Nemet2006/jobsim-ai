@@ -222,7 +222,7 @@ export default async function CoursesDashboard() {
           <FadeInUp delay={0.3}>
             <Link href="/courses/abonelik" className="card-feature p-6 block text-paper hover:shadow-soft-md transition-shadow">
               <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-soft mb-2">
-                Abunəlik · B2B2C
+                Abunəlik
               </p>
               <p className="font-display text-2xl font-semibold mb-1">$2,499 / il</p>
               <p className="text-sm text-paper/80 leading-relaxed mb-3">

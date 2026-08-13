@@ -16,16 +16,15 @@ export function CoursesSubscriptionClient({ instructorName }: CoursesSubscriptio
   return (
     <div>
       <EditorialHero
-        eyebrow="Abunəlik · B2B2C"
+        eyebrow="Abunəlik"
         title={
           <>
             {firstName}, kampus planı <span className="text-navy">$2,499</span>-dan başlayır.
           </>
         }
-        dek="Universitet və kurslar üçün illik B2B2C lisenziya. Qruplar, tapşırıqlar, reytinq və tələbə–HR axını bir yerdə."
+        dek="Universitet və kurslar üçün illik lisenziya. Qruplar, tapşırıqlar, reytinq və tələbə–HR axını bir yerdə."
         meta={[
           { label: 'İllik', value: '$2,499+' },
-          { label: 'Auditoriya', value: 'B2B2C' },
         ]}
       />
 
