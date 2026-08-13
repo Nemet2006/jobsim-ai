@@ -27,7 +27,7 @@ export function HRSubscriptionClient({ companyName }: HRSubscriptionClientProps)
         ]}
       />
 
-      <PricingCards plans={HR_PLANS} />
+      <PricingCards plans={HR_PLANS} showDemoNotice={false} />
 
       <div className="mt-8">
         <Link href="/hr/simulations" className="btn-secondary inline-flex">

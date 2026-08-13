@@ -6,12 +6,15 @@ import { formatUsd, type SubscriptionPlan } from '@/lib/subscription-plans'
 
 interface PricingCardsProps {
   plans: SubscriptionPlan[]
+  /** Demo lockout copy. Hidden on HR / campus pages. */
+  showDemoNotice?: boolean
 }
 
-export function PricingCards({ plans }: PricingCardsProps) {
+export function PricingCards({ plans, showDemoNotice = true }: PricingCardsProps) {
   const [notice, setNotice] = useState<string | null>(null)
 
   function handleSelect(plan: SubscriptionPlan) {
+    if (!showDemoNotice) return
     setNotice(
       `${plan.name} planı görünüş üçündür. Ödəniş tezliklə aktivləşəcək — hələ heç nə tutulmur.`,
     )
@@ -89,7 +92,7 @@ export function PricingCards({ plans }: PricingCardsProps) {
         ))}
       </div>
 
-      {notice && (
+      {showDemoNotice && notice && (
         <p
           role="status"
           className="mt-5 max-w-3xl rounded-xl border border-gold/30 bg-gold-wash px-4 py-3 text-sm text-ink-mid flex items-start gap-2"
@@ -99,9 +102,11 @@ export function PricingCards({ plans }: PricingCardsProps) {
         </p>
       )}
 
-      <p className="mt-4 text-xs text-ink-mute max-w-3xl">
-        Bu səhifə görünüş üçündür. Ödəniş sistemi hələ aktiv deyil — düymələr demo məqsədlidir.
-      </p>
+      {showDemoNotice && (
+        <p className="mt-4 text-xs text-ink-mute max-w-3xl">
+          Bu səhifə görünüş üçündür. Ödəniş sistemi hələ aktiv deyil — düymələr demo məqsədlidir.
+        </p>
+      )}
     </div>
   )
 }

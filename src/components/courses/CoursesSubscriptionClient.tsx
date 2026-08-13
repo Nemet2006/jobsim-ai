@@ -29,7 +29,7 @@ export function CoursesSubscriptionClient({ instructorName }: CoursesSubscriptio
         ]}
       />
 
-      <PricingCards plans={COURSES_PLANS} />
+      <PricingCards plans={COURSES_PLANS} showDemoNotice={false} />
 
       <div className="mt-8">
         <Link href="/courses/groups" className="btn-secondary inline-flex">
