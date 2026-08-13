@@ -9,6 +9,7 @@ import {
   GitCompare,
   BarChart2,
   Briefcase,
+  Zap,
 } from 'lucide-react'
 import { AppShell, type NavItem } from './AppShell'
 
@@ -24,6 +25,7 @@ const navItems: NavItem[] = [
   { href: '/hr/shortlist', label: 'Shortlist', icon: Star },
   { href: '/hr/compare', label: 'Müqayisə', icon: GitCompare },
   { href: '/hr/reports', label: 'Hesabatlar', icon: BarChart2 },
+  { href: '/hr/abonelik', label: 'Abunəlik', icon: Zap },
 ]
 
 export default function HRLayout({ children, user }: HRLayoutProps) {

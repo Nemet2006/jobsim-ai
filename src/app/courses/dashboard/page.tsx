@@ -220,6 +220,19 @@ export default async function CoursesDashboard() {
           </FadeInUp>
 
           <FadeInUp delay={0.3}>
+            <Link href="/courses/abonelik" className="card-feature p-6 block text-paper hover:shadow-soft-md transition-shadow">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-soft mb-2">
+                Abunəlik · B2B2C
+              </p>
+              <p className="font-display text-2xl font-semibold mb-1">$2,499 / il</p>
+              <p className="text-sm text-paper/80 leading-relaxed mb-3">
+                Kampus planı — qruplar, tapşırıqlar və tələbə–HR axını. Qiymət buradan başlayır.
+              </p>
+              <span className="text-sm font-semibold text-gold-soft">Planı gör →</span>
+            </Link>
+          </FadeInUp>
+
+          <FadeInUp delay={0.35}>
             <div className="card-dossier p-6">
               <BarChart2 size={18} className="text-navy mb-3" aria-hidden="true" />
               <p className="font-display text-base font-semibold text-ink leading-snug mb-1">

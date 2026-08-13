@@ -3,18 +3,13 @@ import { createAdminClient } from '@/lib/premium'
 import { ApiError, getClientIp, jsonError } from '@/lib/api-auth'
 import { enforceRateLimit } from '@/lib/rate-limit'
 import { trackServerEvent } from '@/lib/analytics'
+import { isValidCoursesInvite, isValidHrInvite } from '@/lib/invite-codes'
 import type { UserRole } from '@/types'
 
 function validateInvite(role: UserRole, inviteCode?: string): boolean {
   if (role === 'student') return true
-  if (role === 'hr') {
-    const expected = process.env.HR_INVITE_CODE?.trim()
-    return Boolean(expected && inviteCode?.trim() === expected)
-  }
-  if (role === 'courses') {
-    const expected = process.env.COURSES_INVITE_CODE?.trim()
-    return Boolean(expected && inviteCode?.trim() === expected)
-  }
+  if (role === 'hr') return isValidHrInvite(inviteCode)
+  if (role === 'courses') return isValidCoursesInvite(inviteCode)
   return false
 }
 

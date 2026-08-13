@@ -237,6 +237,17 @@ export default async function HRDashboard() {
             ))}
           </StaggerContainer>
 
+          <Link href="/hr/abonelik" className="card-feature p-5 mt-6 block text-paper hover:shadow-soft-md transition-shadow">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-soft mb-2">
+              Abunəlik · B2B
+            </p>
+            <p className="font-display text-2xl font-semibold mb-1">$499 / il</p>
+            <p className="text-sm text-paper/75 leading-relaxed mb-3">
+              Company planı — namizəd pipeline, shortlist və hesabatlar.
+            </p>
+            <span className="text-sm font-semibold text-gold-soft">Planı gör →</span>
+          </Link>
+
           <div className="card-dossier p-5 mt-6">
             <BarChart2 size={18} className="text-navy mb-3" aria-hidden="true" />
             <p className="font-display text-base font-semibold text-ink leading-snug mb-1">

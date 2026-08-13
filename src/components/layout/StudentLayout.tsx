@@ -13,7 +13,7 @@ const navItems: NavItem[] = [
   { href: '/student/dashboard',      label: 'Dashboard',        icon: LayoutDashboard },
   { href: '/student/courses',        label: 'Kurslarım',        icon: BookOpen },
   { href: '/student/simulations',    label: 'Simulyasiyalar',   icon: PlaySquare },
-  { href: '/student/premium',        label: 'Premium',          icon: Zap },
+  { href: '/student/premium',        label: 'Abunəlik',         icon: Zap },
   { href: '/student/results',        label: 'Nəticələr',        icon: ClipboardList },
   { href: '/student/skill-passport', label: 'Bacarıq Pasportu', icon: Award },
 ]

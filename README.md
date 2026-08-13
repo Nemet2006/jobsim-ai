@@ -400,6 +400,13 @@ Vercel Environment Variables-a `.env.local` dəyərlərini əlavə edin.
 | Kurs müəllimi | `karyera@ada.edu.az` | `JobSim2026!` |
 | Seed tələbələr | seed çıxışında | `JobSim2026!` |
 
+**Dəvət kodları** (qeydiyyatda HR / Müəllim seçəndə):
+
+| Rol | Dəvət kodu |
+|-----|------------|
+| HR / Şirkət | `JOBSIM-HR-2026` |
+| Kurs / Müəllim | `JOBSIM-UNI-2026` |
+
 > Öz Supabase layihənizdə qeydiyyatdan keçərək yeni hesab da yarada bilərsiniz.
 
 ---
