@@ -12,6 +12,7 @@ import {
   type CertificateData,
 } from '@/lib/certificate'
 import { VerificationSeal } from '@/components/ui/VerificationSeal'
+import { useT } from '@/i18n/I18nProvider'
 
 interface CertificateCardProps {
   data: CertificateData
@@ -26,15 +27,16 @@ export function CertificateCard({
   showResultsLink = false,
   resultsHref,
 }: CertificateCardProps) {
+  const { locale, t } = useT()
   const [downloading, setDownloading] = useState(false)
   const certId = getCertificateId(data.attemptId)
-  const grade = getCertificateGrade(data.score)
-  const dateStr = formatCertificateDate(data.completedAt)
+  const grade = getCertificateGrade(data.score, locale)
+  const dateStr = formatCertificateDate(data.completedAt, locale)
 
   async function handleDownload() {
     setDownloading(true)
     try {
-      await downloadCertificatePDF(data)
+      await downloadCertificatePDF(data, locale)
     } finally {
       setDownloading(false)
     }
@@ -59,7 +61,7 @@ export function CertificateCard({
       />
 
       <span className={`h-eyebrow block mb-2 ${isDark ? 'text-gold-soft' : 'text-gold-deep'}`}>
-        Sertifikat hazırdır
+        {t('sim.doneTitle')}
       </span>
       <h2 className={`font-display text-2xl lg:text-3xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-paper'}`}>
         Təbrik edirik, {data.studentName.split(' ')[0]}!
@@ -129,7 +131,7 @@ export function CertificateCard({
           ) : (
             <Download size={15} aria-hidden="true" />
           )}
-          PDF yüklə
+          PDF {t('certificate.download')}
         </button>
         {showResultsLink && resultsHref && (
           <Link
@@ -141,7 +143,7 @@ export function CertificateCard({
             }
           >
             <ExternalLink size={14} aria-hidden="true" />
-            Nəticələrə bax
+            {t('sim.seeResults')}
           </Link>
         )}
       </div>

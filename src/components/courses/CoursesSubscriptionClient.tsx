@@ -4,36 +4,37 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { EditorialHero } from '@/components/ui/EditorialHero'
 import { PricingCards } from '@/components/subscription/PricingCards'
-import { COURSES_PLANS } from '@/lib/subscription-plans'
+import { getCoursesPlans } from '@/lib/subscription-plans'
+import { useT } from '@/i18n/I18nProvider'
 
 interface CoursesSubscriptionClientProps {
   instructorName: string
 }
 
 export function CoursesSubscriptionClient({ instructorName }: CoursesSubscriptionClientProps) {
-  const firstName = instructorName.split(' ')[0] || 'müəllim'
+  const { t } = useT()
+  const firstName = instructorName.split(' ')[0] || t('nav.teacherBrand')
 
   return (
     <div>
       <EditorialHero
-        eyebrow="Abunəlik · B2B2C"
+        eyebrow={t('nav.subscription')}
         title={
           <>
-            {firstName}, kampus planı <span className="text-navy">$2,499</span>-dan başlayır.
+            {firstName} · <span className="text-navy">{t('pricing.coursesName')}</span>
           </>
         }
-        dek="Universitet və kurslar üçün illik B2B2C lisenziya. Qruplar, tapşırıqlar, reytinq və tələbə–HR axını bir yerdə."
+        dek={t('pricing.coursesF1')}
         meta={[
-          { label: 'İllik', value: '$2,499+' },
-          { label: 'Auditoriya', value: 'B2B2C' },
+          { label: t('pricing.studentYearly'), value: '$2,499+' },
         ]}
       />
 
-      <PricingCards plans={COURSES_PLANS} />
+      <PricingCards plans={getCoursesPlans(t)} />
 
       <div className="mt-8">
         <Link href="/courses/groups" className="btn-secondary inline-flex">
-          Qruplara qayıt
+          {t('nav.groups')}
           <ArrowRight size={15} aria-hidden="true" />
         </Link>
       </div>

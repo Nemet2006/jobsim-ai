@@ -1,4 +1,5 @@
 import type { Question } from '@/types'
+import type { TFunction } from '@/i18n/translate'
 
 export interface FileAnswerPayload {
   type: 'file'
@@ -29,25 +30,36 @@ export function hasQuestionAnswer(answers: Record<string, string>, q: Question):
   return true
 }
 
-export function formatAnswerForAI(q: Question, raw: string | undefined): string {
-  if (!raw?.trim()) return '(Cavab verilmədi)'
+export function formatAnswerForAI(q: Question, raw: string | undefined, t?: TFunction): string {
+  if (!raw?.trim()) return t ? t('sim.unanswered') : '(Cavab verilmədi)'
 
   if (q.type === 'file_upload') {
     const file = parseFileAnswer(raw)
-    if (!file) return '(Fayl yüklənməyib)'
+    if (!file) return t ? t('sim.noFile') : '(Fayl yüklənməyib)'
     const sizeKb = Math.round(file.size / 1024)
-    return `[Fayl yükləndi: ${file.name} (${file.mime}, ${sizeKb} KB)]`
+    return t
+      ? t('sim.fileUploaded', { name: file.name, mime: file.mime, size: sizeKb })
+      : `[Fayl yükləndi: ${file.name} (${file.mime}, ${sizeKb} KB)]`
   }
 
   if (q.type === 'code') {
     const lang = q.code_language || 'code'
-    return `[${lang} kod cavabı]\n${raw}`
+    const prefix = t ? t('sim.codeAnswer', { lang }) : `[${lang} kod cavabı]`
+    return `${prefix}\n${raw}`
   }
 
   return raw
 }
 
-export function questionTypeLabel(type: Question['type']): string {
+export function questionTypeLabel(type: Question['type'], t?: TFunction): string {
+  if (t) {
+    switch (type) {
+      case 'multiple_choice': return t('sim.qMc')
+      case 'code': return t('sim.qCode')
+      case 'file_upload': return t('sim.qFile')
+      default: return t('sim.qOpen')
+    }
+  }
   switch (type) {
     case 'multiple_choice': return 'Çox seçimli'
     case 'code': return 'Kod tapşırığı'

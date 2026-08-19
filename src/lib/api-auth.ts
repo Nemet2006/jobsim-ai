@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { UserRole } from '@/types'
+import { getT } from '@/i18n/get-locale'
 
 export class ApiError extends Error {
   constructor(
@@ -7,15 +8,17 @@ export class ApiError extends Error {
     public status: number
   ) {
     super(message)
+    this.name = 'ApiError'
   }
 }
 
 export async function requireAuth() {
   const supabase = await createClient()
+  const { t } = await getT()
   const { data: { user }, error } = await supabase.auth.getUser()
 
   if (error || !user) {
-    throw new ApiError('Daxil olmalısınız', 401)
+    throw new ApiError(t('errors.unauthorized'), 401)
   }
 
   return { supabase, user }
@@ -23,6 +26,7 @@ export async function requireAuth() {
 
 export async function requireRole(allowed: UserRole | UserRole[]) {
   const { supabase, user } = await requireAuth()
+  const { t } = await getT()
   const roles = Array.isArray(allowed) ? allowed : [allowed]
 
   const { data: profile } = await supabase
@@ -32,7 +36,7 @@ export async function requireRole(allowed: UserRole | UserRole[]) {
     .single()
 
   if (!profile?.role || !roles.includes(profile.role as UserRole)) {
-    throw new ApiError('Bu əməliyyat üçün icazəniz yoxdur', 403)
+    throw new ApiError(t('errors.forbidden'), 403)
   }
 
   return { supabase, user, profile }
@@ -44,12 +48,12 @@ export function getClientIp(request: Request): string {
   return request.headers.get('x-real-ip') || 'unknown'
 }
 
-export function jsonError(error: unknown, fallback = 'Xəta baş verdi') {
+export function jsonError(error: unknown, fallback?: string) {
   if (error instanceof ApiError) {
     return Response.json({ error: error.message }, { status: error.status })
   }
   console.error(error)
-  return Response.json({ error: fallback }, { status: 500 })
+  return Response.json({ error: fallback || 'Xəta baş verdi' }, { status: 500 })
 }
 
 export function sanitizeFilename(input: string, fallback = 'export'): string {

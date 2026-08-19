@@ -7,9 +7,11 @@ import { formatDate, getScoreColor } from '@/lib/utils'
 import { StatGrid, type StatItem } from '@/components/ui/StatGrid'
 import { EditorialHero } from '@/components/ui/EditorialHero'
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/ui/Motion'
+import { getT } from '@/i18n/get-locale'
 
 export default async function StudentDashboard() {
   const supabase = await createClient()
+  const { t } = await getT()
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ data: profile }, { data: attempts }, { data: passport }] = await Promise.all([
@@ -28,55 +30,49 @@ export default async function StudentDashboard() {
     ? Math.round(completedAttempts.reduce((s, a) => s + (a.score || 0), 0) / completedAttempts.length)
     : 0
   const skillCount = (passport?.skills as { skill_name: string }[] | null)?.length || 0
-  const firstName = profile?.full_name?.split(' ')[0] || 'dostum'
+  const firstName = profile?.full_name?.split(' ')[0] || t('student.friend')
 
   const stats: StatItem[] = [
-    { label: 'Cəhdlər', value: attempts?.length || 0, icon: 'play', accent: 'forest', meta: 'Ümumi sayı' },
-    { label: 'Orta bal', value: avgScore, icon: 'target', accent: 'coral', meta: 'Son cəhdlər' },
-    { label: 'Bacarıqlar', value: skillCount, icon: 'award', accent: 'sun', meta: 'Pasportda' },
+    { label: t('student.attempts'), value: attempts?.length || 0, icon: 'play', accent: 'forest', meta: t('student.totalCount') },
+    { label: t('student.avgScore'), value: avgScore, icon: 'target', accent: 'coral', meta: t('student.recentAttempts') },
+    { label: t('student.skills'), value: skillCount, icon: 'award', accent: 'sun', meta: t('student.inPassport') },
     {
-      label: 'Giriş',
-      value: 'Açıq',
+      label: t('student.access'),
+      value: t('common.open'),
       icon: 'zap',
       accent: 'verdigris',
-      meta: 'Bütün simulyasiyalar',
+      meta: t('student.allSimsOpen'),
     },
   ]
 
   return (
     <div className="relative">
       <EditorialHero
-        eyebrow="Tələbə Paneli"
+        eyebrow={t('student.dashEyebrow')}
         title={
           <>
-            Salam, <span className="text-navy">{firstName}</span>.<br />
-            Bu gün hansı bacarığı sübut edəcəksiniz?
+            {t('student.dashHello', { name: firstName })}<br />
+            {t('student.dashTitle')}
           </>
         }
-        dek={
-          <>
-            Real iş simulyasiyaları, AI qiymətləndirmə və{' '}
-            <strong className="text-ink">verification seal</strong>.
-            Hər tamamlanmış tapşırıq — dossier-inizə bir qeyd.
-          </>
-        }
+        dek={t('student.dashDek')}
         actions={
           <>
             <Link href="/student/simulations" className="btn-primary group">
               <PlaySquare size={16} aria-hidden="true" />
-              <span>Simulyasiya başlat</span>
+              <span>{t('student.startSim')}</span>
               <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
             <Link href="/student/skill-passport" className="btn-secondary">
               <Sparkles size={14} aria-hidden="true" />
-              Bacarıq pasportu
+              {t('nav.skillPassport')}
             </Link>
           </>
         }
         meta={[
-          { label: 'Universitet', value: profile?.university || 'Qeyd edilməyib' },
-          { label: 'Giriş', value: 'Açıq' },
-          { label: 'Cəhdlər', value: `${attempts?.length || 0}` },
+          { label: t('student.university'), value: profile?.university || t('common.notSpecified') },
+          { label: t('student.access'), value: t('common.open') },
+          { label: t('student.attempts'), value: `${attempts?.length || 0}` },
         ]}
       />
 

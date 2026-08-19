@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/premium'
+import { getT } from '@/i18n/get-locale'
 
 export async function checkRateLimit(
   bucketKey: string,
@@ -32,8 +33,9 @@ export async function enforceRateLimit(
 ): Promise<Response | null> {
   const allowed = await checkRateLimit(bucketKey, maxRequests, windowSeconds)
   if (!allowed) {
+    const { t } = await getT()
     return Response.json(
-      { error: 'Çox sayda sorğu. Zəhmət olmasa bir az gözləyin.' },
+      { error: t('errors.rateLimit') },
       { status: 429 }
     )
   }

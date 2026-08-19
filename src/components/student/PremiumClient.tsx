@@ -4,37 +4,38 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { EditorialHero } from '@/components/ui/EditorialHero'
 import { PricingCards } from '@/components/subscription/PricingCards'
-import { STUDENT_PLANS } from '@/lib/subscription-plans'
+import { getStudentPlans } from '@/lib/subscription-plans'
+import { useT } from '@/i18n/I18nProvider'
 
 interface PremiumClientProps {
   studentName: string
 }
 
 export function PremiumClient({ studentName }: PremiumClientProps) {
-  const firstName = studentName.split(' ')[0] || 'tələbə'
+  const { t } = useT()
+  const firstName = studentName.split(' ')[0] || t('student.studentFallback')
 
   return (
     <div>
       <EditorialHero
-        eyebrow="Abunəlik · B2C"
+        eyebrow={t('student.premiumEyebrow')}
         title={
           <>
             {firstName}, planını <span className="text-navy">seç</span>.
           </>
         }
-        dek="Tələbə abunəliyi: aylıq $9.99 və ya illik $79.99. Limitsiz simulyasiya, AI feedback və rəsmi sertifikat."
+        dek={t('student.premiumDek')}
         meta={[
-          { label: 'Aylıq', value: '$9.99' },
-          { label: 'İllik', value: '$79.99' },
-          { label: 'Auditoriya', value: 'B2C' },
+          { label: t('pricing.studentMonthly'), value: '$9.99' },
+          { label: t('pricing.studentYearly'), value: '$79.99' },
         ]}
       />
 
-      <PricingCards plans={STUDENT_PLANS} />
+      <PricingCards plans={getStudentPlans(t)} />
 
       <div className="mt-8">
         <Link href="/student/simulations" className="btn-secondary inline-flex">
-          Simulyasiyalara keç
+          {t('nav.simulations')}
           <ArrowRight size={15} aria-hidden="true" />
         </Link>
       </div>

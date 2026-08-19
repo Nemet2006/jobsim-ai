@@ -11,9 +11,9 @@ import {
   Clock,
   CheckCircle2,
 } from 'lucide-react'
-import { getDifficultyLabel } from '@/lib/utils'
 import type { Simulation, Difficulty } from '@/types'
 import { SimCard } from '@/components/ui/SimCard'
+import { useT } from '@/i18n/I18nProvider'
 
 interface SimulationsGridProps {
   simulations: (Simulation & { creator?: { full_name: string; company_name: string } | null })[]
@@ -40,6 +40,7 @@ const SORT_OPTIONS: { id: SortKey; label: string }[] = [
 ]
 
 export default function SimulationsGrid({ simulations, completionCounts = {} }: SimulationsGridProps) {
+  const { t } = useT()
   const [search, setSearch] = useState('')
   const [quick, setQuick] = useState<QuickFilterId>('all')
   const [roles, setRoles] = useState<Set<string>>(new Set())
@@ -117,16 +118,16 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
       <header className="pb-8 mb-8 border-b border-forest/8">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>
-            <span className="h-eyebrow block mb-2">Simulyasiya kitabxanası</span>
+            <span className="h-eyebrow block mb-2">{t('sim.libraryEyebrow')}</span>
             <h1 className="font-display text-[clamp(2rem,5vw,4rem)] leading-[1.02] font-semibold text-balance">
-              İş simulyasiyaları və <span className="italic font-light text-forest">qısa kurslar</span>.
+              {t('sim.libraryTitle')} <span className="italic font-light text-forest">{t('sim.libraryTitleAccent')}</span>.
             </h1>
             <p className="mt-3 text-base lg:text-lg text-ink-mid max-w-2xl leading-relaxed">
-              Bacarıqlarınızı qurmaq və recruiter-lər tərəfindən fərq edilmək üçün uyğun simulyasiyanı tapın.
+              {t('sim.libraryDek')}
             </p>
           </div>
           <div className="hidden sm:flex items-center gap-2.5 px-4 py-2.5 rounded-md bg-navy-wash border border-navy/15 text-navy text-sm font-medium">
-            <span>{simulations.length} simulyasiya · hamısı açıq</span>
+            <span>{t('sim.countOpen', { n: simulations.length })}</span>
           </div>
         </div>
 
@@ -137,15 +138,15 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Şirkət, rol, və ya bacarıq axtarın…"
-            aria-label="Simulyasiya axtar"
+            placeholder={t('sim.searchPh')}
+            aria-label={t('sim.searchAria')}
             className="ed-input pl-11 pr-4 py-3 rounded-full"
           />
           {search && (
             <button
               onClick={() => setSearch('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full hover:bg-forest-wash flex items-center justify-center text-ink-mute hover:text-forest"
-              aria-label="Axtarışı təmizlə"
+              aria-label={t('sim.clearSearch')}
             >
               <X size={14} aria-hidden="true" />
             </button>
@@ -154,9 +155,10 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
 
         {/* Quick filters */}
         <div className="mt-5 flex items-center gap-2 flex-wrap">
-          <span className="h-meta mr-1">Sürətli filter:</span>
+          <span className="h-meta mr-1">{t('sim.quickFilter')}</span>
           {QUICK_FILTERS.map((q) => {
             const isActive = quick === q.id
+            const label = q.id === 'all' ? t('sim.all') : q.id === 'under60' ? t('sim.under60') : t('sim.beginners')
             return (
               <button
                 key={q.id}
@@ -168,7 +170,7 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
                 }`}
               >
                 {q.icon}
-                {q.label}
+                {label}
               </button>
             )
           })}
@@ -177,7 +179,7 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
           <button
             onClick={() => setMobileFilterOpen(true)}
             className="lg:hidden ml-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white border border-forest/12 text-forest"
-            aria-label="Bütün filterləri aç"
+            aria-label={t('sim.openFilters')}
           >
             <SlidersHorizontal size={12} aria-hidden="true" />
             Filter
@@ -228,7 +230,9 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
                 className="text-sm font-medium bg-white border border-forest/12 rounded-full pl-4 pr-9 py-2 cursor-pointer hover:border-forest/30 focus:outline-none focus:border-forest/60"
               >
                 {SORT_OPTIONS.map((o) => (
-                  <option key={o.id} value={o.id}>{o.label}</option>
+                  <option key={o.id} value={o.id}>
+                    {o.id === 'recent' ? t('sim.sortRecent') : o.id === 'shortest' ? t('sim.sortShort') : o.id === 'easy_first' ? t('sim.sortEasy') : t('sim.sortHard')}
+                  </option>
                 ))}
               </select>
             </div>
@@ -244,7 +248,7 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
                 <Chip key={`c-${c}`} label={c} onRemove={() => toggleSet(companies, c, setCompanies)} />
               ))}
               {Array.from(difficulties).map((d) => (
-                <Chip key={`d-${d}`} label={getDifficultyLabel(d)} onRemove={() => toggleSet(difficulties, d, setDifficulties)} />
+                <Chip key={`d-${d}`} label={t(`sim.${d}`)} onRemove={() => toggleSet(difficulties, d, setDifficulties)} />
               ))}
               <button onClick={clearAll} className="text-xs font-semibold text-coral-deep hover:text-coral underline-offset-2 hover:underline">
                 Hamısını təmizlə
@@ -263,7 +267,7 @@ export default function SimulationsGrid({ simulations, completionCounts = {} }: 
                     company={sim.creator?.company_name || null}
                     category={sim.role_type}
                     difficulty={sim.difficulty}
-                    duration={`${sim.duration_minutes} dəq`}
+                    duration={t('common.minutes', { n: sim.duration_minutes })}
                     description={sim.description}
                     completions={completionCounts[sim.id]}
                     delay={Math.min(idx * 0.04, 0.4)}
@@ -380,11 +384,12 @@ function FilterPanel({
   onClear: () => void
   activeCount: number
 }) {
+  const { t } = useT()
   return (
     <div className="space-y-7">
       {/* Top */}
       <div className="hidden lg:flex items-center justify-between">
-        <h2 className="font-display text-lg font-semibold">Filterlər</h2>
+        <h2 className="font-display text-lg font-semibold">{t('sim.filters')}</h2>
         {activeCount > 0 && (
           <button onClick={onClear} className="text-xs font-semibold text-coral-deep hover:text-coral">
             Təmizlə
@@ -397,7 +402,7 @@ function FilterPanel({
         {facets.difficulties.map(([d, count]) => (
           <FacetCheckbox
             key={d}
-            label={getDifficultyLabel(d)}
+            label={t(`sim.${d}`)}
             count={count}
             checked={difficulties.has(d)}
             onChange={() => toggleDifficulty(d)}

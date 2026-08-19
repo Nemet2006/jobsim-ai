@@ -5,7 +5,9 @@ import { enforceRateLimit } from '@/lib/rate-limit'
 import { runAiAnalysis } from '@/lib/ai-analyze'
 import { trackServerEvent } from '@/lib/analytics'
 import { formatAnswerForAI, questionTypeLabel } from '@/lib/answers'
-import { normalizeQuestions } from '@/lib/questions'
+import { getLocale } from '@/i18n/get-locale'
+import { makeT } from '@/i18n/t'
+import { localizeSimulation } from '@/lib/localize-simulation'
 import type { Json } from '@/types/database'
 
 export async function POST(request: Request) {
@@ -15,12 +17,14 @@ export async function POST(request: Request) {
     if (rateLimited) return rateLimited
 
     const { supabase, user } = await requireRole('student')
+    const locale = await getLocale()
+    const t = makeT(locale)
     const body = await request.json().catch(() => ({}))
     const attemptId = body.attemptId as string | undefined
     const answers = body.answers as Record<string, string> | undefined
 
     if (!attemptId || !answers || typeof answers !== 'object') {
-      throw new ApiError('attemptId və answers tələb olunur', 400)
+      throw new ApiError(t('errors.attemptRequired'), 400)
     }
 
     const { data: attempt } = await supabase
@@ -31,29 +35,39 @@ export async function POST(request: Request) {
       .single()
 
     if (!attempt || attempt.status !== 'in_progress') {
-      throw new ApiError('Attempt tapılmadı və ya artıq bağlanıb', 403)
+      throw new ApiError(t('errors.attemptClosed'), 403)
     }
 
     const simulation = attempt.simulation as {
       title: string
+      description?: string
       role_type: string
       questions: unknown
     } | null
 
     if (!simulation) {
-      throw new ApiError('Simulyasiya tapılmadı', 404)
+      throw new ApiError(t('errors.simNotFound'), 404)
     }
 
-    const questions = normalizeQuestions(simulation.questions)
-    const questionAnswerPairs = questions.map((q) => ({
-      question: `[${questionTypeLabel(q.type)}] ${q.question}`,
-      answer: formatAnswerForAI(q, answers[q.id]),
+    const localized = localizeSimulation(
+      {
+        title: simulation.title,
+        description: simulation.description || '',
+        role_type: simulation.role_type,
+        questions: simulation.questions,
+      },
+      locale,
+    )
+    const questionAnswerPairs = localized.questions.map((q) => ({
+      question: `[${questionTypeLabel(q.type, t)}] ${q.question}`,
+      answer: formatAnswerForAI(q, answers[q.id], t),
     }))
 
     const aiResult = await runAiAnalysis({
-      simulationTitle: simulation.title,
-      roleType: simulation.role_type,
+      simulationTitle: localized.title,
+      roleType: localized.role_type,
       questions: questionAnswerPairs,
+      locale,
     })
 
     if (!aiResult.ok) {
@@ -79,7 +93,7 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error('Attempt complete update failed:', updateError.message)
-      throw new ApiError('Nəticə saxlanıla bilmədi', 500)
+      throw new ApiError(t('errors.saveFailed'), 500)
     }
 
     if (analysis.skill_scores) {
@@ -118,6 +132,6 @@ export async function POST(request: Request) {
       completed_at: completedAt,
     })
   } catch (error) {
-    return jsonError(error, 'Simulyasiya tamamlanmadı')
+    return jsonError(error)
   }
 }

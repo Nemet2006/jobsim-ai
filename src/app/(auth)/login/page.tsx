@@ -10,6 +10,8 @@ import { track } from '@/lib/analytics-client'
 import type { UserRole } from '@/types'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
 import { VerificationSeal } from '@/components/ui/VerificationSeal'
+import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher'
+import { useT } from '@/i18n/I18nProvider'
 
 const ROLE_REDIRECTS: Record<UserRole, string> = {
   student: '/student/dashboard',
@@ -19,6 +21,7 @@ const ROLE_REDIRECTS: Record<UserRole, string> = {
 }
 
 export default function LoginPage() {
+  const { t } = useT()
   const router = useRouter()
   const supabase = createClient()
   const [email, setEmail] = useState('')
@@ -36,7 +39,7 @@ export default function LoginPage() {
 
     if (signInError) {
       track('login_failed')
-      setError('Email və ya şifrə yanlışdır')
+      setError(t('auth.loginError'))
       setLoading(false)
       return
     }
@@ -77,9 +80,12 @@ export default function LoginPage() {
               JobSim<span className="text-gold">.</span>
             </span>
           </Link>
-          <Link href="/register" className="text-sm font-medium text-ink-mid hover:text-navy">
-            Hesabınız yoxdur? <span className="text-navy underline-offset-2 hover:underline">Qeydiyyat</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <Link href="/register" className="text-sm font-medium text-ink-mid hover:text-navy">
+              {t('auth.noAccount')} <span className="text-navy underline-offset-2 hover:underline">{t('common.register')}</span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -91,20 +97,20 @@ export default function LoginPage() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="order-2 lg:order-1"
           >
-            <span className="h-eyebrow-gold inline-block mb-4">Welcome back</span>
+            <span className="h-eyebrow-gold inline-block mb-4">{t('auth.welcomeBack')}</span>
             <h1 className="h-display text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] mb-5 text-balance">
-              Sübut et.<br />
-              <span className="text-navy">Görün.</span>{' '}
-              <span className="text-gold-deep">İşə düz.</span>
+              {t('landing.h1a')}<br />
+              <span className="text-navy">{t('landing.h1b')}</span>{' '}
+              <span className="text-gold-deep">{t('landing.h1c')}</span>
             </h1>
             <p className="text-base lg:text-lg text-ink-mid leading-relaxed max-w-md mb-7">
-              Real iş simulyasiyaları ilə bacarıqlarını sübut et. AI qiymətləndirməsi, sertifikat və verification seal.
+              {t('auth.loginDek')}
             </p>
             <ul className="space-y-2.5 mb-8">
               {[
-                'Real şirkət simulyasiyaları',
-                'AI qiymətləndirmə və bacarıq pasportu',
-                'Universitet qrupu ilə inteqrasiya',
+                t('auth.b1'),
+                t('auth.b2'),
+                t('auth.b3'),
               ].map((text, i) => (
                 <motion.li
                   key={i}
@@ -126,14 +132,14 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
             className="order-1 lg:order-2"
-            aria-label="Daxil olma forması"
+            aria-label={t('auth.formAria')}
           >
             <div className="card-dossier p-7 lg:p-8 max-w-md mx-auto lg:ml-auto lg:mr-0">
               <h2 className="font-display text-2xl lg:text-3xl font-semibold mb-1.5">
-                Daxil ol<span className="text-gold">.</span>
+                {t('auth.loginTitle')}<span className="text-gold">.</span>
               </h2>
               <p className="text-sm text-ink-mid mb-6">
-                Davam etmək üçün hesabınıza qoşulun.
+                {t('auth.loginHint')}
               </p>
 
               {error && (
@@ -151,7 +157,7 @@ export default function LoginPage() {
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-semibold text-ink mb-1.5">
-                    Email
+                    {t('auth.email')}
                   </label>
                   <input
                     id="email"
@@ -169,7 +175,7 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <label htmlFor="password" className="block text-sm font-semibold text-ink mb-1.5">
-                    Şifrə
+                    {t('auth.password')}
                   </label>
                   <input
                     id="password"
@@ -188,11 +194,11 @@ export default function LoginPage() {
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                      <span>Yoxlanılır…</span>
+                      <span>{t('auth.checking')}</span>
                     </>
                   ) : (
                     <>
-                      <span>Daxil ol</span>
+                      <span>{t('common.login')}</span>
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                     </>
                   )}
@@ -201,9 +207,9 @@ export default function LoginPage() {
 
               <div className="mt-6 pt-5 border-t border-navy/10 text-center">
                 <p className="text-sm text-ink-mid">
-                  Yeni gəlmisiniz?{' '}
+                  {t('auth.newHere')}{' '}
                   <Link href="/register" className="font-semibold text-navy hover:underline underline-offset-2">
-                    Pulsuz hesab yaradın →
+                    {t('auth.createFreeArrow')}
                   </Link>
                 </p>
               </div>

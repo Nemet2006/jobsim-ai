@@ -10,6 +10,7 @@ import { hasQuestionAnswer, questionTypeLabel } from '@/lib/answers'
 import { QuestionAnswerInput } from './QuestionAnswerInput'
 import type { Question } from '@/types'
 import { CertificateCard } from './CertificateCard'
+import { useT } from '@/i18n/I18nProvider'
 import {
   AlertTriangle,
   Clock,
@@ -36,13 +37,6 @@ interface SimulationExamProps {
 
 type ExamPhase = 'exam' | 'analyzing' | 'done' | 'error'
 
-const ANALYZE_STEPS = [
-  'Cavablar oxunur və strukturlaşdırılır',
-  'Bacarıq skorları hesablanır',
-  'Güclü / zəif tərəflər müəyyən edilir',
-  'Verification hesabatı hazırlanır',
-]
-
 export default function SimulationExam({
   simulation,
   attemptId,
@@ -50,6 +44,7 @@ export default function SimulationExam({
   studentName,
   companyName,
 }: SimulationExamProps) {
+  const { t } = useT()
   const router = useRouter()
   const supabase = createClient()
   const [answers, setAnswers] = useState<Record<string, string>>({})
@@ -64,6 +59,13 @@ export default function SimulationExam({
   const [finalCompletedAt, setFinalCompletedAt] = useState<string | null>(null)
   const [analyzeStep, setAnalyzeStep] = useState(0)
   const cheatCountRef = useRef(0)
+
+  const ANALYZE_STEPS = [
+    t('sim.analyzing1'),
+    t('sim.analyzing2'),
+    t('sim.analyzing3'),
+    t('sim.analyzing4'),
+  ]
 
   const questions = normalizeQuestions(simulation.questions)
 
@@ -199,7 +201,7 @@ export default function SimulationExam({
           </div>
 
           <h2 className="font-display text-2xl font-semibold text-paper mb-2">
-            Cavablar qiymətləndirilir
+            {t('sim.analyzing')}
           </h2>
           <p className="text-sm text-white/55 leading-relaxed mb-6">
             OpenRouter üzərindən real AI modeli cavablarınızı oxuyur, skor və bacarıq hesabatı hazırlayır.
@@ -343,7 +345,7 @@ export default function SimulationExam({
                 timeLeft < 300 ? 'text-danger-soft animate-pulse' : 'text-gold'
               }`}
               aria-live="polite"
-              aria-label={`Qalan vaxt ${formatTime(timeLeft)}`}
+              aria-label={`${t('sim.timeLeft')} ${formatTime(timeLeft)}`}
             >
               <Clock size={16} aria-hidden="true" />
               {formatTime(timeLeft)}
@@ -365,7 +367,7 @@ export default function SimulationExam({
               {currentQ + 1}
             </span>
             <span className="text-[11px] text-white/45 uppercase tracking-[0.14em] font-semibold">
-              {questionTypeLabel(q.type)}
+              {questionTypeLabel(q.type, t)}
             </span>
             <span className="ml-auto font-mono text-[10px] text-white/30 uppercase tracking-wider">
               Q{currentQ + 1}/{questions.length}
@@ -392,7 +394,7 @@ export default function SimulationExam({
             className="exam-btn-secondary"
           >
             <ChevronLeft size={16} aria-hidden="true" />
-            Əvvəlki
+            {t('sim.prev')}
           </button>
 
           {currentQ < questions.length - 1 ? (
@@ -400,7 +402,7 @@ export default function SimulationExam({
               onClick={() => setCurrentQ((idx) => Math.min(questions.length - 1, idx + 1))}
               className="exam-btn-primary"
             >
-              Növbəti
+              {t('sim.next')}
               <ChevronRight size={16} aria-hidden="true" />
             </button>
           ) : (
@@ -410,7 +412,7 @@ export default function SimulationExam({
               className="exam-btn-submit"
             >
               <CheckCircle size={16} aria-hidden="true" />
-              Qiymətləndirməyə göndər
+              {t('sim.submit')}
             </button>
           )}
         </div>

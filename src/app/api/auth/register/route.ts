@@ -5,6 +5,7 @@ import { enforceRateLimit } from '@/lib/rate-limit'
 import { trackServerEvent } from '@/lib/analytics'
 import { isValidCoursesInvite, isValidHrInvite } from '@/lib/invite-codes'
 import type { UserRole } from '@/types'
+import { getT } from '@/i18n/get-locale'
 
 function validateInvite(role: UserRole, inviteCode?: string): boolean {
   if (role === 'student') return true
@@ -15,6 +16,7 @@ function validateInvite(role: UserRole, inviteCode?: string): boolean {
 
 export async function POST(request: Request) {
   try {
+    const { t } = await getT()
     const ip = getClientIp(request)
     const rateLimited = await enforceRateLimit(`register:${ip}`, 5, 3600)
     if (rateLimited) return rateLimited
@@ -29,23 +31,23 @@ export async function POST(request: Request) {
     const inviteCode = body.inviteCode ? String(body.inviteCode).trim() : undefined
 
     if (!email || !password || !fullName) {
-      throw new ApiError('Email, şifrə və ad tələb olunur', 400)
+      throw new ApiError(t('errors.requiredFields'), 400)
     }
 
     if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      throw new ApiError('Email formatı yanlışdır', 400)
+      throw new ApiError(t('errors.emailFormat'), 400)
     }
 
     if (password.length < 8 || password.length > 72) {
-      throw new ApiError('Şifrə 8-72 simvol aralığında olmalıdır', 400)
+      throw new ApiError(t('errors.passwordRange'), 400)
     }
 
     if (!['student', 'hr', 'courses'].includes(role)) {
-      throw new ApiError('Yanlış rol', 400)
+      throw new ApiError(t('errors.badRole'), 400)
     }
 
     if (!validateInvite(role, inviteCode)) {
-      throw new ApiError('Bu rol üçün etibarlı dəvət kodu tələb olunur', 403)
+      throw new ApiError(t('errors.inviteRequired'), 403)
     }
 
     const admin = createAdminClient()
@@ -61,7 +63,7 @@ export async function POST(request: Request) {
     })
 
     if (error || !data.user) {
-      throw new ApiError(error?.message || 'Qeydiyyat uğursuz oldu', 400)
+      throw new ApiError(error?.message || t('errors.registerFailed'), 400)
     }
 
     if (role !== 'student') {
@@ -76,7 +78,7 @@ export async function POST(request: Request) {
 
       if (roleError) {
         console.error('Role assignment failed:', roleError.message)
-        throw new ApiError('Hesab yaradıldı, lakin rol təyin edilə bilmədi', 500)
+        throw new ApiError(t('errors.roleAssignFailed'), 500)
       }
     }
 
