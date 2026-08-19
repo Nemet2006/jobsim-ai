@@ -7,6 +7,7 @@ import { track } from '@/lib/analytics-client'
 import type { Question, Difficulty, QuestionType } from '@/types'
 import { Plus, Trash2, GripVertical, ChevronLeft, ChevronRight, Eye, Code2, FileUp } from 'lucide-react'
 import { questionTypeLabel } from '@/lib/answers'
+import { useT } from '@/i18n/I18nProvider'
 
 const ROLE_TYPES = [
   'Junior HR', 'Data Analyst', 'Sales Assistant', 'Marketing Intern',
@@ -18,6 +19,7 @@ interface CreateSimulationFormProps {
 }
 
 export default function CreateSimulationForm({ hrId }: CreateSimulationFormProps) {
+  const { t } = useT()
   const router = useRouter()
   const supabase = createClient()
   const [step, setStep] = useState(1)
@@ -70,7 +72,7 @@ export default function CreateSimulationForm({ hrId }: CreateSimulationFormProps
 
   async function handleSave(publish: boolean) {
     if (questions.length < 3) {
-      alert('Minimum 3 sual tələb olunur')
+      alert(t('hr.min3'))
       return
     }
     setSaving(true)

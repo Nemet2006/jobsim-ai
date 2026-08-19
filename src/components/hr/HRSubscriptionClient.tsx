@@ -4,34 +4,35 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { EditorialHero } from '@/components/ui/EditorialHero'
 import { PricingCards } from '@/components/subscription/PricingCards'
-import { HR_PLANS } from '@/lib/subscription-plans'
+import { getHrPlans } from '@/lib/subscription-plans'
+import { useT } from '@/i18n/I18nProvider'
 
 interface HRSubscriptionClientProps {
   companyName: string
 }
 
 export function HRSubscriptionClient({ companyName }: HRSubscriptionClientProps) {
+  const { t } = useT()
   return (
     <div>
       <EditorialHero
-        eyebrow="Abunəlik · B2B"
+        eyebrow={t('nav.subscription')}
         title={
           <>
-            {companyName} üçün <span className="text-navy">Company</span> planı.
+            {companyName} · <span className="text-navy">{t('pricing.hrName')}</span>
           </>
         }
-        dek="HR / şirkət abunəliyi illik $499. Namizəd pipeline, shortlist, müqayisə və hesabatlar — bir komanda lisenziyasında."
+        dek={t('pricing.hrF2')}
         meta={[
-          { label: 'İllik', value: '$499' },
-          { label: 'Auditoriya', value: 'B2B' },
+          { label: t('pricing.studentYearly'), value: '$499' },
         ]}
       />
 
-      <PricingCards plans={HR_PLANS} />
+      <PricingCards plans={getHrPlans(t)} />
 
       <div className="mt-8">
         <Link href="/hr/simulations" className="btn-secondary inline-flex">
-          Simulyasiyalara qayıt
+          {t('nav.simulations')}
           <ArrowRight size={15} aria-hidden="true" />
         </Link>
       </div>

@@ -19,6 +19,8 @@ import {
   ShieldCheck,
   type LucideIcon,
 } from 'lucide-react'
+import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher'
+import { useT } from '@/i18n/I18nProvider'
 
 export interface AdminNavItem {
   href: string
@@ -26,25 +28,26 @@ export interface AdminNavItem {
   icon: LucideIcon
 }
 
-const NAV: AdminNavItem[] = [
-  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/users', label: 'Users', icon: Users },
-  { href: '/admin/simulations', label: 'Simulations', icon: PlaySquare },
-  { href: '/admin/feedback', label: 'Feedback', icon: MessageSquareText },
-  { href: '/admin/events', label: 'Hadisələr', icon: Activity },
-  { href: '/admin/documents', label: 'Documents', icon: FileStack },
-]
-
 interface AdminShellProps {
   children: React.ReactNode
   user: User
 }
 
 export default function AdminShell({ children, user }: AdminShellProps) {
+  const { t } = useT()
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
   const [open, setOpen] = useState(false)
+
+  const NAV: AdminNavItem[] = [
+    { href: '/admin/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+    { href: '/admin/users', label: t('nav.users'), icon: Users },
+    { href: '/admin/simulations', label: t('nav.simulations'), icon: PlaySquare },
+    { href: '/admin/feedback', label: t('nav.feedback'), icon: MessageSquareText },
+    { href: '/admin/events', label: t('nav.events'), icon: Activity },
+    { href: '/admin/documents', label: t('nav.documents'), icon: FileStack },
+  ]
 
   async function handleLogout() {
     track('logout', { section: 'PLATFORM ADMIN' })
@@ -54,7 +57,7 @@ export default function AdminShell({ children, user }: AdminShellProps) {
   }
 
   const NavLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <nav className="flex flex-col gap-1 px-3" aria-label="Admin naviqasiya">
+            <nav className="flex flex-col gap-1 px-3" aria-label={t('nav.adminNav')}>
       {NAV.map((item) => {
         const Icon = item.icon
         const active = pathname === item.href || pathname.startsWith(item.href + '/')
@@ -109,13 +112,14 @@ export default function AdminShell({ children, user }: AdminShellProps) {
               <p className="text-[11px] text-white/45 truncate">{user.email}</p>
             </div>
           </div>
+            <LanguageSwitcher className="mb-3 w-full justify-center border-white/15 bg-white/5 [&_button]:text-white/80" />
           <button
             type="button"
             onClick={handleLogout}
             className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/8"
           >
             <LogOut size={14} aria-hidden="true" />
-            Çıxış
+            {t('common.logout')}
           </button>
         </div>
       </aside>

@@ -3,18 +3,18 @@
 import { useState } from 'react'
 import { Check, Clock } from 'lucide-react'
 import { formatUsd, type SubscriptionPlan } from '@/lib/subscription-plans'
+import { useT } from '@/i18n/I18nProvider'
 
 interface PricingCardsProps {
   plans: SubscriptionPlan[]
 }
 
 export function PricingCards({ plans }: PricingCardsProps) {
+  const { t } = useT()
   const [notice, setNotice] = useState<string | null>(null)
 
   function handleSelect(plan: SubscriptionPlan) {
-    setNotice(
-      `${plan.name} planı görünüş üçündür. Ödəniş tezliklə aktivləşəcək — hələ heç nə tutulmur.`,
-    )
+    setNotice(t('common.displayOnly', { name: plan.name }))
   }
 
   return (
@@ -35,7 +35,7 @@ export function PricingCards({ plans }: PricingCardsProps) {
           >
             {plan.highlight && (
               <span className="absolute -top-3 left-6 inline-flex items-center px-2.5 py-1 rounded-md bg-gold text-navy-deep text-[10px] font-semibold uppercase tracking-[0.14em]">
-                {plan.savingsLabel || 'Tövsiyə olunur'}
+                {plan.savingsLabel || t('common.recommended')}
               </span>
             )}
 
@@ -59,7 +59,7 @@ export function PricingCards({ plans }: PricingCardsProps) {
             </div>
 
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-mute mb-3">
-              Nə əldə edirsiniz
+              {t('common.whatYouGet')}
             </p>
             <ul className="space-y-2.5 mb-7">
               {plan.features.map((feature) => (

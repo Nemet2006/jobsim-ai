@@ -4,9 +4,12 @@ import { createClient } from '@/lib/supabase/server'
 import SimulationsGrid from '@/components/simulation/SimulationsGrid'
 import { AssignedSimsSection } from '@/components/simulation/AssignedSimsSection'
 import type { Simulation } from '@/types'
+import { getLocale } from '@/i18n/get-locale'
+import { localizeSimulation } from '@/lib/localize-simulation'
 
 export default async function StudentSimulationsPage() {
   const supabase = await createClient()
+  const locale = await getLocale()
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ data: profile }, { data: simulations }, { data: assignedRows }, { data: attemptRows }] = await Promise.all([
@@ -50,7 +53,13 @@ export default async function StudentSimulationsPage() {
     const rows = (assignedRows || []).filter((r) => r.simulation_id === sim.id)
     const groups = rows.map((r) => r.group_name).join(', ')
     const deadline = rows.find((r) => r.deadline)?.deadline || null
-    return { ...sim, _groupName: groups, _deadline: deadline }
+    const loc = localizeSimulation(sim, locale)
+    return { ...sim, ...loc, _groupName: groups, _deadline: deadline }
+  })
+
+  const library = ((simulations || []) as unknown as SimWithCreator[]).map((sim) => {
+    const loc = localizeSimulation(sim, locale)
+    return { ...sim, ...loc }
   })
 
   return (
@@ -62,7 +71,7 @@ export default async function StudentSimulationsPage() {
 
       {/* ── Public library ── */}
       <SimulationsGrid
-        simulations={(simulations || []) as unknown as SimWithCreator[]}
+        simulations={library}
         isPremium={profile?.is_premium || false}
         completionCounts={completionCounts}
       />

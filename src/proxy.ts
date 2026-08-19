@@ -1,5 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { makeT } from '@/i18n/t'
+import { resolveRequestLocale, withLocaleCookie } from '@/i18n/request-locale'
 
 const ROLE_REDIRECTS: Record<string, string> = {
   student: '/student/dashboard',
@@ -27,6 +29,7 @@ const PUBLIC_API_PREFIXES = [
   '/api/premium/webhook',
   '/api/auth/register',
   '/api/analytics/track',
+  '/api/locale',
 ]
 
 /** Paths that never need an auth round-trip to Supabase. */
@@ -35,6 +38,7 @@ const AUTH_BYPASS_PREFIXES = [
   '/sitemap.xml',
   '/api/analytics/track',
   '/api/premium/webhook',
+  '/api/locale',
 ]
 
 function hasAuthCookie(request: NextRequest): boolean {
@@ -45,9 +49,12 @@ function hasAuthCookie(request: NextRequest): boolean {
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+  const { locale, missing } = resolveRequestLocale(request)
+  const t = makeT(locale)
+  const pass = (response: NextResponse) => withLocaleCookie(response, locale, missing)
 
   if (AUTH_BYPASS_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '?'))) {
-    return NextResponse.next()
+    return pass(NextResponse.next())
   }
 
   const isPublicApi = PUBLIC_API_PREFIXES.some((prefix) => pathname.startsWith(prefix))
@@ -59,15 +66,15 @@ export async function proxy(request: NextRequest) {
 
   // Anonymous visitors on public marketing pages — skip Supabase getUser latency
   if (!hasAuthCookie(request) && !isProtected && !isProtectedApi && !isAuthRoute) {
-    return NextResponse.next()
+    return pass(NextResponse.next())
   }
 
   // Anonymous hitting protected routes — redirect without network call when possible
   if (!hasAuthCookie(request) && isProtected) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    return pass(NextResponse.redirect(new URL('/login', request.url)))
   }
   if (!hasAuthCookie(request) && isProtectedApi) {
-    return NextResponse.json({ error: 'Daxil olmalısınız' }, { status: 401 })
+    return pass(NextResponse.json({ error: t('errors.unauthorized') }, { status: 401 }))
   }
 
   let supabaseResponse = NextResponse.next({ request })
@@ -98,11 +105,11 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   if (!user && isProtectedApi) {
-    return NextResponse.json({ error: 'Daxil olmalısınız' }, { status: 401 })
+    return pass(NextResponse.json({ error: t('errors.unauthorized') }, { status: 401 }))
   }
 
   if (!user && isProtected) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    return pass(NextResponse.redirect(new URL('/login', request.url)))
   }
 
   if (user && (isAuthRoute || isProtected)) {
@@ -114,21 +121,21 @@ export async function proxy(request: NextRequest) {
 
     if (profile?.role) {
       if (isAuthRoute) {
-        return NextResponse.redirect(
+        return pass(NextResponse.redirect(
           new URL(ROLE_REDIRECTS[profile.role] || '/login', request.url)
-        )
+        ))
       }
 
       const allowedPrefix = `/${profile.role}`
       if (!pathname.startsWith(allowedPrefix)) {
-        return NextResponse.redirect(
+        return pass(NextResponse.redirect(
           new URL(ROLE_REDIRECTS[profile.role], request.url)
-        )
+        ))
       }
     }
   }
 
-  return supabaseResponse
+  return pass(supabaseResponse)
 }
 
 export const matcher = [

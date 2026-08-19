@@ -1,3 +1,6 @@
+import type { Locale } from '@/i18n/config'
+import { makeT } from '@/i18n/t'
+
 export interface CertificateData {
   studentName: string
   simulationTitle: string
@@ -18,11 +21,12 @@ export function getCertificateId(attemptId: string): string {
   return `JSIM-${attemptId.replace(/-/g, '').slice(0, 12).toUpperCase()}`
 }
 
-export function getCertificateGrade(score: number): { label: string; az: string } {
-  if (score >= 85) return { label: 'Distinction', az: 'Üstün nəticə' }
-  if (score >= 70) return { label: 'Merit', az: 'Yaxşı nəticə' }
-  if (score >= 50) return { label: 'Pass', az: 'Keçid' }
-  return { label: 'Completed', az: 'Tamamlanmış' }
+export function getCertificateGrade(score: number, locale: Locale = 'az'): { label: string; az: string } {
+  const t = makeT(locale)
+  if (score >= 85) return { label: 'Distinction', az: t('certificate.distinction') }
+  if (score >= 70) return { label: 'Merit', az: t('certificate.merit') }
+  if (score >= 50) return { label: 'Pass', az: t('certificate.pass') }
+  return { label: 'Completed', az: t('certificate.completed') }
 }
 
 const AZ_MONTHS = [
@@ -30,8 +34,13 @@ const AZ_MONTHS = [
   'iyul', 'avqust', 'sentyabr', 'oktyabr', 'noyabr', 'dekabr',
 ]
 
+const EN_MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+]
+
 /** Certificate date in Asia/Baku local time. */
-export function formatCertificateDate(iso: string): string {
+export function formatCertificateDate(iso: string, locale: Locale = 'az'): string {
   const d = new Date(iso)
   const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Asia/Baku',
@@ -42,12 +51,14 @@ export function formatCertificateDate(iso: string): string {
   const get = (type: Intl.DateTimeFormatPartTypes) =>
     parts.find((p) => p.type === type)?.value ?? ''
   const monthIdx = Math.max(0, Number(get('month')) - 1)
-  return `${get('day')} ${AZ_MONTHS[monthIdx] ?? ''} ${get('year')}`
+  const months = locale === 'en' ? EN_MONTHS : AZ_MONTHS
+  return `${get('day')} ${months[monthIdx] ?? ''} ${get('year')}`
 }
 
-export async function downloadCertificatePDF(data: CertificateData): Promise<void> {
+export async function downloadCertificatePDF(data: CertificateData, locale: Locale = 'az'): Promise<void> {
   const { default: jsPDF } = await import('jspdf')
   const { registerPdfUnicodeFonts, setPdfFont } = await import('@/lib/pdf-fonts')
+  const t = makeT(locale)
 
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
   await registerPdfUnicodeFonts(doc)
@@ -55,8 +66,8 @@ export async function downloadCertificatePDF(data: CertificateData): Promise<voi
   const w = 297
   const h = 210
   const certId = getCertificateId(data.attemptId)
-  const grade = getCertificateGrade(data.score)
-  const dateStr = formatCertificateDate(data.completedAt)
+  const grade = getCertificateGrade(data.score, locale)
+  const dateStr = formatCertificateDate(data.completedAt, locale)
 
   // Background
   doc.setFillColor(250, 245, 236)
@@ -79,18 +90,18 @@ export async function downloadCertificatePDF(data: CertificateData): Promise<voi
   doc.setFontSize(10)
   setPdfFont(doc, 'normal')
   doc.setTextColor(92, 92, 92)
-  doc.text('Job Simulation Certificate', w / 2, 40, { align: 'center' })
+  doc.text(t('certificate.subtitle'), w / 2, 40, { align: 'center' })
 
   // Title
   doc.setTextColor(26, 26, 26)
   doc.setFontSize(28)
   setPdfFont(doc, 'bold')
-  doc.text('Sertifikat', w / 2, 58, { align: 'center' })
+  doc.text(t('certificate.title'), w / 2, 58, { align: 'center' })
 
   doc.setFontSize(11)
   setPdfFont(doc, 'normal')
   doc.setTextColor(92, 92, 92)
-  doc.text('Bu sertifikat aşağıdakı şəxsə verilir', w / 2, 68, { align: 'center' })
+  doc.text(t('certificate.awardedTo'), w / 2, 68, { align: 'center' })
 
   // Student name
   doc.setTextColor(31, 78, 74)
@@ -105,7 +116,7 @@ export async function downloadCertificatePDF(data: CertificateData): Promise<voi
   const simLine = data.companyName
     ? `${data.simulationTitle} — ${data.companyName}`
     : data.simulationTitle
-  doc.text('uğurla tamamladığı üçün', w / 2, 94, { align: 'center' })
+  doc.text(t('certificate.completedFor'), w / 2, 94, { align: 'center' })
 
   setPdfFont(doc, 'bold')
   doc.setFontSize(15)
@@ -114,7 +125,7 @@ export async function downloadCertificatePDF(data: CertificateData): Promise<voi
   setPdfFont(doc, 'normal')
   doc.setFontSize(11)
   doc.setTextColor(92, 92, 92)
-  doc.text(`Rol: ${data.roleType}`, w / 2, 114, { align: 'center' })
+  doc.text(t('certificate.role', { role: data.roleType }), w / 2, 114, { align: 'center' })
 
   // Score badge area
   doc.setFillColor(31, 78, 74)
@@ -137,7 +148,7 @@ export async function downloadCertificatePDF(data: CertificateData): Promise<voi
   setPdfFont(doc, 'normal')
   doc.setFontSize(8)
   doc.setTextColor(184, 134, 46)
-  doc.text('JobSim AI · Rəsmi imza', w / 2, sigY - 4, { align: 'center' })
+  doc.text(t('certificate.officialSign'), w / 2, sigY - 4, { align: 'center' })
 
   doc.setDrawColor(31, 78, 74)
   doc.setLineWidth(0.4)
@@ -160,10 +171,10 @@ export async function downloadCertificatePDF(data: CertificateData): Promise<voi
   doc.setTextColor(92, 92, 92)
   doc.setFontSize(8)
   setPdfFont(doc, 'normal')
-  doc.text(`Tarix: ${dateStr}`, 24, h - 18)
-  doc.text(`Sertifikat ID: ${certId}`, 24, h - 12)
-  doc.text('JobSim AI · rəsmi sertifikat', w - 24, h - 18, { align: 'right' })
-  doc.text('AI qiymətləndirmə ilə təsdiqlənib', w - 24, h - 12, { align: 'right' })
+  doc.text(t('certificate.date', { date: dateStr }), 24, h - 18)
+  doc.text(t('certificate.certId', { id: certId }), 24, h - 12)
+  doc.text(t('certificate.official'), w - 24, h - 18, { align: 'right' })
+  doc.text(t('certificate.verifiedAi'), w - 24, h - 12, { align: 'right' })
 
   const safeName = data.studentName.replace(/[^a-zA-Z0-9\u00C0-\u024F]/g, '-').slice(0, 30)
   doc.save(`JobSim-sertifikat-${safeName}.pdf`)

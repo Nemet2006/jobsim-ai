@@ -2,39 +2,37 @@ import Link from 'next/link'
 import { ArrowRight, CheckCircle2, Shield, Award, Briefcase, GraduationCap } from 'lucide-react'
 import { VerificationSeal } from '@/components/ui/VerificationSeal'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
+import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher'
+import { getT } from '@/i18n/get-locale'
+import type { TFunction } from '@/i18n/translate'
 
-const FEATURES = [
-  {
-    icon: Shield,
-    title: 'Sübut edilmiş bacarıq',
-    text: 'AI ilə qiymətləndirilən real iş simulyasiyaları — CV-dəki iddiaların yerinə konkret nəticə.',
-  },
-  {
-    icon: Award,
-    title: 'Rəsmi sertifikat',
-    text: 'Hər tamamlanmış simulyasiya üçün verification seal və bacarıq pasportu.',
-  },
-  {
-    icon: Briefcase,
-    title: 'HR-lər sizi tapır',
-    text: 'Nəticələriniz şirkətlərin shortlist-inə düşür — birbaşa müraciət etmədən görünürsünüz.',
-  },
-]
+function featureList(t: TFunction) {
+  return [
+    { icon: Shield, title: t('landing.f1Title'), text: t('landing.f1Text') },
+    { icon: Award, title: t('landing.f2Title'), text: t('landing.f2Text') },
+    { icon: Briefcase, title: t('landing.f3Title'), text: t('landing.f3Text') },
+  ]
+}
 
-const STEPS = [
-  { n: '01', title: 'Hesab yaradın', text: '30 saniyəyə pulsuz qeydiyyat' },
-  { n: '02', title: 'Simulyasiya keçin', text: 'Real şirkət tapşırıqları, AI qiymətləndirmə' },
-  { n: '03', title: 'Sertifikat alın', text: 'Verification seal + skill passport' },
-]
+function stepList(t: TFunction) {
+  return [
+    { n: '01', title: t('landing.step1Title'), text: t('landing.step1Text') },
+    { n: '02', title: t('landing.step2Title'), text: t('landing.step2Text') },
+    { n: '03', title: t('landing.step3Title'), text: t('landing.step3Text') },
+  ]
+}
 
-/** Server Component — zero client JS for the marketing homepage. */
-export default function LandingPage() {
+export default async function LandingPage() {
+  const { t } = await getT()
+  const FEATURES = featureList(t)
+  const STEPS = stepList(t)
+
   return (
     <div className="min-h-screen relative">
       <AuroraBackground variant="auth" />
 
       <header className="relative z-10 px-6 lg:px-8 py-5">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2.5" aria-label="JobSim AI">
             <div className="w-7 h-7 rounded-md bg-navy flex items-center justify-center">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -46,11 +44,12 @@ export default function LandingPage() {
             </span>
           </Link>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-navy" prefetch>
-              Daxil ol
+              {t('common.login')}
             </Link>
             <Link href="/register" className="btn-primary text-sm py-2 px-4" prefetch>
-              Pulsuz başla
+              {t('common.startFree')}
             </Link>
           </div>
         </div>
@@ -60,30 +59,29 @@ export default function LandingPage() {
         <section className="px-6 lg:px-8 pt-12 pb-20 lg:pt-20 lg:pb-28">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-center">
             <div className="animate-fade-up">
-              <span className="h-eyebrow inline-block mb-5">Bacarıq sertifikatlaşdırması</span>
+              <span className="h-eyebrow inline-block mb-5">{t('landing.eyebrow')}</span>
               <h1 className="h-display text-[clamp(2.5rem,6vw,4.25rem)] leading-[1.02] mb-5 text-balance">
-                Sübut et.<br />
-                <span className="text-navy">Görün.</span>{' '}
-                <span className="text-gold-deep">İşə düz.</span>
+                {t('landing.h1a')}<br />
+                <span className="text-navy">{t('landing.h1b')}</span>{' '}
+                <span className="text-gold-deep">{t('landing.h1c')}</span>
               </h1>
               <p className="text-lg text-ink-mid leading-relaxed max-w-lg mb-8 text-balance">
-                Real iş simulyasiyaları, AI qiymətləndirmə və verification seal —
-                CV-ni deyil, bacarığını göstər.
+                {t('landing.dek')}
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <Link href="/register" className="btn-primary group" prefetch>
-                  Pulsuz hesab yarat
+                  {t('common.createFreeAccount')}
                   <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                 </Link>
                 <Link href="/login" className="btn-secondary" prefetch>
-                  Artıq hesabım var
+                  {t('landing.haveAccount')}
                 </Link>
               </div>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
-                {['100% pulsuz', 'Self-paced', 'AI-powered'].map((t) => (
-                  <li key={t} className="flex items-center gap-1.5 text-sm text-ink-mid">
+                {[t('landing.perkFree'), t('landing.perkPace'), t('landing.perkAi')].map((label) => (
+                  <li key={label} className="flex items-center gap-1.5 text-sm text-ink-mid">
                     <CheckCircle2 size={14} className="text-verdigris" aria-hidden="true" />
-                    {t}
+                    {label}
                   </li>
                 ))}
               </ul>
@@ -91,21 +89,21 @@ export default function LandingPage() {
 
             <aside
               className="card-dossier p-6 lg:p-7 max-w-sm mx-auto lg:ml-auto w-full animate-fade-up [animation-delay:120ms]"
-              aria-label="Nümunə verification ledger"
+              aria-label={t('landing.ledgerAria')}
             >
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <p className="h-meta mb-1">Verification ledger</p>
-                  <p className="font-display text-lg font-semibold text-ink">Namizəd dossier</p>
+                  <p className="h-meta mb-1">{t('landing.ledgerKicker')}</p>
+                  <p className="font-display text-lg font-semibold text-ink">{t('landing.dossier')}</p>
                 </div>
                 <VerificationSeal score={94} label="SCORE" size="md" variant="gold" />
               </div>
               <div className="space-y-0 divide-y divide-navy/8">
                 {[
-                  { k: 'Simulyasiya', v: 'Data Analyst' },
-                  { k: 'Şirkət', v: 'Kapital Bank' },
-                  { k: 'Sertifikat', v: '#A2-13F' },
-                  { k: 'Status', v: 'VERIFIED' },
+                  { k: t('landing.sim'), v: 'Data Analyst' },
+                  { k: t('common.company'), v: 'Kapital Bank' },
+                  { k: t('landing.certificate'), v: '#A2-13F' },
+                  { k: t('common.status'), v: t('common.verified') },
                 ].map((row) => (
                   <div key={row.k} className="flex items-center justify-between py-2.5 text-sm">
                     <span className="text-ink-mute">{row.k}</span>
@@ -116,7 +114,7 @@ export default function LandingPage() {
               <div className="mt-5 pt-4 border-t border-navy/10 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-verdigris" aria-hidden="true" />
                 <span className="text-xs font-semibold uppercase tracking-[0.12em] text-verdigris">
-                  Açıq giriş
+                  {t('landing.openAccess')}
                 </span>
               </div>
             </aside>
@@ -125,8 +123,8 @@ export default function LandingPage() {
 
         <section className="px-6 lg:px-8 py-16 border-t border-navy/10 bg-white/50">
           <div className="max-w-6xl mx-auto">
-            <p className="h-eyebrow mb-3">Proses</p>
-            <h2 className="h-display text-3xl lg:text-4xl mb-10">Üç addımda işə hazırlıq</h2>
+            <p className="h-eyebrow mb-3">{t('landing.process')}</p>
+            <h2 className="h-display text-3xl lg:text-4xl mb-10">{t('landing.threeSteps')}</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {STEPS.map((step, i) => (
                 <div
@@ -145,9 +143,9 @@ export default function LandingPage() {
 
         <section className="px-6 lg:px-8 py-16">
           <div className="max-w-6xl mx-auto">
-            <p className="h-eyebrow mb-3">Niyə JobSim</p>
+            <p className="h-eyebrow mb-3">{t('landing.why')}</p>
             <h2 className="h-display text-3xl lg:text-4xl mb-10 max-w-xl text-balance">
-              CV əvəzinə sübut
+              {t('landing.whyTitle')}
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
               {FEATURES.map((f) => {
@@ -169,9 +167,9 @@ export default function LandingPage() {
         <section className="px-6 lg:px-8 py-16 border-t border-navy/10 bg-navy text-paper">
           <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
             {[
-              { icon: GraduationCap, role: 'Tələbə', text: 'Simulyasiya keç, sertifikat al, HR-lərə görün.' },
-              { icon: Briefcase, role: 'HR / Şirkət', text: 'Namizədləri bal və bacarıqla müqayisə et.' },
-              { icon: Award, role: 'Kurs / Müəllim', text: 'Qrup yarat, tapşırıq ver, liderbord izlə.' },
+              { icon: GraduationCap, role: t('landing.audienceStudent'), text: t('landing.audienceStudentText') },
+              { icon: Briefcase, role: t('landing.audienceHr'), text: t('landing.audienceHrText') },
+              { icon: Award, role: t('landing.audienceCourses'), text: t('landing.audienceCoursesText') },
             ].map((a) => {
               const Icon = a.icon
               return (
@@ -189,13 +187,13 @@ export default function LandingPage() {
           <div className="max-w-3xl mx-auto text-center">
             <VerificationSeal label="START" size="lg" variant="navy" className="mx-auto mb-6" />
             <h2 className="h-display text-3xl lg:text-4xl mb-4 text-balance">
-              Karyera hekayəniz bu gün başlayır
+              {t('landing.ctaTitle')}
             </h2>
             <p className="text-ink-mid mb-8 max-w-md mx-auto">
-              Pulsuz hesab yaradın. Bütün simulyasiyalar açıq, AI qiymətləndirmə dərhal.
+              {t('landing.ctaDek')}
             </p>
             <Link href="/register" className="btn-primary group text-base px-7 py-3" prefetch>
-              İndi qeydiyyatdan keç
+              {t('landing.ctaButton')}
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
           </div>

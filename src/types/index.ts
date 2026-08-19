@@ -25,6 +25,10 @@ export interface Question {
   placeholder?: string
   instructions?: string
   accepted_formats?: string
+  question_en?: string
+  options_en?: string[]
+  placeholder_en?: string
+  instructions_en?: string
 }
 
 export interface Simulation {

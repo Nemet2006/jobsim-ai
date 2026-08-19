@@ -8,6 +8,8 @@ import { createClient } from '@/lib/supabase/client'
 import { track } from '@/lib/analytics-client'
 import type { User } from '@/types'
 import { LogOut, Menu, X, ChevronDown, type LucideIcon } from 'lucide-react'
+import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher'
+import { useT } from '@/i18n/I18nProvider'
 
 export interface NavItem {
   href: string
@@ -27,6 +29,7 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, user, navItems, brand }: AppShellProps) {
+  const { t } = useT()
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -45,7 +48,7 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
       <header className="sticky top-0 z-40 bg-paper/95 backdrop-blur-sm border-b border-navy/10">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="flex items-center justify-between h-14 lg:h-16">
-            <Link href="/" className="flex items-center gap-2.5 group" aria-label="JobSim AI ana səhifə">
+            <Link href="/" className="flex items-center gap-2.5 group" aria-label={t('common.homeAria')}>
               <div className="w-7 h-7 rounded-md bg-navy flex items-center justify-center">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path d="M12 2L14 9L21 11L14 13L12 20L10 13L3 11L10 9L12 2Z" fill="#F6F3EC" />
@@ -56,7 +59,7 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
               </span>
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-0.5" aria-label="Əsas naviqasiya">
+            <nav className="hidden lg:flex items-center gap-0.5" aria-label={t('common.navMain')}>
               {navItems.map((item) => {
                 const Icon = item.icon
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
@@ -80,13 +83,14 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
             </nav>
 
             <div className="flex items-center gap-2">
+              <LanguageSwitcher className="hidden sm:inline-flex" />
               <div className="hidden lg:block relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-2 pl-1.5 pr-2.5 py-1 rounded-md border border-navy/12 bg-white hover:border-navy/25"
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
-                  aria-label="Hesab menyusu"
+                  aria-label={t('common.accountMenu')}
                 >
                   <div className="w-6 h-6 rounded-md bg-navy text-paper font-semibold text-[10px] flex items-center justify-center">
                     {user.full_name?.[0]?.toUpperCase() || 'U'}
@@ -121,7 +125,7 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
                           role="menuitem"
                         >
                           <LogOut size={14} aria-hidden="true" />
-                          Çıxış
+                          {t('common.logout')}
                         </button>
                       </motion.div>
                     </>
@@ -132,7 +136,7 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
               <button
                 onClick={() => setSidebarOpen(true)}
                 className="lg:hidden w-9 h-9 rounded-md border border-navy/12 bg-white hover:bg-navy-wash flex items-center justify-center text-ink"
-                aria-label="Menyunu aç"
+                aria-label={t('common.openMenu')}
               >
                 <Menu size={16} aria-hidden="true" />
               </button>
@@ -162,7 +166,7 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
             exit={{ x: '100%' }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             className="lg:hidden fixed right-0 top-0 h-full w-[280px] bg-paper z-50 shadow-soft-xl flex flex-col"
-            aria-label="Naviqasiya menyusu"
+            aria-label={t('common.navMobile')}
           >
             <div className="flex items-center justify-between p-4 border-b border-navy/10">
               <span className="font-display text-lg font-semibold">
@@ -171,7 +175,7 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
               <button
                 onClick={() => setSidebarOpen(false)}
                 className="w-8 h-8 rounded-md hover:bg-navy-wash flex items-center justify-center text-ink-mid hover:text-ink"
-                aria-label="Menyunu bağla"
+                aria-label={t('common.closeMenu')}
               >
                 <X size={16} aria-hidden="true" />
               </button>
@@ -200,6 +204,7 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
             </nav>
 
             <div className="p-3 border-t border-navy/10 space-y-2.5">
+              <LanguageSwitcher className="w-full justify-center" />
               <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-navy/10">
                 <div className="w-9 h-9 rounded-md bg-navy text-paper font-semibold text-sm flex items-center justify-center">
                   {user.full_name?.[0]?.toUpperCase() || 'U'}
@@ -213,10 +218,10 @@ export function AppShell({ children, user, navItems, brand }: AppShellProps) {
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-danger-tint text-danger font-medium text-sm"
-                aria-label="Hesabdan çıxış"
+                aria-label={t('common.logout')}
               >
                 <LogOut size={14} aria-hidden="true" />
-                Çıxış
+                {t('common.logout')}
               </button>
             </div>
           </motion.aside>

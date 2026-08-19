@@ -9,34 +9,17 @@ import { createClient } from '@/lib/supabase/client'
 import { track } from '@/lib/analytics-client'
 import type { UserRole } from '@/types'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
+import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher'
+import { useT } from '@/i18n/I18nProvider'
 
-const ROLE_OPTIONS: {
-  value: UserRole
-  label: string
-  description: string
-  icon: typeof GraduationCap
-}[] = [
-  {
-    value: 'student',
-    label: 'Tələbə / İş axtaran',
-    description: 'Pulsuz simulyasiyalar keç, bacarıqlarını sübut et',
-    icon: GraduationCap,
-  },
-  {
-    value: 'hr',
-    label: 'HR / Şirkət',
-    description: 'Simulyasiyalar yarat, ən yaxşı namizədləri tap',
-    icon: Briefcase,
-  },
-  {
-    value: 'courses',
-    label: 'Kurs / Müəllim',
-    description: 'Tələbələrin tərəqqisini analitika ilə izlə',
-    icon: Users,
-  },
-]
+const ROLE_ICONS = {
+  student: GraduationCap,
+  hr: Briefcase,
+  courses: Users,
+} as const
 
 export default function RegisterPage() {
+  const { t } = useT()
   const router = useRouter()
   const supabase = createClient()
   const [fullName, setFullName] = useState('')
@@ -49,6 +32,17 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const ROLE_OPTIONS: {
+    value: Exclude<UserRole, 'admin'>
+    label: string
+    description: string
+    icon: typeof GraduationCap
+  }[] = [
+    { value: 'student', label: t('auth.roleStudent'), description: t('auth.roleStudentDek'), icon: ROLE_ICONS.student },
+    { value: 'hr', label: t('auth.roleHr'), description: t('auth.roleHrDek'), icon: ROLE_ICONS.hr },
+    { value: 'courses', label: t('auth.roleCourses'), description: t('auth.roleCoursesDek'), icon: ROLE_ICONS.courses },
+  ]
+
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -56,7 +50,7 @@ export default function RegisterPage() {
     track('register_attempt', { role })
 
     if (password.length < 8) {
-      setError('Şifrə ən az 8 simvol olmalıdır')
+      setError(t('auth.passwordMin'))
       setLoading(false)
       return
     }
@@ -79,7 +73,7 @@ export default function RegisterPage() {
 
     if (!res.ok) {
       track('register_failed', { role })
-      setError(payload.error || 'Qeydiyyat uğursuz oldu')
+      setError(payload.error || t('auth.registerFailed'))
       setLoading(false)
       return
     }
@@ -87,7 +81,7 @@ export default function RegisterPage() {
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
     if (signInError) {
-      setError('Hesab yaradıldı, lakin giriş uğursuz oldu. Login səhifəsindən cəhd edin.')
+      setError(t('auth.createdButLoginFailed'))
       setLoading(false)
       return
     }
@@ -118,9 +112,12 @@ export default function RegisterPage() {
               JobSim<span className="text-gold">.</span>
             </span>
           </Link>
-          <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-navy">
-            Hesabınız var? <span className="text-navy underline-offset-2 hover:underline">Daxil ol</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-navy">
+              {t('auth.hasAccount')} <span className="text-navy underline-offset-2 hover:underline">{t('common.login')}</span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -132,13 +129,13 @@ export default function RegisterPage() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="text-center mb-8"
           >
-            <span className="h-eyebrow-gold inline-block mb-3">Pulsuz başlayın</span>
+            <span className="h-eyebrow-gold inline-block mb-3">{t('auth.startFreeEyebrow')}</span>
             <h1 className="h-display text-[clamp(1.85rem,4.5vw,3.25rem)] leading-[1.05] mb-3 text-balance">
-              Karyera hekayəniz<br />
-              <span className="text-navy">bu gün başlayır.</span>
+              {t('auth.registerTitle')}<br />
+              <span className="text-navy">{t('auth.registerTitleAccent')}</span>
             </h1>
             <p className="text-base text-ink-mid leading-relaxed max-w-lg mx-auto">
-              30 saniyəyə hesab yaradın. Self-paced, 100% pulsuz başlanğıc.
+              {t('auth.registerDek')}
             </p>
           </motion.div>
 
@@ -163,9 +160,9 @@ export default function RegisterPage() {
             <form onSubmit={handleRegister} className="space-y-5">
               <fieldset>
                 <legend className="block text-sm font-semibold text-ink mb-2.5">
-                  Sizə uyğun rol
+                  {t('auth.yourRole')}
                 </legend>
-                <div className="grid grid-cols-1 gap-2" role="radiogroup" aria-label="Rolunuzu seçin">
+                <div className="grid grid-cols-1 gap-2" role="radiogroup" aria-label={t('auth.chooseRole')}>
                   {ROLE_OPTIONS.map((option, idx) => {
                     const Icon = option.icon
                     const isActive = role === option.value
@@ -212,7 +209,7 @@ export default function RegisterPage() {
               </fieldset>
 
               <div>
-                <label htmlFor="fullName" className="block text-sm font-semibold text-ink mb-1.5">Ad Soyad</label>
+                <label htmlFor="fullName" className="block text-sm font-semibold text-ink mb-1.5">{t('auth.fullName')}</label>
                 <input
                   id="fullName"
                   name="fullName"
@@ -220,7 +217,7 @@ export default function RegisterPage() {
                   autoComplete="name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Adınız Soyadınız"
+                  placeholder={t('auth.fullNamePh')}
                   required
                   className="ed-input"
                 />
@@ -236,7 +233,7 @@ export default function RegisterPage() {
                     transition={{ duration: 0.25 }}
                   >
                     <label htmlFor="university" className="block text-sm font-semibold text-ink mb-1.5">
-                      Universitet <span className="text-ink-mute font-normal">· Opsional</span>
+                      {t('auth.university')} <span className="text-ink-mute font-normal">· {t('common.optional')}</span>
                     </label>
                     <input
                       id="university"
@@ -244,7 +241,7 @@ export default function RegisterPage() {
                       autoComplete="organization"
                       value={university}
                       onChange={(e) => setUniversity(e.target.value)}
-                      placeholder="Bakı Dövlət Universiteti"
+                      placeholder={t('auth.universityPh')}
                       className="ed-input"
                     />
                   </motion.div>
@@ -260,27 +257,27 @@ export default function RegisterPage() {
                     className="space-y-4"
                   >
                     <div>
-                      <label htmlFor="company" className="block text-sm font-semibold text-ink mb-1.5">Şirkət adı</label>
+                      <label htmlFor="company" className="block text-sm font-semibold text-ink mb-1.5">{t('auth.companyName')}</label>
                       <input
                         id="company"
                         type="text"
                         autoComplete="organization"
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder="Şirkətinizin adı"
+                        placeholder={t('auth.companyPh')}
                         required
                         className="ed-input"
                       />
                     </div>
                     <div>
-                      <label htmlFor="inviteCode" className="block text-sm font-semibold text-ink mb-1.5">HR dəvət kodu</label>
+                      <label htmlFor="inviteCode" className="block text-sm font-semibold text-ink mb-1.5">{t('auth.hrInvite')}</label>
                       <input
                         id="inviteCode"
                         type="password"
                         autoComplete="off"
                         value={inviteCode}
                         onChange={(e) => setInviteCode(e.target.value)}
-                        placeholder="Daxili dəvət kodu"
+                        placeholder={t('auth.invitePh')}
                         required
                         className="ed-input"
                       />
@@ -296,14 +293,14 @@ export default function RegisterPage() {
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <label htmlFor="coursesInviteCode" className="block text-sm font-semibold text-ink mb-1.5">Müəllim dəvət kodu</label>
+                    <label htmlFor="coursesInviteCode" className="block text-sm font-semibold text-ink mb-1.5">{t('auth.teacherInvite')}</label>
                     <input
                       id="coursesInviteCode"
                       type="password"
                       autoComplete="off"
                       value={inviteCode}
                       onChange={(e) => setInviteCode(e.target.value)}
-                      placeholder="Daxili dəvət kodu"
+                      placeholder={t('auth.invitePh')}
                       required
                       className="ed-input"
                     />
@@ -313,7 +310,7 @@ export default function RegisterPage() {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-ink mb-1.5">Email</label>
+                  <label htmlFor="email" className="block text-sm font-semibold text-ink mb-1.5">{t('auth.email')}</label>
                   <input
                     id="email"
                     type="email"
@@ -329,7 +326,7 @@ export default function RegisterPage() {
                 </div>
                 <div>
                   <label htmlFor="password" className="block text-sm font-semibold text-ink mb-1.5">
-                    Şifrə <span className="text-ink-mute font-normal">· min 8</span>
+                    {t('auth.password')} <span className="text-ink-mute font-normal">· {t('auth.min8')}</span>
                   </label>
                   <input
                     id="password"
@@ -349,11 +346,11 @@ export default function RegisterPage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                    <span>Hesab yaradılır…</span>
+                    <span>{t('auth.creating')}</span>
                   </>
                 ) : (
                   <>
-                    <span>Pulsuz hesab yarat</span>
+                    <span>{t('common.createFreeAccount')}</span>
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                   </>
                 )}
@@ -362,9 +359,9 @@ export default function RegisterPage() {
           </motion.div>
 
           <p className="mt-5 text-center text-sm text-ink-mid">
-            Hesabınız var?{' '}
+            {t('auth.hasAccount')}{' '}
             <Link href="/login" className="font-semibold text-navy hover:underline underline-offset-2">
-              Daxil ol →
+              {t('auth.loginArrow')}
             </Link>
           </p>
         </div>
