@@ -43,6 +43,11 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
+  async redirects() {
+    return [
+      { source: '/admin/login', destination: '/login', permanent: false },
+    ]
+  },
   async headers() {
     return [
       {
