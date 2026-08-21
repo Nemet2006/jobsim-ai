@@ -11,7 +11,7 @@ const ROLE_REDIRECTS: Record<string, string> = {
 }
 
 const PROTECTED_PREFIXES = ['/student', '/hr', '/courses', '/admin']
-const AUTH_ROUTES = ['/login', '/register']
+const AUTH_ROUTES = ['/login', '/register', '/admin/login']
 
 const PROTECTED_API_PREFIXES = [
   '/api/attempts/',
@@ -61,7 +61,9 @@ export async function proxy(request: NextRequest) {
   const isProtectedApi =
     !isPublicApi &&
     PROTECTED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix))
-  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  const isAdminLogin = pathname === '/admin/login' || pathname.startsWith('/admin/login/')
+  const isProtected =
+    PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix)) && !isAdminLogin
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route))
 
   // Anonymous visitors on public marketing pages — skip Supabase getUser latency
@@ -71,7 +73,8 @@ export async function proxy(request: NextRequest) {
 
   // Anonymous hitting protected routes — redirect without network call when possible
   if (!hasAuthCookie(request) && isProtected) {
-    return pass(NextResponse.redirect(new URL('/login', request.url)))
+    const dest = pathname.startsWith('/admin') ? '/admin/login' : '/login'
+    return pass(NextResponse.redirect(new URL(dest, request.url)))
   }
   if (!hasAuthCookie(request) && isProtectedApi) {
     return pass(NextResponse.json({ error: t('errors.unauthorized') }, { status: 401 }))
@@ -109,7 +112,8 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!user && isProtected) {
-    return pass(NextResponse.redirect(new URL('/login', request.url)))
+    const dest = pathname.startsWith('/admin') ? '/admin/login' : '/login'
+    return pass(NextResponse.redirect(new URL(dest, request.url)))
   }
 
   if (user && (isAuthRoute || isProtected)) {

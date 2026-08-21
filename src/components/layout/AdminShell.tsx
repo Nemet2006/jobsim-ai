@@ -52,7 +52,7 @@ export default function AdminShell({ children, user }: AdminShellProps) {
   async function handleLogout() {
     track('logout', { section: 'PLATFORM ADMIN' })
     await supabase.auth.signOut()
-    router.push('/login')
+    router.push('/admin/login')
     router.refresh()
   }
 

@@ -7,7 +7,7 @@ export default async function AdminRootLayout({ children }: { children: React.Re
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
+  if (!user) redirect('/admin/login')
 
   const { data: profile } = await supabase
     .from('users')
@@ -15,7 +15,7 @@ export default async function AdminRootLayout({ children }: { children: React.Re
     .eq('id', user.id)
     .single()
 
-  if (!profile || (profile as { role: string }).role !== 'admin') redirect('/login')
+  if (!profile || (profile as { role: string }).role !== 'admin') redirect('/admin/login')
 
   return <AdminLayout user={profile as User}>{children}</AdminLayout>
 }
