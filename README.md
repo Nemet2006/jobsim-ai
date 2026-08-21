@@ -183,7 +183,7 @@ mindmap
 | Framework | Next.js 16 (App Router), React 19, TypeScript |
 | Styling | Tailwind CSS **3.4**, custom design system (cream / forest / coral) |
 | Database & Auth | Supabase (PostgreSQL + Auth + Storage) |
-| AI | OpenRouter (`google/gemma-4-26b-a4b-it:free` + fallback modellər) |
+| AI | OpenRouter (`nvidia/nemotron-3.5-lightning` only) |
 | Charts | Recharts |
 | PDF | jsPDF + Noto Sans (Azərbaycan Unicode dəstəyi) |
 | Payments | Stripe (optional) + promo kodlar |
@@ -266,7 +266,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 OPENROUTER_API_KEY=sk-or-v1-...
-OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free
+# Model is hardcoded: nvidia/nemotron-3.5-lightning (no fallbacks)
 
 # Optional
 STRIPE_SECRET_KEY=sk_test_...
