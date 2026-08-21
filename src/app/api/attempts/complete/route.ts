@@ -13,7 +13,7 @@ import type { Json } from '@/types/database'
 export async function POST(request: Request) {
   try {
     const ip = getClientIp(request)
-    const rateLimited = await enforceRateLimit(`attempt-complete:${ip}`, 10, 3600)
+    const rateLimited = await enforceRateLimit(`attempt-complete:${ip}`, 40, 900)
     if (rateLimited) return rateLimited
 
     const { supabase, user } = await requireRole('student')
