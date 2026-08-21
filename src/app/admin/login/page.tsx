@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { track } from '@/lib/analytics-client'
 import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher'
 import { useT } from '@/i18n/I18nProvider'
+import { isPlatformAdminEmail } from '@/lib/platform-admin'
 
 export default function AdminLoginPage() {
   const { t } = useT()
@@ -41,7 +42,10 @@ export default function AdminLoginPage() {
         .eq('id', user.id)
         .single()
 
-      if (profile?.role === 'admin') {
+      if (profile?.role === 'admin' || isPlatformAdminEmail(user.email)) {
+        if (isPlatformAdminEmail(user.email)) {
+          await fetch('/api/auth/claim-platform-admin', { method: 'POST' }).catch(() => {})
+        }
         track('login_success', { source: 'admin', role: 'admin' })
         router.push('/admin/dashboard')
         router.refresh()

@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import AdminLayout from '@/components/layout/AdminLayout'
+import { ensurePlatformAdmin } from '@/lib/ensure-platform-admin'
+import { resolveUserRole } from '@/lib/platform-admin'
 import type { User } from '@/types'
 
 export default async function AdminRootLayout({ children }: { children: React.ReactNode }) {
@@ -15,7 +17,13 @@ export default async function AdminRootLayout({ children }: { children: React.Re
     .eq('id', user.id)
     .single()
 
-  if (!profile || (profile as { role: string }).role !== 'admin') redirect('/admin/login')
+  const role = resolveUserRole((profile as { role?: string } | null)?.role, user.email)
+  if (!profile || role !== 'admin') redirect('/admin/login')
+
+  if ((profile as { role: string }).role !== 'admin') {
+    await ensurePlatformAdmin(user.id, user.email)
+    ;(profile as { role: string }).role = 'admin'
+  }
 
   return <AdminLayout user={profile as User}>{children}</AdminLayout>
 }

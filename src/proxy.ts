@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { makeT } from '@/i18n/t'
 import { resolveRequestLocale, withLocaleCookie } from '@/i18n/request-locale'
+import { resolveUserRole } from '@/lib/platform-admin'
 
 const ROLE_REDIRECTS: Record<string, string> = {
   student: '/student/dashboard',
@@ -123,17 +124,18 @@ export async function proxy(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    if (profile?.role) {
+    const role = resolveUserRole(profile?.role, user.email)
+    if (role) {
       if (isAuthRoute) {
         return pass(NextResponse.redirect(
-          new URL(ROLE_REDIRECTS[profile.role] || '/login', request.url)
+          new URL(ROLE_REDIRECTS[role] || '/login', request.url)
         ))
       }
 
-      const allowedPrefix = `/${profile.role}`
+      const allowedPrefix = `/${role}`
       if (!pathname.startsWith(allowedPrefix)) {
         return pass(NextResponse.redirect(
-          new URL(ROLE_REDIRECTS[profile.role], request.url)
+          new URL(ROLE_REDIRECTS[role], request.url)
         ))
       }
     }
