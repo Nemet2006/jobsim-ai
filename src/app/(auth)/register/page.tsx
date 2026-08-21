@@ -86,13 +86,14 @@ export default function RegisterPage() {
       return
     }
 
+    const assignedRole = (payload.role || role) as UserRole
     const redirects: Record<UserRole, string> = {
       student: '/student/dashboard',
       hr: '/hr/dashboard',
       courses: '/courses/dashboard',
       admin: '/admin/dashboard',
     }
-    router.push(redirects[role])
+    router.push(redirects[assignedRole] || redirects.student)
     router.refresh()
   }
 

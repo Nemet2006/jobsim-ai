@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { makeT } from '@/i18n/t'
 import { resolveRequestLocale, withLocaleCookie } from '@/i18n/request-locale'
+import { resolveUserRole } from '@/lib/platform-admin'
 
 const ROLE_REDIRECTS: Record<string, string> = {
   student: '/student/dashboard',
@@ -11,7 +12,7 @@ const ROLE_REDIRECTS: Record<string, string> = {
 }
 
 const PROTECTED_PREFIXES = ['/student', '/hr', '/courses', '/admin']
-const AUTH_ROUTES = ['/login', '/register']
+const AUTH_ROUTES = ['/login', '/register', '/admin/login']
 
 const PROTECTED_API_PREFIXES = [
   '/api/attempts/',
@@ -61,7 +62,9 @@ export async function proxy(request: NextRequest) {
   const isProtectedApi =
     !isPublicApi &&
     PROTECTED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix))
-  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  const isAdminLogin = pathname === '/admin/login' || pathname.startsWith('/admin/login/')
+  const isProtected =
+    PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix)) && !isAdminLogin
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route))
 
   // Anonymous visitors on public marketing pages — skip Supabase getUser latency
@@ -71,7 +74,8 @@ export async function proxy(request: NextRequest) {
 
   // Anonymous hitting protected routes — redirect without network call when possible
   if (!hasAuthCookie(request) && isProtected) {
-    return pass(NextResponse.redirect(new URL('/login', request.url)))
+    const dest = pathname.startsWith('/admin') ? '/admin/login' : '/login'
+    return pass(NextResponse.redirect(new URL(dest, request.url)))
   }
   if (!hasAuthCookie(request) && isProtectedApi) {
     return pass(NextResponse.json({ error: t('errors.unauthorized') }, { status: 401 }))
@@ -109,7 +113,8 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!user && isProtected) {
-    return pass(NextResponse.redirect(new URL('/login', request.url)))
+    const dest = pathname.startsWith('/admin') ? '/admin/login' : '/login'
+    return pass(NextResponse.redirect(new URL(dest, request.url)))
   }
 
   if (user && (isAuthRoute || isProtected)) {
@@ -119,17 +124,18 @@ export async function proxy(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    if (profile?.role) {
+    const role = resolveUserRole(profile?.role, user.email)
+    if (role) {
       if (isAuthRoute) {
         return pass(NextResponse.redirect(
-          new URL(ROLE_REDIRECTS[profile.role] || '/login', request.url)
+          new URL(ROLE_REDIRECTS[role] || '/login', request.url)
         ))
       }
 
-      const allowedPrefix = `/${profile.role}`
+      const allowedPrefix = `/${role}`
       if (!pathname.startsWith(allowedPrefix)) {
         return pass(NextResponse.redirect(
-          new URL(ROLE_REDIRECTS[profile.role], request.url)
+          new URL(ROLE_REDIRECTS[role], request.url)
         ))
       }
     }

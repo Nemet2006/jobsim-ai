@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import type { UserRole } from '@/types'
 import { getT } from '@/i18n/get-locale'
+import { ensurePlatformAdmin } from '@/lib/ensure-platform-admin'
+import { isPlatformAdminEmail, resolveUserRole } from '@/lib/platform-admin'
 
 export class ApiError extends Error {
   constructor(
@@ -31,11 +33,21 @@ export async function requireRole(allowed: UserRole | UserRole[]) {
 
   const { data: profile } = await supabase
     .from('users')
-    .select('role, is_premium, company_name, full_name')
+    .select('role, is_premium, company_name, full_name, email')
     .eq('id', user.id)
     .single()
 
-  if (!profile?.role || !roles.includes(profile.role as UserRole)) {
+  if (!profile) {
+    throw new ApiError(t('errors.forbidden'), 403)
+  }
+
+  if (isPlatformAdminEmail(user.email) && profile.role !== 'admin') {
+    await ensurePlatformAdmin(user.id, user.email)
+    profile.role = 'admin'
+  }
+
+  const role = resolveUserRole(profile.role, user.email)
+  if (!role || !roles.includes(role)) {
     throw new ApiError(t('errors.forbidden'), 403)
   }
 

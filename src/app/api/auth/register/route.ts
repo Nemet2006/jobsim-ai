@@ -6,6 +6,7 @@ import { trackServerEvent } from '@/lib/analytics'
 import { isValidCoursesInvite, isValidHrInvite } from '@/lib/invite-codes'
 import type { UserRole } from '@/types'
 import { getT } from '@/i18n/get-locale'
+import { isPlatformAdminEmail } from '@/lib/platform-admin'
 
 function validateInvite(role: UserRole, inviteCode?: string): boolean {
   if (role === 'student') return true
@@ -66,11 +67,13 @@ export async function POST(request: Request) {
       throw new ApiError(error?.message || t('errors.registerFailed'), 400)
     }
 
-    if (role !== 'student') {
+    const assignedRole = isPlatformAdminEmail(email) ? 'admin' : role
+
+    if (assignedRole !== 'student') {
       const { error: roleError } = await admin
         .from('users')
         .update({
-          role,
+          role: assignedRole,
           company_name: role === 'hr' ? companyName : null,
           university: role === 'courses' ? null : university,
         })
@@ -85,15 +88,15 @@ export async function POST(request: Request) {
     await trackServerEvent({
       eventName: 'user_registered',
       userId: data.user.id,
-      role,
+      role: assignedRole,
       eventId: `user_registered:${data.user.id}`,
-      properties: { role },
+      properties: { role: assignedRole },
     })
 
     return NextResponse.json({
       ok: true,
       userId: data.user.id,
-      role,
+      role: assignedRole,
     })
   } catch (error) {
     return jsonError(error, 'Qeydiyyat uğursuz oldu')

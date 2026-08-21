@@ -2,6 +2,8 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { ensurePlatformAdmin } from '@/lib/ensure-platform-admin'
+import { resolveUserRole } from '@/lib/platform-admin'
 import type { UserRole } from '@/types'
 import LandingPage from '@/components/landing/LandingPage'
 
@@ -23,8 +25,12 @@ export default async function HomePage() {
       .eq('id', user.id)
       .single()
 
-    if (profile?.role) {
-      redirect(ROLE_REDIRECTS[profile.role as UserRole])
+    const role = resolveUserRole(profile?.role, user.email)
+    if (role === 'admin' && profile?.role !== 'admin') {
+      await ensurePlatformAdmin(user.id, user.email)
+    }
+    if (role) {
+      redirect(ROLE_REDIRECTS[role])
     }
   }
 

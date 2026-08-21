@@ -12,6 +12,7 @@ import { AuroraBackground } from '@/components/ui/AuroraBackground'
 import { VerificationSeal } from '@/components/ui/VerificationSeal'
 import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher'
 import { useT } from '@/i18n/I18nProvider'
+import { isPlatformAdminEmail } from '@/lib/platform-admin'
 
 const ROLE_REDIRECTS: Record<UserRole, string> = {
   student: '/student/dashboard',
@@ -52,9 +53,13 @@ export default function LoginPage() {
         .eq('id', user.id)
         .single()
 
-      if (profile?.role) {
-        track('login_success', { role: profile.role })
-        router.push(ROLE_REDIRECTS[profile.role as UserRole])
+      if (profile?.role || isPlatformAdminEmail(user.email)) {
+        if (isPlatformAdminEmail(user.email)) {
+          await fetch('/api/auth/claim-platform-admin', { method: 'POST' }).catch(() => {})
+        }
+        const role = (isPlatformAdminEmail(user.email) ? 'admin' : profile?.role) as UserRole
+        track('login_success', { role })
+        router.push(ROLE_REDIRECTS[role] || '/login')
         router.refresh()
         return
       }

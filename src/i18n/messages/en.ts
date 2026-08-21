@@ -132,6 +132,12 @@ const en: MessageTree = {
     passwordMin: 'Password must be at least 8 characters',
     registerFailed: 'Registration failed',
     createdButLoginFailed: 'Account created, but sign-in failed. Try the login page.',
+    adminEyebrow: 'Platform admin',
+    adminTitle: 'Admin sign-in',
+    adminHint: 'Sign in with an admin account only. Students, HR, and teachers cannot use this page.',
+    adminSubmit: 'Enter admin panel',
+    adminOnly: 'This sign-in is for admin accounts only.',
+    adminBack: 'Home',
   },
   nav: {
     dashboard: 'Dashboard',
