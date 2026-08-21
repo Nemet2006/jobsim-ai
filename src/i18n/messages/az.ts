@@ -134,12 +134,6 @@ const az: MessageTree = {
     passwordMin: 'Şifrə ən az 8 simvol olmalıdır',
     registerFailed: 'Qeydiyyat uğursuz oldu',
     createdButLoginFailed: 'Hesab yaradıldı, lakin giriş uğursuz oldu. Login səhifəsindən cəhd edin.',
-    adminEyebrow: 'Platforma idarəsi',
-    adminTitle: 'Admin girişi',
-    adminHint: 'Yalnız admin hesabı ilə daxil olun. Tələbə, HR və müəllim bu səhifədən keçə bilməz.',
-    adminSubmit: 'Admin panelinə daxil ol',
-    adminOnly: 'Bu giriş yalnız admin hesabı üçündür.',
-    adminBack: 'Ana səhifə',
   },
   nav: {
     dashboard: 'Dashboard',
