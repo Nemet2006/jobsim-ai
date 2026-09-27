@@ -1,19 +1,26 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Clock } from 'lucide-react'
+import { Check, Clock, Loader2 } from 'lucide-react'
 import { formatUsd, type SubscriptionPlan } from '@/lib/subscription-plans'
 import { useT } from '@/i18n/I18nProvider'
 
 interface PricingCardsProps {
   plans: SubscriptionPlan[]
+  /** When provided, plan buttons start a real checkout instead of showing the preview notice. */
+  onSelect?: (plan: SubscriptionPlan) => void
+  busyPlanId?: string | null
 }
 
-export function PricingCards({ plans }: PricingCardsProps) {
+export function PricingCards({ plans, onSelect, busyPlanId = null }: PricingCardsProps) {
   const { t } = useT()
   const [notice, setNotice] = useState<string | null>(null)
 
   function handleSelect(plan: SubscriptionPlan) {
+    if (onSelect) {
+      onSelect(plan)
+      return
+    }
     setNotice(t('common.displayOnly', { name: plan.name }))
   }
 
@@ -77,13 +84,17 @@ export function PricingCards({ plans }: PricingCardsProps) {
             <button
               type="button"
               onClick={() => handleSelect(plan)}
+              disabled={busyPlanId !== null}
               className={
                 plan.highlight
                   ? 'btn-gold w-full'
                   : 'btn-secondary w-full'
               }
             >
-              {plan.cta}
+              {busyPlanId === plan.id && (
+                <Loader2 size={15} className="animate-spin" aria-hidden="true" />
+              )}
+              {busyPlanId === plan.id ? t('premium.redirecting') : plan.cta}
             </button>
           </article>
         ))}
@@ -99,9 +110,11 @@ export function PricingCards({ plans }: PricingCardsProps) {
         </p>
       )}
 
-      <p className="mt-4 text-xs text-ink-mute max-w-3xl">
-        Bu səhifə görünüş üçündür. Ödəniş sistemi hələ aktiv deyil — düymələr demo məqsədlidir.
-      </p>
+      {!onSelect && (
+        <p className="mt-4 text-xs text-ink-mute max-w-3xl">
+          {t('common.comingSoonPay')}
+        </p>
+      )}
     </div>
   )
 }

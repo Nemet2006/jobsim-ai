@@ -49,6 +49,8 @@ Namizədlər real şirkət ssenariləri üzrə simulyasiya keçir, AI cavabları
 | `/student/results` | Nəticələr + sertifikat |
 | `/hr/dashboard` | HR paneli |
 | `/courses/dashboard` | Kurs/müəllim paneli |
+| `/simulations` | Public simulyasiya kataloqu (qeydiyyatsız) |
+| `/verify` | Public sertifikat yoxlaması (ID və ya QR ilə) |
 
 ---
 
@@ -66,7 +68,7 @@ flowchart TB
   end
 
   subgraph API["API Routes"]
-    AI["/api/ai/analyze"]
+    AI["/api/attempts/complete\n(server-side AI scoring)"]
     UP["/api/attempts/upload"]
     PR["/api/premium/*"]
     PDF["/api/reports/pdf"]
@@ -103,7 +105,7 @@ sequenceDiagram
   participant S as Tələbə
   participant E as SimulationExam
   participant P as ProctorCamera
-  participant API as /api/ai/analyze
+  participant API as /api/attempts/complete
   participant AI as OpenRouter
   participant DB as Supabase
   participant C as Certificate PDF
@@ -149,7 +151,8 @@ mindmap
 | **HR** | Simulyasiya yaratma (4 addım), namizəd cədvəli, qısa siyahı, müqayisə, radar chart, PDF hesabat |
 | **Kurslar** | Qrup yaratma, join code, tapşırıq vermə, liderbord, tələbə irəliləyişi |
 | **AI** | OpenRouter ilə real-time cavab analizi, bal (0–100), bacarıq skorları |
-| **Premium** | Stripe checkout + promo kod aktivləşdirmə |
+| **Böyümə** | Public kataloq + SEO sitemap, sertifikat yoxlama səhifəsi, PDF-də QR kod, LinkedIn-ə əlavə et / paylaş, qeydiyyatdan sonra seçilmiş simulyasiyaya qayıdış |
+| **Premium** | Stripe checkout + promo kod aktivləşdirmə (`NEXT_PUBLIC_PREMIUM_ENABLED=true` ilə) |
 | **Təhlükəsizlik** | Supabase RLS, kamera proktorluğu, 3 xəbərdarlıq = ləğv |
 
 ---
@@ -181,14 +184,15 @@ mindmap
 | Kateqoriya | Texnologiya |
 |------------|-------------|
 | Framework | Next.js 16 (App Router), React 19, TypeScript |
-| Styling | Tailwind CSS **3.4**, custom design system (cream / forest / coral) |
+| Styling | Tailwind CSS **3.4**, custom design system (Ledger Navy: navy / gold / paper) |
 | Database & Auth | Supabase (PostgreSQL + Auth + Storage) |
 | AI | OpenRouter (`nvidia/nemotron-3.5-lightning` only) |
 | Charts | Recharts |
 | PDF | jsPDF + Noto Sans (Azərbaycan Unicode dəstəyi) |
 | Payments | Stripe (optional) + promo kodlar |
 | Deploy | Vercel |
-| State | Zustand, React hooks |
+| State | React hooks |
+| CI | GitHub Actions — typecheck, unit test, build |
 
 ---
 
@@ -200,7 +204,9 @@ jobsim-ai/
 │   └── banner.svg              # README banner
 ├── public/
 │   └── fonts/                  # Noto Sans (sertifikat PDF)
+├── .github/workflows/ci.yml    # typecheck + test + build
 ├── scripts/
+│   ├── *.test.ts               # unit testlər (npm test)
 │   ├── seed-real-content.mjs   # Şirkət simulyasiyaları + ADA qrupu
 │   ├── seed-it-simulations.mjs # IT simulyasiyaları
 │   └── seed-expand-tasks.mjs   # Genişləndirilmiş tapşırıqlar
@@ -214,7 +220,10 @@ jobsim-ai/
     │   ├── student/            # tələbə portalı
     │   ├── hr/                 # HR portalı
     │   ├── courses/            # kurs portalı
-    │   └── api/                # AI, upload, premium, PDF
+    │   ├── admin/              # admin paneli (traction, events)
+    │   ├── simulations/        # public kataloq (qeydiyyatsız)
+    │   ├── verify/             # public sertifikat yoxlaması
+    │   └── api/                # attempts, premium, analytics, PDF
     ├── components/
     │   ├── simulation/         # Exam, Certificate, Results, Proctor
     │   ├── hr/                 # HR UI
@@ -222,6 +231,8 @@ jobsim-ai/
     │   └── ui/                 # Shared UI
     ├── lib/
     │   ├── certificate.ts      # PDF sertifikat generatoru
+    │   ├── certificate-id.ts   # JSIM-… ID ↔ attempt UUID
+    │   ├── public-data.ts      # public səhifələr üçün təhlükəsiz sorğular
     │   ├── openrouter.ts       # AI client
     │   ├── simulation-access.ts
     │   └── supabase/
@@ -268,12 +279,29 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 OPENROUTER_API_KEY=sk-or-v1-...
 # Model is hardcoded: nvidia/nemotron-3.5-lightning (no fallbacks)
 
-# Optional
+NEXT_PUBLIC_SITE_URL=http://localhost:3000   # sertifikat QR/paylaşım linkləri, sitemap
+
+# Production-da mütləq təyin edin — təyin olunanda demo dəvət kodları işləmir
+HR_INVITE_CODE=...
+COURSES_INVITE_CODE=...
+
+# Optional — Premium (default söndürülüb, bütün simulyasiyalar pulsuzdur)
+NEXT_PUBLIC_PREMIUM_ENABLED=false
+PREMIUM_PROMO_CODES=JOBSIM2026
 STRIPE_SECRET_KEY=sk_test_...
-STRIPE_PRICE_ID=price_...
+STRIPE_PRICE_ID_MONTHLY=price_...
+STRIPE_PRICE_ID_YEARLY=price_...
 STRIPE_WEBHOOK_SECRET=whsec_...
-PREMIUM_PROMO_CODES=JOBSIM2026!
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+Tam siyahı və izahlar üçün `.env.local.example` faylına baxın.
+
+### Yoxlamalar
+
+```bash
+npm run typecheck   # TypeScript
+npm test            # unit testlər (node:test)
+npm run build       # production build
 ```
 
 ### 4. Database
@@ -286,6 +314,9 @@ Supabase SQL Editor-də sıra ilə işə salın:
 4. `SQL_STORAGE.sql`
 5. `SQL_SECURITY.sql` — **production security (roles, scoring, rate limits)**
 6. `SQL_ANALYTICS.sql` — **traction/analytics sistemi + admin rolu**
+7. `SQL_GROUPS_MIGRATION.sql` → `SQL_GROUPS_FIX.sql` → `SQL_GROUPS_RLS_RECURSION_FIX.sql` — kurs qrupları
+8. `SQL_FIX_TRIGGER.sql` — yeni istifadəçi trigger düzəlişi
+9. `SQL_I18N.sql` — (opsional) simulyasiyalar üçün EN sütunları
 
 ### 5. Development server
 
@@ -374,9 +405,11 @@ npm run seed:tasks
 
 | Üsul | Təsvir |
 |------|--------|
-| **Promo kod** | `PREMIUM_PROMO_CODES` env-də (məs. `JOBSIM2026!`) |
-| **Stripe** | `/api/premium/checkout` → webhook → `is_premium=true` |
-| **Freemium** | 2 ən yeni simulyasiya pulsuz, qalanları kilidlidir |
+| **Aktivləşdirmə** | `NEXT_PUBLIC_PREMIUM_ENABLED=true` — söndürülü olanda qiymət səhifəsi yalnız məlumat xarakterlidir |
+| **Promo kod** | `PREMIUM_PROMO_CODES` env-də; `/student/premium` səhifəsindəki forma ilə (saatda 5 cəhd limiti) |
+| **Stripe** | `/api/premium/checkout` → Stripe Checkout → `/api/premium/confirm` + webhook → `is_premium=true` (idempotent) |
+| **Webhook** | Stripe Dashboard-da `https://<domain>/api/premium/webhook`, event: `checkout.session.completed` |
+| **Giriş** | Hazırda bütün dərc olunmuş simulyasiyalar hamı üçün açıqdır |
 
 ---
 
@@ -407,6 +440,8 @@ Vercel Environment Variables-a `.env.local` dəyərlərini əlavə edin.
 | HR / Şirkət | `JOBSIM-HR-2026` |
 | Kurs / Müəllim | `JOBSIM-UNI-2026` |
 
+> Bu demo kodlar yalnız `HR_INVITE_CODE` / `COURSES_INVITE_CODE` təyin olunmayanda işləyir. Production-da hər ikisini gizli dəyərlə təyin edin.
+
 > Öz Supabase layihənizdə qeydiyyatdan keçərək yeni hesab da yarada bilərsiniz.
 
 ---
@@ -425,9 +460,10 @@ Sertifikat ID formatı: `JSIM-XXXXXXXXXXXX`
 
 ## Roadmap
 
-- [ ] Sertifikat verify URL (`verify.jobsim-ai.app`)
+- [x] Sertifikat verify URL (`/verify/JSIM-…`) + PDF-də QR kod
+- [x] Çoxdilli interfeys (AZ / EN)
+- [x] Public simulyasiya kataloqu
 - [ ] Real-time leaderboard WebSocket
-- [ ] Çoxdilli interfeys (AZ / EN)
 - [ ] Mobil tətbiq (React Native)
 
 ---

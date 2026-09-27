@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { makeT } from '@/i18n/t'
 import { resolveRequestLocale, withLocaleCookie } from '@/i18n/request-locale'
 import { resolveUserRole } from '@/lib/platform-admin'
+import { resolveNextPath } from '@/lib/next-path'
 
 const ROLE_REDIRECTS: Record<string, string> = {
   student: '/student/dashboard',
@@ -123,8 +124,9 @@ export async function proxy(request: NextRequest) {
     const role = resolveUserRole(profile?.role, user.email)
     if (role) {
       if (isAuthRoute) {
+        const next = resolveNextPath(request.nextUrl.searchParams.get('next'), role)
         return pass(NextResponse.redirect(
-          new URL(ROLE_REDIRECTS[role] || '/login', request.url)
+          new URL(next || ROLE_REDIRECTS[role] || '/login', request.url)
         ))
       }
 
@@ -140,6 +142,8 @@ export async function proxy(request: NextRequest) {
   return pass(supabaseResponse)
 }
 
-export const matcher = [
-  '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|woff2)$).*)',
-]
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?|ttf|pdf|txt|xml)$).*)',
+  ],
+}

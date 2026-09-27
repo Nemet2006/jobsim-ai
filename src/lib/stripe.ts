@@ -1,4 +1,6 @@
 import Stripe from 'stripe'
+import { getPublicSiteUrl } from '@/lib/site-url'
+import { stripePriceIdFor, type PremiumPlan } from '@/lib/premium-feature'
 
 let stripe: Stripe | null = null
 
@@ -11,12 +13,10 @@ export function getStripe(): Stripe | null {
   return stripe
 }
 
-export function isStripeConfigured(): boolean {
-  return Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_PRICE_ID)
+export function isStripeConfigured(plan: PremiumPlan = 'monthly'): boolean {
+  return Boolean(process.env.STRIPE_SECRET_KEY && stripePriceIdFor(plan))
 }
 
 export function getSiteUrl(): string {
-  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
-  return 'http://localhost:3000'
+  return getPublicSiteUrl()
 }
