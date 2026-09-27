@@ -34,6 +34,7 @@ export default function CertificateSamplePage() {
             completedAt: new Date().toISOString(),
             attemptId: 'sample-cert-0001-abcd',
           }}
+          shareable={false}
         />
 
         <div className="text-center">

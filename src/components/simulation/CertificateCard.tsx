@@ -13,12 +13,15 @@ import {
 } from '@/lib/certificate'
 import { VerificationSeal } from '@/components/ui/VerificationSeal'
 import { useT } from '@/i18n/I18nProvider'
+import { CertificateShare } from '@/components/simulation/CertificateShare'
 
 interface CertificateCardProps {
   data: CertificateData
   variant?: 'light' | 'dark'
   showResultsLink?: boolean
   resultsHref?: string
+  /** Off for sample/demo certificates that have no real attempt behind them. */
+  shareable?: boolean
 }
 
 export function CertificateCard({
@@ -26,6 +29,7 @@ export function CertificateCard({
   variant = 'light',
   showResultsLink = false,
   resultsHref,
+  shareable = true,
 }: CertificateCardProps) {
   const { locale, t } = useT()
   const [downloading, setDownloading] = useState(false)
@@ -131,7 +135,7 @@ export function CertificateCard({
           ) : (
             <Download size={15} aria-hidden="true" />
           )}
-          PDF {t('certificate.download')}
+          {t('certificate.download')}
         </button>
         {showResultsLink && resultsHref && (
           <Link
@@ -147,6 +151,8 @@ export function CertificateCard({
           </Link>
         )}
       </div>
+
+      {shareable && <CertificateShare data={data} isDark={isDark} />}
     </div>
   )
 }

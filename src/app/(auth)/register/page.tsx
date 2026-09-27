@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -11,6 +11,7 @@ import type { UserRole } from '@/types'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
 import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher'
 import { useT } from '@/i18n/I18nProvider'
+import { readNextParam, resolveNextPath } from '@/lib/next-path'
 
 const ROLE_ICONS = {
   student: GraduationCap,
@@ -22,6 +23,11 @@ export default function RegisterPage() {
   const { t } = useT()
   const router = useRouter()
   const supabase = createClient()
+  const [loginHref, setLoginHref] = useState('/login')
+  useEffect(() => {
+    const next = readNextParam()
+    if (next) setLoginHref(`/login?next=${encodeURIComponent(next)}`)
+  }, [])
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -93,7 +99,9 @@ export default function RegisterPage() {
       courses: '/courses/dashboard',
       admin: '/admin/dashboard',
     }
-    router.push(redirects[assignedRole] || redirects.student)
+    router.push(
+      resolveNextPath(readNextParam(), assignedRole) || redirects[assignedRole] || redirects.student
+    )
     router.refresh()
   }
 
@@ -115,7 +123,7 @@ export default function RegisterPage() {
           </Link>
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-navy">
+            <Link href={loginHref} className="text-sm font-medium text-ink-mid hover:text-navy">
               {t('auth.hasAccount')} <span className="text-navy underline-offset-2 hover:underline">{t('common.login')}</span>
             </Link>
           </div>
@@ -361,7 +369,7 @@ export default function RegisterPage() {
 
           <p className="mt-5 text-center text-sm text-ink-mid">
             {t('auth.hasAccount')}{' '}
-            <Link href="/login" className="font-semibold text-navy hover:underline underline-offset-2">
+            <Link href={loginHref} className="font-semibold text-navy hover:underline underline-offset-2">
               {t('auth.loginArrow')}
             </Link>
           </p>

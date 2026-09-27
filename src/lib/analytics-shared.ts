@@ -22,6 +22,9 @@ export const CLIENT_EVENTS = [
   'premium_promo_submitted',
   'hr_simulation_created',
   'hr_report_downloaded',
+  'certificate_shared',
+  'certificate_lookup',
+  'public_sim_cta_click',
 ] as const
 
 export const SERVER_EVENTS = [
@@ -60,6 +63,7 @@ const ALLOWED_PROPERTY_KEYS: ReadonlySet<string> = new Set([
   'error_code',
   'navigation_type',
   'method',
+  'channel',
 ])
 
 export type AnalyticsProperties = Record<string, string | number | boolean>

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
+import { getPublicSiteUrl } from '@/lib/site-url'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jobsim-ai-mvpp.vercel.app'
+const SITE_URL = getPublicSiteUrl()
 
 export default function robots(): MetadataRoute.Robots {
   return {

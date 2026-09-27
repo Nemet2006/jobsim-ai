@@ -43,12 +43,18 @@ export default async function LandingPage() {
               JobSim<span className="text-gold-deep">.</span>
             </span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <Link href="/simulations" className="hidden sm:inline text-sm font-medium text-ink-mid hover:text-navy">
+              {t('public.navSimulations')}
+            </Link>
+            <Link href="/verify" className="hidden md:inline text-sm font-medium text-ink-mid hover:text-navy">
+              {t('public.navVerify')}
+            </Link>
             <LanguageSwitcher />
-            <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-navy" prefetch>
+            <Link href="/login" className="text-sm font-medium text-ink-mid hover:text-navy whitespace-nowrap" prefetch>
               {t('common.login')}
             </Link>
-            <Link href="/register" className="btn-primary text-sm py-2 px-4" prefetch>
+            <Link href="/register" className="btn-primary text-sm py-2 px-3 sm:px-4 whitespace-nowrap" prefetch>
               {t('common.startFree')}
             </Link>
           </div>
@@ -73,8 +79,8 @@ export default async function LandingPage() {
                   {t('common.createFreeAccount')}
                   <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                 </Link>
-                <Link href="/login" className="btn-secondary" prefetch>
-                  {t('landing.haveAccount')}
+                <Link href="/simulations" className="btn-secondary" prefetch>
+                  {t('public.exploreSims')}
                 </Link>
               </div>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
@@ -205,7 +211,11 @@ export default async function LandingPage() {
           <span className="font-display text-sm font-semibold">
             JobSim<span className="text-gold-deep">.</span>
           </span>
-          <p className="text-xs text-ink-mute">© 2026 JobSim AI · Get noticed. Get hired.</p>
+          <div className="flex items-center gap-4 text-xs text-ink-mute">
+            <Link href="/simulations" className="hover:text-navy">{t('public.navSimulations')}</Link>
+            <Link href="/verify" className="hover:text-navy">{t('public.navVerify')}</Link>
+            <span>© 2026 JobSim AI · Get noticed. Get hired.</span>
+          </div>
         </div>
       </footer>
     </div>
